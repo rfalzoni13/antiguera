@@ -1,0 +1,72 @@
+﻿@model Antiguera.Administrador.Models.LoginModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Login";
+}
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antiguera - @ViewBag.Title</title>
+    @Styles.Render("~/bundles/bootstrap")
+    @Styles.Render("~/Content/css/Login")
+    @Scripts.Render("~/bundles/modernizr")
+    <style>
+        body {
+            background-color: #ebebeb;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-image">
+        <img src="~/Content/Images/LogoAntiguera2.png" />
+    </div>
+    <div class="container">
+        @using (Html.BeginForm("Login", "Home", FormMethod.Post, new { @class = "form-signin" }))
+        {
+            if (ViewBag.ErroMensagem != null)
+            {
+                <div class="alert alert-danger">
+                    <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
+                    <p>@ViewBag.ErroMensagem</p>
+                </div>
+            }
+
+            if (ViewBag.StatusMensagem != null)
+            {
+                <div class="alert alert-info">
+                    <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
+                    <p>@ViewBag.StatusMensagem</p>
+                </div>
+            }
+
+            <h2 class="form-signin-heading">Painel de Administração</h2>
+
+            @Html.LabelFor(x => x.Email, new { @class = "sr-only" })
+            @Html.TextBoxFor(x => x.Email, new { @type = "email", @id = "Email", @class = "form-control", @autofocus = "autofocus", @placeholder = "Digite seu login ou e-mail", @required = "required" })
+
+            @Html.LabelFor(x => x.Senha, new { @class = "sr-only" })
+            @Html.TextBoxFor(x => x.Senha, new { @type = "password", @id = "Senha", @class = "form-control", @placeholder = "Digite sua senha" })
+            <div class="checkbox">
+                <label>
+                    @Html.CheckBoxFor(x => x.RememberMe) Lembrar-me
+                </label>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Acessar</button>
+            </div>
+        }
+
+    </div> <!-- /container -->
+    <div class="container container-footer">
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Renato Falzoni - Todos os direitos reservados.</p>
+        </footer>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/Scripts")
+</body>
+</html>
