@@ -8,6 +8,7 @@ using X.PagedList;
 
 namespace Antiguera.Administrador.Controllers
 {
+    [Authorize]
     public class ProgramaController : BaseController
     {
         // GET: Programa

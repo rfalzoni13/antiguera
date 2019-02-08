@@ -26,19 +26,19 @@ namespace Antiguera.WebApi
 
                 if(usuario != null)
                 {
-                    //if(BCrypt.CheckPassword(context.Password, usuario.Senha))
-                    //{
-                        usuario.Acesso = db.Database.SqlQuery<AcessoModel>("SELECT Nome FROM NivelPermissao WHERE Id=@Id ", new SqlParameter("@Id", usuario.AcessoId)).FirstOrDefault();
+                    if (BCrypt.CheckPassword(context.Password, usuario.Senha))
+                    {
+                        usuario.Acesso = db.Database.SqlQuery<AcessoModel>("SELECT Nome FROM Acesso WHERE Id=@Id ", new SqlParameter("@Id", usuario.AcessoId)).FirstOrDefault();
 
                         var identity = new ClaimsIdentity(context.Options.AuthenticationType);
                         identity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
                         identity.AddClaim(new Claim(ClaimTypes.Role, usuario.Acesso.Nome));
                         context.Validated(identity);
-                    //}
-                    //else
-                    //{
-                    //    context.SetError("Password error: ", "Senha inválida!");
-                    //}
+                    }
+                    else
+                    {
+                        context.SetError("Password error: ", "Senha inválida!");
+                    }
                 }
                 else
                 {

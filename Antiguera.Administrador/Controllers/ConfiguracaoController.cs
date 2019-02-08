@@ -1,4 +1,5 @@
-﻿using Antiguera.Administrador.Models;
+﻿using Antiguera.Administrador.Controllers.Base;
+using Antiguera.Administrador.Models;
 using System;
 using System.Configuration;
 using System.Web.Configuration;
@@ -6,7 +7,8 @@ using System.Web.Mvc;
 
 namespace Antiguera.Administrador.Controllers
 {
-    public class ConfiguracaoController : Controller
+    [Authorize]
+    public class ConfiguracaoController : BaseController
     {
         // GET: Configuracao
         public ActionResult Index()

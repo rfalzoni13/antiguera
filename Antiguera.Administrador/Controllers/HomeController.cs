@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 
 namespace Antiguera.Administrador.Controllers
@@ -12,6 +14,7 @@ namespace Antiguera.Administrador.Controllers
     public class HomeController : BaseController
     {
         // GET: Home
+        [Authorize]
         public ActionResult Index()
         {
             HomeModel model = new HomeModel();
@@ -32,13 +35,30 @@ namespace Antiguera.Administrador.Controllers
         }
 
         [HttpPost]
-        public ActionResult Login(LoginModel model)
+        public async Task<ActionResult> Login(LoginModel model)
         {
             if (ModelState.IsValid)
             {
+                bool isPersistent = false;
+                bool rememberBrowser = false;
+
+                if (model.RememberMe)
+                {
+                    isPersistent = true;
+                    rememberBrowser = true;
+                }
+
+                var login = await FazerLogin(model, isPersistent, rememberBrowser);
+
+                if (!login)
+                {
+                    ViewBag.ErroMensagem = "Login ou senha incorretos!";
+                    return View(model);
+                }
+
                 var content = new List<KeyValuePair<string, string>>(new[]
                 {
-                    new KeyValuePair<string, string>("username", model.Email),
+                    new KeyValuePair<string, string>("username", model.Login),
                     new KeyValuePair<string, string>("password", model.Senha),
                     new KeyValuePair<string, string>("grant_type", "password")
                 });
@@ -52,7 +72,7 @@ namespace Antiguera.Administrador.Controllers
 
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + resultLogin.access_token);
 
-                        using (var responseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPeloLoginOuEmail + model.Email).Result)
+                        using (var responseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPeloLoginOuEmail + model.Login).Result)
                         {
                             if (responseUsuario.IsSuccessStatusCode)
                             {
@@ -69,7 +89,7 @@ namespace Antiguera.Administrador.Controllers
                                 }
                             }
                         }
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index");
                     }
                     else if (responseLogin.StatusCode == HttpStatusCode.InternalServerError)
                     {
@@ -104,9 +124,13 @@ namespace Antiguera.Administrador.Controllers
                 Session.Abandon();
             }
 
+            var authenticationManager = HttpContext.GetOwinContext().Authentication;
+
+            authenticationManager.SignOut();
+
             TempData["logout"] = "Você foi desconectado!";
 
-            return RedirectToAction("Login", "Home");
+            return RedirectToAction("Login");
         }
     }
 }
