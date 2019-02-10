@@ -1,15 +1,11 @@
 ﻿using Antiguera.Administrador.Config;
 using Antiguera.Administrador.Models;
-using Antiguera.Administrador.Models.Auth;
-using Microsoft.AspNet.Identity.Owin;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -989,70 +985,6 @@ namespace Antiguera.Administrador.Controllers.Base
 
             Response.Cookies.Add(cookieUser);
             Response.Cookies.Add(cookieToken);
-        }
-
-        [NonAction]
-        protected async Task<bool> CriarUsuario(UsuarioModel model)
-        {
-            var contexto = HttpContext.GetOwinContext();
-
-            var manager = contexto.GetUserManager<UsuarioAppManager>();
-
-            var nome = model.Nome.Split(' ');
-
-            var usuario = new UserModel()
-            {
-                UserName = model.Login,
-                FirstName = nome[0],
-                LastName = nome[2],
-                Email = model.Email
-            };
-
-            await manager.CreateAsync(usuario, model.Senha);
-
-            return true;
-        }
-
-        [NonAction]
-        protected async Task<bool> FazerLogin(LoginModel model, bool isPersistent, bool rememberBrowser)
-        {
-            var userManager = HttpContext.GetOwinContext().GetUserManager<UsuarioAppManager>();
-
-            var user = await userManager.FindAsync(model.Login, model.Senha);
-
-            if(user != null)
-            {
-                var appSign = HttpContext.GetOwinContext().Get<SignInAppManager>();
-
-                await appSign.SignInAsync(user, true, false);
-
-                return true;
-            }
-            else
-            {
-                var findEmail = await userManager.FindByEmailAsync(model.Login);
-                if(findEmail != null)
-                {
-                    user = await userManager.FindAsync(findEmail.UserName, model.Senha);
-                    if(user != null)
-                    {
-                        var appSign = HttpContext.GetOwinContext().Get<SignInAppManager>();
-
-                        await appSign.SignInAsync(user, true, false);
-
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-                
-            }
         }
         #endregion
     }

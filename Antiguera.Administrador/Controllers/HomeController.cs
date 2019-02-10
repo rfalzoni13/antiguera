@@ -38,24 +38,7 @@ namespace Antiguera.Administrador.Controllers
         public async Task<ActionResult> Login(LoginModel model)
         {
             if (ModelState.IsValid)
-            {
-                bool isPersistent = false;
-                bool rememberBrowser = false;
-
-                if (model.RememberMe)
-                {
-                    isPersistent = true;
-                    rememberBrowser = true;
-                }
-
-                var login = await FazerLogin(model, isPersistent, rememberBrowser);
-
-                if (!login)
-                {
-                    ViewBag.ErroMensagem = "Login ou senha incorretos!";
-                    return View(model);
-                }
-
+            {               
                 var content = new List<KeyValuePair<string, string>>(new[]
                 {
                     new KeyValuePair<string, string>("username", model.Login),
