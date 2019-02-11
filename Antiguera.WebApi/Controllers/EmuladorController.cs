@@ -30,6 +30,9 @@ namespace Antiguera.WebApi.Controllers
         /// <summary>
         /// Listar todos os emuladores
         /// </summary>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Listagem de todos os emuladores</remarks>
         /// <returns></returns>
         // GET api/antiguera/admin/emulador/listartodososemuladores
@@ -79,6 +82,10 @@ namespace Antiguera.WebApi.Controllers
         /// <summary>
         /// Listar emulador pelo Id
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Retorna o emulador através do Id do mesmo</remarks>
         /// <param name="Id"></param>
         /// <returns></returns>
@@ -143,6 +150,9 @@ namespace Antiguera.WebApi.Controllers
         /// <summary>
         /// Inserir emulador
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Insere um novo emulador passando um objeto no body da requisição no método POST</remarks>
         /// <param name="emuladorModel"></param>
         /// <returns></returns>
@@ -191,6 +201,9 @@ namespace Antiguera.WebApi.Controllers
         /// <summary>
         /// Atualizar emulador
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza o emulador passando o objeto no body da requisição pelo método PUT</remarks>
         /// <param name="emuladorModel"></param>
         /// <returns></returns>
@@ -239,6 +252,9 @@ namespace Antiguera.WebApi.Controllers
         /// <summary>
         /// Excluir emulador
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Exclui o emulador passando o objeto no body da requisição pelo método DELETE</remarks>
         /// <param name="emuladorModel"></param>
         /// <returns></returns>
@@ -287,6 +303,9 @@ namespace Antiguera.WebApi.Controllers
         /// <summary>
         /// Apagar emuladores
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Deleta uma lista de emuladores passando um array de Ids no body da requisição</remarks>
         /// <param name="Ids"></param>
         /// <returns></returns>

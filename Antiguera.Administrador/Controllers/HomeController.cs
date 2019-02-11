@@ -41,7 +41,7 @@ namespace Antiguera.Administrador.Controllers
         {
             if (ModelState.IsValid)
             {
-                using (var responseFirstLogin =  Cliente.PostAsJsonAsync(url.UrlApi + url.UrlAdminLogin, model).Result)
+                using (var responseFirstLogin =  Cliente.PostAsJsonAsync(url.UrlApi + url.UrlLoginAdmin, model).Result)
                 {
                     if (responseFirstLogin.IsSuccessStatusCode)
                     {
@@ -54,7 +54,7 @@ namespace Antiguera.Administrador.Controllers
 
                         var stringContent = new FormUrlEncodedContent(content);
 
-                        using (var responseSecondLogin = Cliente.PostAsync(url.UrlApi + url.UrlTokenLogin, stringContent).Result)
+                        using (var responseSecondLogin = Cliente.PostAsync(url.UrlApi + url.UrlToken, stringContent).Result)
                         {
                             if (responseSecondLogin.IsSuccessStatusCode)
                             {

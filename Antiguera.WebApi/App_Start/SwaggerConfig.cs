@@ -162,6 +162,7 @@ namespace Antiguera.WebApi
                         // to execute the operation
                         //
                         //c.OperationFilter<AssignOAuth2SecurityRequirements>();
+                        c.OperationFilter<AddAuthorizationHeaderParameterOperationFilter>();
 
                         // Post-modify the entire Swagger document by wiring up one or more Document filters.
                         // This gives full control to modify the final SwaggerDocument. You should have a good understanding of
@@ -269,7 +270,7 @@ namespace Antiguera.WebApi
         /// <param name="apiExplorer">The api explorer.</param>
         public void Apply(SwaggerDocument swaggerDoc, SchemaRegistry schemaRegistry, IApiExplorer apiExplorer)
         {
-            swaggerDoc.paths.Add("/api/antiguera/login", new PathItem
+            swaggerDoc.paths.Add("/api/antiguera/token", new PathItem
             {
                 post = new Operation
                 {
@@ -277,7 +278,7 @@ namespace Antiguera.WebApi
 
                     description = "Token de autorização para endpoints",
 
-                    tags = new List<string> { "Login/Token" },
+                    tags = new List<string> { "Token" },
                     consumes = new List<string>
                     {
                         "application/x-www-form-urlencoded"

@@ -29,6 +29,9 @@ namespace AntigueraWebApi.Controllers
         /// <summary>
         /// Listar todos os programas
         /// </summary>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Listagem de todos os programas</remarks>
         /// <returns></returns>
         // GET api/antiguera/admin/programa/listartodososprogramas
@@ -79,6 +82,10 @@ namespace AntigueraWebApi.Controllers
         /// <summary>
         /// Listar programa pelo Id
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Retorna o programa através do Id do mesmo</remarks>
         /// <param name="Id"></param>
         /// <returns></returns>
@@ -144,6 +151,9 @@ namespace AntigueraWebApi.Controllers
         /// <summary>
         /// Inserir Programa
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Insere um novo programa passando um objeto no body da requisição no método POST</remarks>
         /// <param name="programaModel"></param>
         /// <returns></returns>
@@ -192,6 +202,9 @@ namespace AntigueraWebApi.Controllers
         /// <summary>
         /// Atualizar programa
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza o programa passando o objeto no body da requisição pelo método PUT</remarks>
         /// <param name="programaModel"></param>
         /// <returns></returns>
@@ -240,6 +253,9 @@ namespace AntigueraWebApi.Controllers
         /// <summary>
         /// Excluir programa
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Exclui o programa passando o objeto no body da requisição pelo método DELETE</remarks>
         /// <param name="programaModel"></param>
         /// <returns></returns>
@@ -288,6 +304,9 @@ namespace AntigueraWebApi.Controllers
         /// <summary>
         /// Apagar programas
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Deleta uma lista de programas passando um array de Ids no body da requisição</remarks>
         /// <param name="Ids"></param>
         /// <returns></returns>

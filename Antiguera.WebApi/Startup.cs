@@ -40,7 +40,7 @@ namespace Antiguera.WebApi
             var options = new OAuthAuthorizationServerOptions()
             {
                 AllowInsecureHttp = true, //true apenas para ambiente de desenvolvimento
-                TokenEndpointPath = new PathString("/api/antiguera/login"),
+                TokenEndpointPath = new PathString("/api/antiguera/token"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
                 Provider = new AccessProviderToken()
             };

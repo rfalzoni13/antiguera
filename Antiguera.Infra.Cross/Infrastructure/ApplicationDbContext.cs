@@ -5,7 +5,7 @@ namespace Antiguera.Infra.Cross.Infrastructure
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            :base("Antiguera", throwIfV1Schema: false)
+            :base(@"Data Source=RENATO-PC\RENATO;Initial Catalog=Antiguera;Integrated Security=True", throwIfV1Schema: false)
         {
             Configuration.ProxyCreationEnabled = false;
             Configuration.LazyLoadingEnabled = false;

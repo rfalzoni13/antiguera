@@ -30,6 +30,9 @@ namespace Antiguera.WebApi.Controllers
         /// <summary>
         /// Listar todas as roms
         /// </summary>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Listagem de todas as roms</remarks>
         /// <returns></returns>
         // GET api/antiguera/admin/rom/listartodasasroms
@@ -81,6 +84,10 @@ namespace Antiguera.WebApi.Controllers
         /// <summary>
         /// Listar rom pelo Id
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Retorna a rom através do Id da mesma</remarks>
         /// <param name="Id"></param>
         /// <returns></returns>
@@ -145,6 +152,9 @@ namespace Antiguera.WebApi.Controllers
         /// <summary>
         /// Inserir rom
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Insere uma nova rom passando um objeto no body da requisição no método POST</remarks>
         /// <param name="romModel"></param>
         /// <returns></returns>
@@ -193,6 +203,9 @@ namespace Antiguera.WebApi.Controllers
         /// <summary>
         /// Atualizar rom
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza a rom passando o objeto no body da requisição pelo método PUT</remarks>
         /// <param name="romModel"></param>
         /// <returns></returns>
@@ -241,6 +254,9 @@ namespace Antiguera.WebApi.Controllers
         /// <summary>
         /// Excluir rom
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Exclui a rom passando o objeto no body da requisição pelo método DELETE</remarks>
         /// <param name="romModel"></param>
         /// <returns></returns>
@@ -289,6 +305,9 @@ namespace Antiguera.WebApi.Controllers
         /// <summary>
         /// Apagar roms
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Deleta uma lista de roms passando um array de Ids no body da requisição</remarks>
         /// <param name="Ids"></param>
         /// <returns></returns>

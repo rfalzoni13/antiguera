@@ -27,6 +27,10 @@ namespace AntigueraWebApi.Controllers
         /// <summary>
         /// Listar usuário pelo Id
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Retorna o usuário através do Id do mesmo</remarks>
         /// <param name="Id"></param>
         /// <returns></returns>
@@ -90,6 +94,10 @@ namespace AntigueraWebApi.Controllers
         /// <summary>
         /// Listar usuário pelo Login ou Email
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Efetua a busca do usuário pelo Login ou Email</remarks>
         /// <param name="userData"></param>
         /// <returns></returns>
@@ -124,7 +132,7 @@ namespace AntigueraWebApi.Controllers
                     stats.Mensagem = "Parâmetro incorreto!";
 
                     logger.Info("ListarUsuariosPorLoginOuEmail - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.NotFound, stats);
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
                 }
             }
             catch (HttpResponseException e)
@@ -153,6 +161,9 @@ namespace AntigueraWebApi.Controllers
         /// <summary>
         /// Inserir usuário
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Insere um novo usuário passando um objeto no body da requisição no método POST</remarks>
         /// <param name="usuarioModel"></param>
         /// <returns></returns>
@@ -205,6 +216,9 @@ namespace AntigueraWebApi.Controllers
         /// <summary>
         /// Atualizar usuário
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza o usuário passando o objeto no body da requisição pelo método PUT</remarks>
         /// <param name="usuarioModel"></param>
         /// <returns></returns>
@@ -253,6 +267,9 @@ namespace AntigueraWebApi.Controllers
         /// <summary>
         /// Atualizar senha do usuário
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza a senha do usuário passando o objeto no body da requisição pelo método PUT</remarks>
         /// <param name="usuarioModel"></param>
         /// <returns></returns>

@@ -10,13 +10,14 @@ using System.Threading.Tasks;
 namespace Antiguera.WebApi
 {
     public class AccessProviderToken : OAuthAuthorizationServerProvider
-    {        
-        public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
+    {
+        public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
             context.Validated();
+            return Task.FromResult<object>(null);
         }
 
-        public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
+        public override Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {            
             try
             {
@@ -54,8 +55,8 @@ namespace Antiguera.WebApi
             catch (Exception e)
             {
                 context.SetError("Authentication error: " + e.Message);
-                return;
             }
+            return Task.FromResult<object>(0);
         }
     }
 }

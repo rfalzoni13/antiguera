@@ -29,6 +29,9 @@ namespace AntigueraWebApi.Controllers
         /// <summary>
         /// Listar todos os jogos
         /// </summary>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Listagem de todos os jogos</remarks>
         /// <returns></returns>
         // GET api/antiguera/admin/jogo/listartodososjogos
@@ -80,6 +83,10 @@ namespace AntigueraWebApi.Controllers
         /// <summary>
         /// Listar jogo pelo Id
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Retorna o jogo através do Id do mesmo</remarks>
         /// <param name="Id"></param>
         /// <returns></returns>
@@ -144,6 +151,9 @@ namespace AntigueraWebApi.Controllers
         /// <summary>
         /// Inserir jogo
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Insere um novo jogo passando um objeto no body da requisição no método POST</remarks>
         /// <param name="jogoModel"></param>
         /// <returns></returns>
@@ -192,6 +202,9 @@ namespace AntigueraWebApi.Controllers
         /// <summary>
         /// Atualizar jogo
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza o jogo passando o objeto no body da requisição pelo método PUT</remarks>
         /// <param name="jogoModel"></param>
         /// <returns></returns>
@@ -240,6 +253,9 @@ namespace AntigueraWebApi.Controllers
         /// <summary>
         /// Excluir jogo
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Exclui o jogo passando o objeto no body da requisição pelo método DELETE</remarks>
         /// <param name="jogoModel"></param>
         /// <returns></returns>
@@ -288,6 +304,9 @@ namespace AntigueraWebApi.Controllers
         /// <summary>
         /// Apagar jogos
         /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
         /// <remarks>Deleta uma lista de jogos passando um array de Ids no body da requisição</remarks>
         /// <param name="Ids"></param>
         /// <returns></returns>
