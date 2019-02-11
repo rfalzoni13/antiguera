@@ -8,7 +8,6 @@ using X.PagedList;
 
 namespace Antiguera.Administrador.Controllers
 {
-    [Authorize]
     public class EmuladorController : BaseController
     {
         // GET: Emulador
@@ -50,14 +49,6 @@ namespace Antiguera.Administrador.Controllers
                     model.UrlArquivo = "/Content/Consoles/Emuladores/" + emuladorFileName;
                 }
 
-                if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                {
-                    var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                    var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                    model.FileBoxArt.SaveAs(boxPath);
-                    model.UrlBoxArt = "/Content/Images/BoxArt/" + boxFileName;
-                }
-
                 if (CadastrarEmulador(model))
                 {
                     return RedirectToAction("Index");
@@ -69,9 +60,7 @@ namespace Antiguera.Administrador.Controllers
         // GET: Editar
         public ActionResult Editar(int id)
         {
-            EmuladorModel model = new EmuladorModel();
-
-            model = BuscarEmuladorPorId(id);
+            var model = BuscarEmuladorPorId(id);
             if (model != null)
             {
                 return View(model);

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Antiguera.Administrador.Models
+namespace Antiguera.WebApi.Models
 {
     public class LoginModel
     {
@@ -9,7 +9,5 @@ namespace Antiguera.Administrador.Models
 
         [Required]
         public string Password { get; set; }
-
-        public bool RememberMe { get; set; }
     }
 }

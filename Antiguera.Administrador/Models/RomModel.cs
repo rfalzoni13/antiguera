@@ -1,4 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Web;
 
 namespace Antiguera.Administrador.Models
 {
@@ -15,6 +18,18 @@ namespace Antiguera.Administrador.Models
         public string Descricao { get; set; }
 
         public string Genero { get; set; }
+
+        public string UrlArquivo { get; set; }
+
+        [DisplayName("Arquivo do programa")]
+        [FileExtensions(Extensions = ".zip, .rar", ErrorMessage = "Somente são aceitos os tipos .zip e .rar")]
+        public HttpPostedFileBase FileRom { get; set; }
+
+        public string UrlBoxArt { get; set; }
+
+        [DisplayName("Arte da capa")]
+        [FileExtensions(Extensions = ".jpg, .png", ErrorMessage = "Somente são aceitos os tipos .jpg e .png")]
+        public HttpPostedFileBase FileBoxArt { get; set; }
 
         public bool? Novo { get; set; }
 

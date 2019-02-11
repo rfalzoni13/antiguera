@@ -33,12 +33,6 @@ namespace Antiguera.Administrador.Models
         [FileExtensions(Extensions = ".zip, .rar", ErrorMessage = "Somente são aceitos os tipos .zip e .rar")]
         public HttpPostedFileBase FileEmulador { get; set; }
 
-        public string UrlBoxArt { get; set; }
-
-        [DisplayName("Arte da capa")]
-        [FileExtensions(Extensions = ".jpg, .png", ErrorMessage = "Somente são aceitos os tipos .jpg e .png")]
-        public HttpPostedFileBase FileBoxArt { get; set; }
-
         public bool? Novo { get; set; }
 
         public DateTime Created { get; set; }

@@ -8,7 +8,6 @@ using X.PagedList;
 
 namespace Antiguera.Administrador.Controllers
 {
-    [Authorize]
     public class ProgramaController : BaseController
     {
         // GET: Programa
@@ -69,9 +68,7 @@ namespace Antiguera.Administrador.Controllers
         // GET: Editar
         public ActionResult Editar(int id)
         {
-            ProgramaModel model = new ProgramaModel();
-
-            model = BuscarProgramaPorId(id);
+            var model = BuscarProgramaPorId(id);
             if (model != null)
             {
                 return View(model);

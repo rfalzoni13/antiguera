@@ -17,8 +17,6 @@ namespace Antiguera.WebApi.Models
 
         public string UrlArquivo { get; set; }
 
-        public string UrlBoxArt { get; set; }
-
         public bool? Novo { get; set; }
 
         public DateTime Created { get; set; }

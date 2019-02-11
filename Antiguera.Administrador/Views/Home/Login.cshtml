@@ -46,11 +46,11 @@
 
             <h2 class="form-signin-heading">Painel de Administração</h2>
 
-            @Html.LabelFor(x => x.Login, new { @class = "sr-only" })
-            @Html.TextBoxFor(x => x.Login, new { @id = "Email", @class = "form-control", @autofocus = "autofocus", @placeholder = "Digite seu login ou e-mail", @required = "required" })
+            @Html.LabelFor(x => x.UserName, new { @class = "sr-only" })
+            @Html.TextBoxFor(x => x.UserName, new { @id = "Email", @class = "form-control", @autofocus = "autofocus", @placeholder = "Digite seu login ou e-mail", @required = "required" })
 
-            @Html.LabelFor(x => x.Senha, new { @class = "sr-only" })
-            @Html.TextBoxFor(x => x.Senha, new { @type = "password", @id = "Senha", @class = "form-control", @placeholder = "Digite sua senha" })
+            @Html.LabelFor(x => x.Password, new { @class = "sr-only" })
+            @Html.TextBoxFor(x => x.Password, new { @type = "password", @id = "Senha", @class = "form-control", @placeholder = "Digite sua senha" })
             <div class="checkbox">
                 <label>
                     @Html.CheckBoxFor(x => x.RememberMe) Lembrar-me

@@ -1,7 +1,7 @@
-﻿@model Antiguera.Administrador.Models.EmuladorModel
+﻿@model Antiguera.Administrador.Models.RomModel
 
 @{
-    ViewBag.Title = "Cadastrar novo emulador";
+    ViewBag.Title = "Cadastrar nova rom";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -14,18 +14,18 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            Cadastrar novo emulador
+            Cadastrar nova rom
         </h1>
         <ol class="breadcrumb">
             <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="@Url.Action("Index", "Emulador")"><i class="fa fa-dashboard"></i> @ViewContext.RouteData.GetRequiredString("controller")</a></li>
+            <li><a href="@Url.Action("Index", "Rom")"><i class="fa fa-dashboard"></i> @ViewContext.RouteData.GetRequiredString("controller")</a></li>
             <li class="active"><i class="fa fa-shopping-bag"></i> @ViewContext.RouteData.GetRequiredString("action")</li>
         </ol>
     </section><!--section -->
 
     <section class="content container-fluid">
         <div class="container">
-            @using (Html.BeginForm("Cadastrar", "Emulador", FormMethod.Post, new { @class = "form-admin", enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("Cadastrar", "Rom", FormMethod.Post, new { @class = "form-admin", enctype = "multipart/form-data" }))
             {
                 if (ViewBag.ErroMensagem != null)
                 {
@@ -53,8 +53,8 @@
                         @Html.TextBoxFor(x => x.Nome, new { @class = "form-control", @autofocus = "autofocus" })
                     </div>
                     <div class="col-md-3">
-                        @Html.LabelFor(x => x.Console)
-                        @Html.TextBoxFor(x => x.Console, new { @class = "form-control" })
+                        @Html.LabelFor(x => x.Genero)
+                        @Html.TextBoxFor(x => x.Genero, new { @class = "form-control" })
                     </div>
                     <div class="col-md-3">
                         @Html.LabelFor(x => x.DataLancamento)
@@ -69,8 +69,12 @@
                 <br />
                 <div class="row">
                     <div class="col-md-4">
-                        @Html.LabelFor(x => x.FileEmulador)
-                        @Html.TextBoxFor(x => x.FileEmulador, new { @type = "file" })
+                        @Html.LabelFor(x => x.FileBoxArt)
+                        @Html.TextBoxFor(x => x.FileBoxArt, new { @type = "file" })
+                    </div>
+                    <div class="col-md-4">
+                        @Html.LabelFor(x => x.FileRom)
+                        @Html.TextBoxFor(x => x.FileRom, new { @type = "file" })
                     </div>
                 </div>
                 <br />

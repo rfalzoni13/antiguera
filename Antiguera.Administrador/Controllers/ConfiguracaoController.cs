@@ -7,7 +7,6 @@ using System.Web.Mvc;
 
 namespace Antiguera.Administrador.Controllers
 {
-    [Authorize]
     public class ConfiguracaoController : BaseController
     {
         // GET: Configuracao

@@ -11,7 +11,9 @@ namespace Antiguera.Administrador.Config
         #endregion
 
         #region Login
-        public string UrlLogin => "api/antiguera/login";
+        public string UrlTokenLogin => "api/antiguera/login";
+
+        public string UrlAdminLogin => "api/antiguera/admin/loginadmin";
         #endregion
 
         #region Admin

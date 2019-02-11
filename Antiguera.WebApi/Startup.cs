@@ -1,8 +1,14 @@
-﻿using Microsoft.Owin;
+﻿using Antiguera.Infra.Cross.Infrastructure;
+using Microsoft.AspNet.Identity;
+using Microsoft.Owin;
 using Microsoft.Owin.Cors;
+using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
+using Newtonsoft.Json.Serialization;
 using Owin;
 using System;
+using System.Linq;
+using System.Net.Http.Formatting;
 using System.Web.Http;
 
 [assembly: OwinStartup(typeof(Antiguera.WebApi.Startup))]
@@ -14,6 +20,13 @@ namespace Antiguera.WebApi
         public void Configuration(IAppBuilder app)
         {
             HttpConfiguration config = GlobalConfiguration.Configuration;
+
+            ConfigureOAuthTokenGeneration(app);
+
+            app.CreatePerOwinContext(ApplicationDbContext.Create);
+            app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
+            app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create);
+
             app.UseCors(CorsOptions.AllowAll);
 
             ActivateAccessToken(app);
@@ -34,6 +47,12 @@ namespace Antiguera.WebApi
 
             app.UseOAuthAuthorizationServer(options);
             app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
+        }
+
+        private void ConfigureOAuthTokenGeneration(IAppBuilder app)
+        {
+            app.CreatePerOwinContext(ApplicationDbContext.Create);
+            app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
         }
 
         //private void ConfigureCors(IAppBuilder app)

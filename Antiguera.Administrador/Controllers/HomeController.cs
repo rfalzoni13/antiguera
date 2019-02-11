@@ -1,5 +1,8 @@
 ﻿using Antiguera.Administrador.Controllers.Base;
 using Antiguera.Administrador.Models;
+using Antiguera.Infra.Cross.Infrastructure;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -14,7 +17,6 @@ namespace Antiguera.Administrador.Controllers
     public class HomeController : BaseController
     {
         // GET: Home
-        [Authorize]
         public ActionResult Index()
         {
             HomeModel model = new HomeModel();
@@ -35,56 +37,75 @@ namespace Antiguera.Administrador.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Login(LoginModel model)
+        public ActionResult Login(LoginModel model)
         {
             if (ModelState.IsValid)
-            {               
-                var content = new List<KeyValuePair<string, string>>(new[]
+            {
+                using (var responseFirstLogin =  Cliente.PostAsJsonAsync(url.UrlApi + url.UrlAdminLogin, model).Result)
                 {
-                    new KeyValuePair<string, string>("username", model.Login),
-                    new KeyValuePair<string, string>("password", model.Senha),
-                    new KeyValuePair<string, string>("grant_type", "password")
-                });
-                var stringContent = new FormUrlEncodedContent(content);
-
-                using (var responseLogin = Cliente.PostAsync(url.UrlApi + url.UrlLogin, stringContent).Result)
-                {
-                    if (responseLogin.IsSuccessStatusCode)
+                    if (responseFirstLogin.IsSuccessStatusCode)
                     {
-                        var resultLogin = responseLogin.Content.ReadAsAsync<ResponseLoginModel>().Result;
-
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + resultLogin.access_token);
-
-                        using (var responseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPeloLoginOuEmail + model.Login).Result)
+                        var content = new List<KeyValuePair<string, string>>(new[]
                         {
-                            if (responseUsuario.IsSuccessStatusCode)
-                            {
-                                var resultUsuario = responseUsuario.Content.ReadAsAsync<UsuarioModel>().Result;
+                            new KeyValuePair<string, string>("username", model.UserName),
+                            new KeyValuePair<string, string>("password", model.Password),
+                            new KeyValuePair<string, string>("grant_type", "password")
+                        });
 
-                                if (model.RememberMe)
+                        var stringContent = new FormUrlEncodedContent(content);
+
+                        using (var responseSecondLogin = Cliente.PostAsync(url.UrlApi + url.UrlTokenLogin, stringContent).Result)
+                        {
+                            if (responseSecondLogin.IsSuccessStatusCode)
+                            {
+                                var resultLogin = responseSecondLogin.Content.ReadAsAsync<ResponseLoginModel>().Result;
+
+                                Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + resultLogin.access_token);
+
+                                using (var responseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPeloLoginOuEmail + model.UserName).Result)
                                 {
-                                    SetInfCookies(resultLogin, resultUsuario);
+                                    if (responseUsuario.IsSuccessStatusCode)
+                                    {
+                                        var resultUsuario = responseUsuario.Content.ReadAsAsync<UsuarioModel>().Result;
+
+                                        var user = responseFirstLogin.Content.ReadAsAsync<ApplicationUser>().Result;
+
+                                        var applicationSign = HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+                                                                                
+                                        applicationSign.SignIn(user, true, true);
+
+                                        if (model.RememberMe)
+                                        {
+                                            SetInfCookies(resultLogin, resultUsuario);
+                                        }
+                                        else
+                                        {
+                                            Session["token"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(resultLogin.access_token));
+                                            Session["userData"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(resultUsuario.Id + resultUsuario.Email));
+                                        }
+                                    }
                                 }
-                                else
-                                {
-                                    Session["token"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(resultLogin.access_token));
-                                    Session["userData"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(resultUsuario.Id + resultUsuario.Email));
-                                }
+
+                                return RedirectToAction("Index");
+                            }
+                            else if (responseSecondLogin.StatusCode == HttpStatusCode.InternalServerError)
+                            {
+                                var result = responseSecondLogin.Content.ReadAsAsync<StatusCode>().Result;
+                                ViewBag.ErroMensagem = result.Mensagem;
+                                return View(model);
+                            }
+
+                            else
+                            {
+                                var result = responseSecondLogin.Content.ReadAsAsync<ResponseErrorLogin>().Result;
+                                ViewBag.ErroMensagem = result.error_description;
+                                return View(model);
                             }
                         }
-                        return RedirectToAction("Index");
                     }
-                    else if (responseLogin.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = responseLogin.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return View(model);
-                    }
-
                     else
                     {
-                        var result = responseLogin.Content.ReadAsAsync<ResponseErrorLogin>().Result;
-                        ViewBag.ErroMensagem = result.error_description;
+                        ViewBag.Mensagem = responseFirstLogin.Content.ReadAsAsync<string>().Result;
                         return View(model);
                     }
                 }
@@ -98,18 +119,17 @@ namespace Antiguera.Administrador.Controllers
 
         public ActionResult Logoff()
         {
-            if (Response.Cookies.Get("usrDt") != null && Response.Cookies.Get("tknUs") != null)
+            if(Request.Cookies["usrDt"] != null && Request.Cookies["tknUs"] != null)
             {
                 ClearCookies();
             }
-            else if (Session != null)
+
+            if (Session != null)
             {
                 Session.Abandon();
             }
 
-            var authenticationManager = HttpContext.GetOwinContext().Authentication;
-
-            authenticationManager.SignOut();
+            HttpContext.GetOwinContext().Authentication.SignOut();
 
             TempData["logout"] = "Você foi desconectado!";
 

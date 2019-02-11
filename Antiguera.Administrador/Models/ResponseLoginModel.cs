@@ -1,4 +1,6 @@
-﻿namespace Antiguera.Administrador.Models
+﻿using System;
+
+namespace Antiguera.Administrador.Models
 {
     public class ResponseLoginModel
     {

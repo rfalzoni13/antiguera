@@ -953,15 +953,22 @@ namespace Antiguera.Administrador.Controllers.Base
         {
             var cookieUser = new HttpCookie("usrDt")
             {
-                Expires = DateTime.Now.AddYears(-1)
+                Value = null,
+                Expires = DateTime.Now.AddYears(-1),
+                HttpOnly = true,
+                Path = "/"
             };
 
             var cookieToken = new HttpCookie("tknUs")
             {
-                Expires = DateTime.Now.AddYears(-1)
+                Value = null,
+                Expires = DateTime.Now.AddYears(-1),
+                HttpOnly = true,
+                Path = "/"
             };
-            Response.Cookies.Add(cookieUser);
+
             Response.Cookies.Add(cookieToken);
+            Response.Cookies.Add(cookieUser);
         }
 
         [NonAction]
@@ -972,7 +979,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 Value = Convert.ToBase64String(Encoding.UTF8.GetBytes(usuarioModel.Id + usuarioModel.Email)),
                 HttpOnly = true,
                 Expires = DateTime.Now.AddYears(1),
-                Path = "/Content/Cookies"
+                Path = "/"
             };
 
             var cookieToken = new HttpCookie("tknUs")
@@ -980,7 +987,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 Value = Convert.ToBase64String(Encoding.UTF8.GetBytes(responseModel.access_token)),
                 HttpOnly = true,
                 Expires = DateTime.Now.AddYears(1),
-                Path = "/Content/Cookies"
+                Path = "/"
             };
 
             Response.Cookies.Add(cookieUser);

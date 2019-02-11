@@ -8,9 +8,9 @@ using X.PagedList;
 
 namespace Antiguera.Administrador.Controllers
 {
-    public class JogoController : BaseController
+    public class RomController : BaseController
     {
-        // GET: Jogo
+        // GET: Rom
         public ActionResult Index(int pagina = 1)
         {
             if (TempData["Mensagem"] != null)
@@ -23,7 +23,7 @@ namespace Antiguera.Administrador.Controllers
                 ViewBag.ErroMensagem = TempData["ErroMensagem"];
             }
 
-            var lista = ListarJogos().OrderBy(j => j.Id).ToPagedList(pagina, 4);
+            var lista = ListarRoms().OrderBy(j => j.Id).ToPagedList(pagina, 4);
             return View();
         }
 
@@ -35,18 +35,18 @@ namespace Antiguera.Administrador.Controllers
 
         // POST: Cadastrar
         [HttpPost]
-        public ActionResult Cadastrar(JogoModel model)
+        public ActionResult Cadastrar(RomModel model)
         {
             if (model != null && ModelState.IsValid)
             {
                 model.Created = DateTime.Now;
 
-                if (model.FileJogo != null && model.FileJogo.ContentLength > 0)
+                if (model.FileRom != null && model.FileRom.ContentLength > 0)
                 {
-                    var gameFileName = Path.GetFileName(model.FileJogo.FileName);
-                    var gamePath = Path.Combine(Server.MapPath("~/Content/Games/"), gameFileName);
-                    model.FileJogo.SaveAs(gamePath);
-                    model.UrlArquivo = "/Content/Games/" + gameFileName;
+                    var romFileName = Path.GetFileName(model.FileRom.FileName);
+                    var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
+                    model.FileRom.SaveAs(romPath);
+                    model.UrlArquivo = "/Content/Consoles/Roms/" + romFileName;
                 }
 
                 if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
@@ -57,7 +57,7 @@ namespace Antiguera.Administrador.Controllers
                     model.UrlBoxArt = "/Content/Images/BoxArt/" + boxFileName;
                 }
 
-                if (CadastrarJogo(model))
+                if (CadastrarRom(model))
                 {
                     return RedirectToAction("Index");
                 }
@@ -68,7 +68,7 @@ namespace Antiguera.Administrador.Controllers
         // GET: Editar
         public ActionResult Editar(int id)
         {
-            var model = BuscarJogoPorId(id);
+            var model = BuscarRomPorId(id);
             if (model != null)
             {
                 return View(model);
@@ -81,12 +81,12 @@ namespace Antiguera.Administrador.Controllers
 
         // POST: Editar
         [HttpPost]
-        public ActionResult Editar(JogoModel model)
+        public ActionResult Editar(RomModel model)
         {
             if (ModelState.IsValid)
             {
                 model.Modified = DateTime.Now;
-                if (AtualizarJogo(model))
+                if (AtualizarRom(model))
                 {
                     return RedirectToAction("Index");
                 }
@@ -103,10 +103,10 @@ namespace Antiguera.Administrador.Controllers
             }
             else
             {
-                var model = BuscarJogoPorId(id);
-                if(model != null)
+                var model = BuscarRomPorId(id);
+                if (model != null)
                 {
-                    ExcluirJogo(model);
+                    ExcluirRom(model);
                 }
             }
             return RedirectToAction("Index");

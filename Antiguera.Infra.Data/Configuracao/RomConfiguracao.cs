@@ -19,11 +19,15 @@ namespace Antiguera.Infra.Data.Configuracao
 
             Property(r => r.Genero).HasMaxLength(50).IsRequired().HasColumnOrder(6);
 
-            Property(r => r.Novo).IsOptional().HasColumnOrder(7);
+            Property(e => e.UrlArquivo).HasMaxLength(200).IsOptional().HasColumnOrder(7);
 
-            Property(r => r.Created).IsRequired().HasColumnOrder(8);
+            Property(e => e.UrlBoxArt).HasMaxLength(200).IsOptional().HasColumnOrder(8);
 
-            Property(r => r.Modified).IsOptional().HasColumnOrder(9);
+            Property(r => r.Novo).IsOptional().HasColumnOrder(9);
+
+            Property(r => r.Created).IsRequired().HasColumnOrder(10);
+
+            Property(r => r.Modified).IsOptional().HasColumnOrder(11);
         }
     }
 }

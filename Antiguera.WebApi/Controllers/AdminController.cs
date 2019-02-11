@@ -1,13 +1,17 @@
 ﻿using Antiguera.Aplicacao.Interfaces;
 using Antiguera.Dominio.Entidades;
+using Antiguera.Infra.Cross.Infrastructure;
 using Antiguera.WebApi.Authorization;
 using Antiguera.WebApi.Models;
 using AutoMapper;
+using Microsoft.AspNet.Identity.Owin;
 using NLog;
 using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 
 namespace AntigueraWebApi.Controllers
@@ -26,6 +30,62 @@ namespace AntigueraWebApi.Controllers
             _usuarioAppServico = usuarioAppServico;
         }
 
+        /// <summary>
+        /// Login no Admin
+        /// </summary>
+        /// <remarks>Login Admin através da base identity passando no body o objeto do usuário</remarks>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        // POST api/antiguera/admin/loginadmin
+        [HttpPost]
+        [Route("loginadmin")]
+        public async Task<HttpResponseMessage> LoginAdmin([FromBody] LoginModel model)
+        {
+            logger.Info("LoginAdmin - Iniciado");
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+
+                    var user = await userManager.FindAsync(model.UserName, model.Password);
+
+                    if(user != null)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, user);
+                    }
+                    else
+                    {
+                        logger.Error("LoginAdmin - Login ou senha incorretos!");
+                        stats.Status = HttpStatusCode.BadRequest;
+                        stats.Mensagem = "Login ou senha incorretos!";
+
+                        logger.Info("LoginAdmin - Finalizado");
+                        return Request.CreateResponse(HttpStatusCode.NotFound, stats);
+                    }
+                }
+                else
+                {
+                    logger.Warn("LoginAdmin - Por favor, preencha os campos corretamente!");
+                    stats.Status = HttpStatusCode.BadRequest;
+                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+
+                    logger.Info("LoginAdmin - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.NotFound, stats);
+                }
+            }
+
+            catch (Exception e)
+            {
+                logger.Error("LoginAdmin - Error: " + e);
+                stats.Status = HttpStatusCode.InternalServerError;
+                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
+                stats.Exception = e.Message;
+
+                logger.Info("LoginAdmin - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+            }
+        }
 
         /// <summary>
         /// Listar todos os usuários
