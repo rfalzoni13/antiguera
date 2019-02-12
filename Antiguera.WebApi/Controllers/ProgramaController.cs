@@ -62,7 +62,6 @@ namespace AntigueraWebApi.Controllers
                 logger.Warn("ListarTodosProgramas - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
                 stats.Mensagem = "Nenhum registro encontrado!";
-                stats.Exception = e.Message;
 
                 logger.Info("ListarTodosProgramas - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -72,8 +71,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("ListarTodosProgramas - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
                 logger.Info("ListarTodosProgramas - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
             }
@@ -130,7 +128,6 @@ namespace AntigueraWebApi.Controllers
                 logger.Error("ListarProgramasPorId - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
                 stats.Mensagem = "Nenhum registro encontrado!";
-                stats.Exception = e.Message;
 
                 logger.Info("ListarProgramasPorId - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -140,8 +137,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("ListarProgramasPorId - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("ListarProgramasPorId - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -191,8 +187,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("InserirPrograma - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("InserirPrograma - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -242,8 +237,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("AtualizarPrograma - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("AtualizarPrograma - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -293,8 +287,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("ExcluirPrograma - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("ExcluirPrograma - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -342,8 +335,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("ApagarProgramas - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("ApagarProgramas - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);

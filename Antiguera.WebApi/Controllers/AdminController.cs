@@ -16,7 +16,6 @@ using System.Web.Http;
 
 namespace AntigueraWebApi.Controllers
 {
-    [AllowAnonymous]
     [CustomAuthorize(Roles = "Administrador")]
     [RoutePrefix("api/antiguera/admin")]
     public class AdminController : ApiController
@@ -82,8 +81,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("LoginAdmin - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("LoginAdmin - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -126,7 +124,6 @@ namespace AntigueraWebApi.Controllers
                 logger.Warn("ListarTodosUsuarios - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
                 stats.Mensagem = "Nenhum registro encontrado!";
-                stats.Exception = e.Message;
 
                 logger.Info("ListarTodosUsuarios - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -136,8 +133,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("ListarTodosUsuarios - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("ListarTodosUsuarios - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -195,7 +191,6 @@ namespace AntigueraWebApi.Controllers
                 stats.Mensagem = "Nenhum registro encontrado!";
 
                 logger.Info("ListarUsuariosPorId - Finalizado");
-                stats.Exception = e.Message;
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
             }
 
@@ -203,10 +198,9 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("ListarUsuariosPorId - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
+                stats.Mensagem = e.Message;
 
                 logger.Info("ListarUsuariosPorId - Finalizado");
-                stats.Exception = e.Message;
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
             }
         }
@@ -262,7 +256,6 @@ namespace AntigueraWebApi.Controllers
                 stats.Mensagem = "Nenhum registro encontrado!";
 
                 logger.Info("ListarUsuariosPorLoginOuEmail - Finalizado");
-                stats.Exception = e.Message;
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
             }
 
@@ -270,10 +263,9 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("ListarUsuariosPorId - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
+                stats.Mensagem = e.Message;
 
                 logger.Info("ListarUsuariosPorId - Finalizado");
-                stats.Exception = e.Message;
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
             }
         }
@@ -325,8 +317,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("InserirUsuario - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("InserirUsuario - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -376,8 +367,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("AtualizarUsuario - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("AtualizarUsuario - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -427,8 +417,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("AtualizarAdmin - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("AtualizarAdmin - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -480,8 +469,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("AtualizarSenhaUsuario - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("AtualizarSenhaUsuario - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -533,8 +521,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("AtualizarSenhaAdmin - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("AtualizarSenhaAdmin - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -584,8 +571,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("ExcluirUsuario - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("ExcluirUsuario - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -633,8 +619,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("ApagarUsuarios - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("ApagarUsuarios - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);

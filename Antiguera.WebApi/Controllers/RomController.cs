@@ -60,10 +60,9 @@ namespace Antiguera.WebApi.Controllers
 
             catch (HttpResponseException e)
             {
-                logger.Warn("ListarTodasAsRoms - Nenhum registro encontrado!");
+                logger.Warn("ListarTodasAsRoms - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
                 stats.Mensagem = "Nenhum registro encontrado!";
-                stats.Exception = e.Message;
 
                 logger.Info("ListarTodasAsRoms - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -73,8 +72,7 @@ namespace Antiguera.WebApi.Controllers
             {
                 logger.Error("ListarTodasAsRoms - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("ListarTodasAsRoms - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -131,7 +129,6 @@ namespace Antiguera.WebApi.Controllers
                 logger.Error("ListarRomsPorId - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
                 stats.Mensagem = "Nenhum registro encontrado!";
-                stats.Exception = e.Message;
 
                 logger.Info("ListarRomsPorId - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -141,8 +138,7 @@ namespace Antiguera.WebApi.Controllers
             {
                 logger.Error("ListarRomsPorId - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("ListarRomsPorId - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -192,8 +188,7 @@ namespace Antiguera.WebApi.Controllers
             {
                 logger.Error("ListarRomsPorId - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("InserirRom - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -243,8 +238,7 @@ namespace Antiguera.WebApi.Controllers
             {
                 logger.Error("AtualizarRom - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("AtualizarRom - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -294,8 +288,7 @@ namespace Antiguera.WebApi.Controllers
             {
                 logger.Error("ExcluirRom - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("ExcluirRom - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -343,8 +336,7 @@ namespace Antiguera.WebApi.Controllers
             {
                 logger.Error("ApagarRoms - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("ApagarRoms - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);

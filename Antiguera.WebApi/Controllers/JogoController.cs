@@ -62,7 +62,6 @@ namespace AntigueraWebApi.Controllers
                 logger.Warn("ListarTodosJogos - Error: " + e);
                 stats.Status = e.Response.StatusCode;
                 stats.Mensagem = "Nenhum registro encontrado!";
-                stats.Exception = e.Message;
 
                 logger.Info("ListarTodosJogos - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -72,8 +71,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("ListarTodosJogos - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("ListarTodosJogos - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -130,7 +128,6 @@ namespace AntigueraWebApi.Controllers
                 logger.Error("ListarJogosPorId - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
                 stats.Mensagem = "Nenhum registro encontrado!";
-                stats.Exception = e.Message;
 
                 logger.Info("ListarJogosPorId - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -140,8 +137,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("ListarJogosPorId - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("ListarJogosPorId - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -191,8 +187,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("InserirJogo - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("InserirJogo - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -242,8 +237,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("AtualizarJogo - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("AtualizarJogo - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -293,8 +287,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("ExcluirJogo - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("ExcluirJogo - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -342,8 +335,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("ApagarJogos - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("ApagarJogos - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);

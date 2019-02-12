@@ -63,7 +63,6 @@ namespace Antiguera.WebApi.Controllers
                 logger.Warn("ListarTodosEmuladores - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
                 stats.Mensagem = "Nenhum registro encontrado!";
-                stats.Exception = e.Message;
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
             }
 
@@ -71,8 +70,7 @@ namespace Antiguera.WebApi.Controllers
             {
                 logger.Error("ListarTodosEmuladores - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("ListarTodosEmuladores - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -129,7 +127,6 @@ namespace Antiguera.WebApi.Controllers
                 logger.Error("ListarEmuladoresPorId - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
                 stats.Mensagem = "Nenhum registro encontrado!";
-                stats.Exception = e.Message;
 
                 logger.Info("ListarEmuladoresPorId - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -139,10 +136,9 @@ namespace Antiguera.WebApi.Controllers
             {
                 logger.Error("ListarEmuladoresPorId - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
+                stats.Mensagem = e.Message;
 
                 logger.Info("ListarEmuladoresPorId - Finalizado");
-                stats.Exception = e.Message;
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
             }
         }
@@ -190,8 +186,7 @@ namespace Antiguera.WebApi.Controllers
             {
                 logger.Error("InserirEmulador - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("InserirEmulador - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -241,8 +236,7 @@ namespace Antiguera.WebApi.Controllers
             {
                 logger.Error("AtualizarEmulador - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("AtualizarEmulador - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -292,8 +286,7 @@ namespace Antiguera.WebApi.Controllers
             {
                 logger.Error("ExcluirEmulador - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("ExcluirEmulador - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -341,8 +334,7 @@ namespace Antiguera.WebApi.Controllers
             {
                 logger.Error("ApagarEmuladores - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = "Ocorreu um erro ao processar sua solicitação!";
-                stats.Exception = e.Message;
+                stats.Mensagem = e.Message;
 
                 logger.Info("ApagarEmuladores - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);

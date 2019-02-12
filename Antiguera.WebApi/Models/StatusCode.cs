@@ -7,7 +7,5 @@ namespace Antiguera.WebApi.Models
         public virtual HttpStatusCode Status { get; set; }
 
         public string Mensagem { get; set; }
-
-        public string Exception { get; set; }
     }
 }
