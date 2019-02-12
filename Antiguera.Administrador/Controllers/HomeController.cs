@@ -3,12 +3,13 @@ using Antiguera.Administrador.Models;
 using Antiguera.Infra.Cross.Infrastructure;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
+using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Net;
+using System.Linq;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -27,13 +28,85 @@ namespace Antiguera.Administrador.Controllers
 
         public ActionResult Login()
         {
-            if (TempData["logout"] != null)
-            {
-                ViewBag.StatusMensagem = TempData["logout"];
-                Session.Clear();
-            }
             LoginModel model = new LoginModel();
-            return View(model);
+
+            if (HttpContext.Request.Cookies.AllKeys.Contains("Antiguera"))
+            {
+                if (HttpContext.Request.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    var token = PegarTokenAtual();
+                    var refreshToken = PegarTokenRefreshAtual();
+
+                    if(!string.IsNullOrEmpty(token))
+                    {
+                        var user = HttpContext.GetOwinContext().Authentication.User.Identity.Name;
+
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+                        using (var responseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPeloLoginOuEmail + user).Result)
+                        {
+                            if (responseUsuario.IsSuccessStatusCode)
+                            {
+                                var resultUsuario = responseUsuario.Content.ReadAsAsync<UsuarioModel>().Result;
+                            }
+                            else if(!string.IsNullOrEmpty(refreshToken))
+                            {
+                                var newToken = RefreshToken(refreshToken);
+                                if(newToken != null)
+                                {
+                                    Cliente.DefaultRequestHeaders.Clear();
+                                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + newToken);
+
+                                    using (var newResponseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios + user).Result)
+                                    {
+                                        if(newResponseUsuario.IsSuccessStatusCode)
+                                        {
+                                            var resultUsuario = responseUsuario.Content.ReadAsAsync<UsuarioModel>().Result;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    ViewBag.ErroMensagem = "Sua sessão expirou, faça login novamente!";
+                                    HttpContext.GetOwinContext().Authentication.SignOut();
+                                    return View(model);
+                                }
+                            }
+                            else
+                            {
+                                ViewBag.ErroMensagem = "Sua sessão expirou, faça login novamente!";
+                                HttpContext.GetOwinContext().Authentication.SignOut();
+                                return View(model);
+                            }
+                        }
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        ViewBag.ErroMensagem = "Sua sessão expirou, faça login novamente!";
+                        HttpContext.GetOwinContext().Authentication.SignOut();
+                        return View(model);
+                    }
+                }
+                else
+                {
+                    ViewBag.ErroMensagem = "Sua sessão expirou, faça login novamente!";
+                    HttpContext.GetOwinContext().Authentication.SignOut();
+                    return View(model);
+                }
+            }
+            else
+            {
+                HttpContext.GetOwinContext().Authentication.SignOut();
+
+                if (Session["logout"] != null)
+                {
+                    ViewBag.StatusMensagem = Session["logout"];
+                    Session.Clear();
+                }
+
+                return View(model);
+            }
         }
 
         [HttpPost]
@@ -41,97 +114,81 @@ namespace Antiguera.Administrador.Controllers
         {
             if (ModelState.IsValid)
             {
-                using (var responseFirstLogin =  Cliente.PostAsJsonAsync(url.UrlApi + url.UrlLoginAdmin, model).Result)
+                using (var responseFirstLogin = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlLoginAdmin, model).Result)
                 {
                     if (responseFirstLogin.IsSuccessStatusCode)
                     {
-                        var content = new List<KeyValuePair<string, string>>(new[]
-                        {
-                            new KeyValuePair<string, string>("username", model.UserName),
-                            new KeyValuePair<string, string>("password", model.Password),
-                            new KeyValuePair<string, string>("grant_type", "password")
-                        });
+                        var token = ObterToken(model);
 
-                        var stringContent = new FormUrlEncodedContent(content);
-
-                        using (var responseSecondLogin = Cliente.PostAsync(url.UrlApi + url.UrlToken, stringContent).Result)
+                        if (token != null)
                         {
-                            if (responseSecondLogin.IsSuccessStatusCode)
+                            var user = responseFirstLogin.Content.ReadAsAsync<ApplicationUser>().Result;
+
+                            var applicationSign = HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+
+                            if (model.RememberMe)
                             {
-                                var resultLogin = responseSecondLogin.Content.ReadAsAsync<ResponseLoginModel>().Result;
-
-                                Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + resultLogin.access_token);
-
-                                using (var responseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPeloLoginOuEmail + model.UserName).Result)
+                                AuthenticationProperties options = new AuthenticationProperties()
                                 {
-                                    if (responseUsuario.IsSuccessStatusCode)
-                                    {
-                                        var resultUsuario = responseUsuario.Content.ReadAsAsync<UsuarioModel>().Result;
+                                    AllowRefresh = true,
+                                    IsPersistent = true,
+                                    ExpiresUtc = DateTime.Now.AddSeconds(token.expires_in)
+                                };
 
-                                        var user = responseFirstLogin.Content.ReadAsAsync<ApplicationUser>().Result;
+                                var claims = new[]
+                                {
+                                    new Claim(ClaimTypes.Name, user.UserName),
+                                    new Claim("AccessToken", string.Format("Bearer {0}", token.access_token)),
+                                    new Claim("RefreshToken", token.refresh_token)
+                                };
 
-                                        var applicationSign = HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-                                                                                
-                                        applicationSign.SignIn(user, true, true);
+                                var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
 
-                                        if (model.RememberMe)
-                                        {
-                                            SetInfCookies(resultLogin, resultUsuario);
-                                        }
-                                        else
-                                        {
-                                            Session["token"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(resultLogin.access_token));
-                                            Session["userData"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(resultUsuario.Id + resultUsuario.Email));
-                                        }
-                                    }
-                                }
-
-                                return RedirectToAction("Index");
+                                HttpContext.Request.GetOwinContext().Authentication.SignIn(options, identity);
+                                applicationSign.SignIn(user, true, false);
                             }
-                            else if (responseSecondLogin.StatusCode == HttpStatusCode.InternalServerError)
-                            {
-                                var result = responseSecondLogin.Content.ReadAsAsync<StatusCode>().Result;
-                                ViewBag.ErroMensagem = result.Mensagem;
-                                return View(model);
-                            }
-
                             else
                             {
-                                var result = responseSecondLogin.Content.ReadAsAsync<ResponseErrorLogin>().Result;
-                                ViewBag.ErroMensagem = result.error_description;
-                                return View(model);
+                                Session["token"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(token.access_token));
+                                applicationSign.SignIn(user, false, false);
+                            }
+
+                            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token.access_token);
+
+                            using (var responseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPeloLoginOuEmail + model.UserName).Result)
+                            {
+                                if (responseUsuario.IsSuccessStatusCode)
+                                {
+                                    var resultUsuario = responseUsuario.Content.ReadAsAsync<UsuarioModel>().Result;
+                                }
                             }
                         }
+                        return RedirectToAction("Index");
                     }
                     else
                     {
-                        ViewBag.Mensagem = responseFirstLogin.Content.ReadAsAsync<string>().Result;
+                        ViewBag.ErroMensagem = responseFirstLogin.Content.ReadAsAsync<string>().Result;
                         return View(model);
                     }
                 }
             }
             else
             {
-                ViewBag.Mensagem = "Preencha todos os campos corretamente!";
+                ViewBag.ErroMensagem = "Preencha todos os campos corretamente!";
                 return View(model);
             }
         }
 
         public ActionResult Logoff()
         {
-            if(Request.Cookies["usrDt"] != null && Request.Cookies["tknUs"] != null)
-            {
-                ClearCookies();
-            }
-
             if (Session != null)
             {
-                Session.Abandon();
+                Session.Clear();
             }
 
             HttpContext.GetOwinContext().Authentication.SignOut();
 
-            TempData["logout"] = "Você foi desconectado!";
+            Session["logout"] = "Você foi desconectado!";
 
             return RedirectToAction("Login");
         }

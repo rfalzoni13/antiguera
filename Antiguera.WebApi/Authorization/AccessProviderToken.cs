@@ -1,13 +1,15 @@
 ﻿using Antiguera.WebApi.Models;
+using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Antiguera.WebApi
+namespace Antiguera.WebApi.Authorization
 {
     public class AccessProviderToken : OAuthAuthorizationServerProvider
     {
@@ -57,6 +59,17 @@ namespace Antiguera.WebApi
                 context.SetError("Authentication error: " + e.Message);
             }
             return Task.FromResult<object>(0);
+        }
+
+        public override Task GrantRefreshToken(OAuthGrantRefreshTokenContext context)
+        {  
+            var identity = new ClaimsIdentity(context.Ticket.Identity);
+
+            var newTicket = new AuthenticationTicket(identity, context.Ticket.Properties);
+
+            context.Validated(newTicket);
+
+            return Task.FromResult<object>(null);
         }
     }
 }

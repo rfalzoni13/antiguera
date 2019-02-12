@@ -1,4 +1,5 @@
 ﻿using Antiguera.Infra.Cross.Infrastructure;
+using Antiguera.WebApi.Authorization;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
@@ -42,7 +43,8 @@ namespace Antiguera.WebApi
                 AllowInsecureHttp = true, //true apenas para ambiente de desenvolvimento
                 TokenEndpointPath = new PathString("/api/antiguera/token"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
-                Provider = new AccessProviderToken()
+                Provider = new AccessProviderToken(),
+                RefreshTokenProvider = new AccessRefreshTokenProvider()
             };
 
             app.UseOAuthAuthorizationServer(options);

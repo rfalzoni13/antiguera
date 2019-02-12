@@ -949,49 +949,102 @@ namespace Antiguera.Administrador.Controllers.Base
 
         #region Outros
         [NonAction]
-        protected void ClearCookies()
+        protected ResponseLoginModel ObterToken(LoginModel model)
         {
-            var cookieUser = new HttpCookie("usrDt")
+            var content = new List<KeyValuePair<string, string>>(new[] 
             {
-                Value = null,
-                Expires = DateTime.Now.AddYears(-1),
-                HttpOnly = true,
-                Path = "/"
-            };
+                            new KeyValuePair<string, string>("username", model.UserName),
+                            new KeyValuePair<string, string>("password", model.Password),
+                            new KeyValuePair<string, string>("grant_type", "password")
+            });
 
-            var cookieToken = new HttpCookie("tknUs")
+            var stringContent = new FormUrlEncodedContent(content);
+
+            using (var responseSecondLogin = Cliente.PostAsync(url.UrlApi + url.UrlToken, stringContent).Result)
             {
-                Value = null,
-                Expires = DateTime.Now.AddYears(-1),
-                HttpOnly = true,
-                Path = "/"
-            };
+                if (responseSecondLogin.IsSuccessStatusCode)
+                {
+                    var resultLogin = responseSecondLogin.Content.ReadAsAsync<ResponseLoginModel>().Result;
 
-            Response.Cookies.Add(cookieToken);
-            Response.Cookies.Add(cookieUser);
+                    return resultLogin;
+                }
+                else if (responseSecondLogin.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = responseSecondLogin.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = responseSecondLogin.Content.ReadAsAsync<ResponseErrorLogin>().Result;
+                    ViewBag.ErroMensagem = result.error_description;
+                }
+            }
+            return null;
         }
 
         [NonAction]
-        protected void SetInfCookies(ResponseLoginModel responseModel, UsuarioModel usuarioModel)
+        protected ResponseLoginModel RefreshToken(string token)
         {
-            var cookieUser = new HttpCookie("usrDt")
+            var content = new List<KeyValuePair<string, string>>(new[]
             {
-                Value = Convert.ToBase64String(Encoding.UTF8.GetBytes(usuarioModel.Id + usuarioModel.Email)),
-                HttpOnly = true,
-                Expires = DateTime.Now.AddYears(1),
-                Path = "/"
-            };
+                new KeyValuePair<string, string>("grant_type", "password"),
+                new KeyValuePair<string, string>("refresh_token", token)
+            });
 
-            var cookieToken = new HttpCookie("tknUs")
+            var stringContent = new FormUrlEncodedContent(content);
+
+            using (var responseSecondLogin = Cliente.PostAsync(url.UrlApi + url.UrlToken, stringContent).Result)
             {
-                Value = Convert.ToBase64String(Encoding.UTF8.GetBytes(responseModel.access_token)),
-                HttpOnly = true,
-                Expires = DateTime.Now.AddYears(1),
-                Path = "/"
-            };
+                if (responseSecondLogin.IsSuccessStatusCode)
+                {
+                    var resultLogin = responseSecondLogin.Content.ReadAsAsync<ResponseLoginModel>().Result;
 
-            Response.Cookies.Add(cookieUser);
-            Response.Cookies.Add(cookieToken);
+                    return resultLogin;
+                }
+                else if (responseSecondLogin.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = responseSecondLogin.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = responseSecondLogin.Content.ReadAsAsync<ResponseErrorLogin>().Result;
+                    ViewBag.ErroMensagem = result.error_description;
+                }
+            }
+            return null;
+        }
+
+        [NonAction]
+        protected string PegarTokenAtual()
+        {
+            string token = string.Empty;
+
+            foreach (var item in HttpContext.GetOwinContext().Authentication.User.Claims)
+            {
+                if (item.Type.Contains("AccessToken"))
+                {
+                    token = item.Value;
+                }
+            }
+            return token;
+        }
+
+        [NonAction]
+        protected string PegarTokenRefreshAtual()
+        {
+            string token = string.Empty;
+
+            foreach (var item in HttpContext.GetOwinContext().Authentication.User.Claims)
+            {
+                if (item.Type.Contains("RefreshToken"))
+                {
+                    token = item.Value;
+                }
+            }
+            return token;
         }
         #endregion
     }

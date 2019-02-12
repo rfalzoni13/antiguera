@@ -39,9 +39,9 @@ namespace AntigueraWebApi.Controllers
         /// <remarks>Login Admin através da base identity passando no body o objeto do usuário</remarks>
         /// <param name="model"></param>
         /// <returns></returns>
-        // POST api/antiguera/admin/loginadmin
+        // POST api/antiguera/admin/login
         [HttpPost]
-        [Route("loginadmin")]
+        [Route("login")]
         public async Task<HttpResponseMessage> LoginAdmin([FromBody] LoginModel model)
         {
             logger.Info("LoginAdmin - Iniciado");
