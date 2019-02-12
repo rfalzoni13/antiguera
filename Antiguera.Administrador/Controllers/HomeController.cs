@@ -138,7 +138,7 @@ namespace Antiguera.Administrador.Controllers
                                 var claims = new[]
                                 {
                                     new Claim(ClaimTypes.Name, user.UserName),
-                                    new Claim("AccessToken", string.Format("Bearer {0}", token.access_token)),
+                                    new Claim("AccessToken", token.access_token),
                                     new Claim("RefreshToken", token.refresh_token)
                                 };
 
