@@ -45,12 +45,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\Base\IAppServicoBase.cs" />
+    <Compile Include="Interfaces\IAcessoAppServico.cs" />
     <Compile Include="Interfaces\IEmuladorAppServico.cs" />
     <Compile Include="Interfaces\IJogoAppServico.cs" />
     <Compile Include="Interfaces\IProgramaAppServico.cs" />
     <Compile Include="Interfaces\IRomAppServico.cs" />
     <Compile Include="Interfaces\IUsuarioAppServico.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Servicos\AcessoAppServico.cs" />
     <Compile Include="Servicos\Base\AppServicoBase.cs" />
     <Compile Include="Servicos\EmuladorAppServico.cs" />
     <Compile Include="Servicos\JogoAppServico.cs" />

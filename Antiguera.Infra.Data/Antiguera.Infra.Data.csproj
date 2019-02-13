@@ -73,6 +73,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Repositorios\AcessoRepositorio.cs" />
     <Compile Include="Repositorios\Base\RepositorioBase.cs" />
     <Compile Include="Repositorios\EmuladorRepositorio.cs" />
     <Compile Include="Repositorios\JogoRepositorio.cs" />

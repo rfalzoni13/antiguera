@@ -32,6 +32,7 @@ namespace Antiguera.Infra.IoC
             {
                 Kernel.Bind(typeof(IRepositorioBase<>)).To(typeof(RepositorioBase<>));
                 Kernel.Bind<IUsuarioRepositorio>().To<UsuarioRepositorio>();
+                Kernel.Bind<IAcessoRepositorio>().To<AcessoRepositorio>();
                 Kernel.Bind<IJogoRepositorio>().To<JogoRepositorio>();
                 Kernel.Bind<IProgramaRepositorio>().To<ProgramaRepositorio>();
                 Kernel.Bind<IEmuladorRepositorio>().To<EmuladorRepositorio>();
@@ -39,6 +40,7 @@ namespace Antiguera.Infra.IoC
 
                 Kernel.Bind(typeof(IServicoBase<>)).To(typeof(ServicoBase<>));
                 Kernel.Bind<IUsuarioServico>().To<UsuarioServico>();
+                Kernel.Bind<IAcessoServico>().To<AcessoServico>();
                 Kernel.Bind<IJogoServico>().To<JogoServico>();
                 Kernel.Bind<IProgramaServico>().To<ProgramaServico>();
                 Kernel.Bind<IEmuladorServico>().To<EmuladorServico>();
@@ -46,6 +48,7 @@ namespace Antiguera.Infra.IoC
 
                 Kernel.Bind(typeof(IAppServicoBase<>)).To(typeof(AppServicoBase<>));
                 Kernel.Bind<IUsuarioAppServico>().To<UsuarioAppServico>();
+                Kernel.Bind<IAcessoAppServico>().To<AcessoAppServico>();
                 Kernel.Bind<IJogoAppServico>().To<JogoAppServico>();
                 Kernel.Bind<IProgramaAppServico>().To<ProgramaAppServico>();
                 Kernel.Bind<IEmuladorAppServico>().To<EmuladorAppServico>();
