@@ -6,6 +6,7 @@ using Swashbuckle.Swagger;
 using System.Web.Http.Description;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Http.Filters;
 
 [assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
@@ -307,6 +308,14 @@ namespace Antiguera.WebApi
                             required = false,
                             @in = "formData"
                         },
+
+                        new Parameter
+                        {
+                            type = "string",
+                            name = "refresh_token",
+                            required = false,
+                            @in = "formData"
+                        },
                     }
                 }
             });
@@ -328,9 +337,13 @@ namespace Antiguera.WebApi
                 operation.parameters = new List<Parameter>();
             }
 
-            var authorizeAttributes = apiDescription.ActionDescriptor.GetCustomAttributes<AuthorizeAttribute>();
+            var filterPipeLine = apiDescription.ActionDescriptor.GetFilterPipeline();
 
-            if (authorizeAttributes.ToList().Any(attr => attr.GetType() == typeof(AllowAnonymousAttribute)) == false)
+            var isAuthorized = filterPipeLine.Select(f => f.Instance).Any(f => f is IAuthorizationFilter);
+
+            var allowAnonymousAttributes = apiDescription.ActionDescriptor.GetCustomAttributes<AllowAnonymousAttribute>().Any();
+
+            if (!allowAnonymousAttributes && isAuthorized)
             {
                 operation.parameters.Add(new Parameter
                 {

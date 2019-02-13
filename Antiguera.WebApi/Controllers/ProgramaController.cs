@@ -12,7 +12,6 @@ using System.Web.Http;
 
 namespace AntigueraWebApi.Controllers
 {
-    [AllowAnonymous]
     [CustomAuthorize(Roles = "Administrador")]
     [RoutePrefix("api/antiguera/admin/programa")]
     public class ProgramaController : ApiController
@@ -85,7 +84,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Retorna o programa através do Id do mesmo</remarks>
-        /// <param name="Id"></param>
+        /// <param name="Id">Id do programa</param>
         /// <returns></returns>
         // GET api/antiguera/admin/programa/listarprogramasporid
         [HttpGet]
@@ -151,7 +150,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Insere um novo programa passando um objeto no body da requisição no método POST</remarks>
-        /// <param name="programaModel"></param>
+        /// <param name="programaModel">Objeto do programa</param>
         /// <returns></returns>
         // POST api/antiguera/admin/programa/inserirprograma
         [HttpPost]
@@ -163,6 +162,8 @@ namespace AntigueraWebApi.Controllers
             {
                 if(ModelState.IsValid)
                 {
+                    programaModel.Created = DateTime.Now;
+
                     var programa = Mapper.Map<ProgramaModel, Programa>(programaModel);
 
                     _programaAppServico.Adicionar(programa);
@@ -201,7 +202,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza o programa passando o objeto no body da requisição pelo método PUT</remarks>
-        /// <param name="programaModel"></param>
+        /// <param name="programaModel">Objeto do programa</param>
         /// <returns></returns>
         // PUT api/antiguera/admin/programa/atualizarprograma
         [HttpPut]
@@ -213,6 +214,8 @@ namespace AntigueraWebApi.Controllers
             {
                 if(ModelState.IsValid)
                 {
+                    programaModel.Modified = DateTime.Now;
+
                     var programa = Mapper.Map<ProgramaModel, Programa>(programaModel);
 
                     _programaAppServico.Atualizar(programa);
@@ -251,7 +254,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Exclui o programa passando o objeto no body da requisição pelo método DELETE</remarks>
-        /// <param name="programaModel"></param>
+        /// <param name="programaModel">Objeto do programa</param>
         /// <returns></returns>
         // DELETE api/antiguera/admin/programa/excluirprograma
         [HttpDelete]
@@ -301,7 +304,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Deleta uma lista de programas passando um array de Ids no body da requisição</remarks>
-        /// <param name="Ids"></param>
+        /// <param name="Ids">Ids de programas</param>
         /// <returns></returns>
         // DELETE api/antiguera/admin/programa/apagarprogramas
         [HttpDelete]

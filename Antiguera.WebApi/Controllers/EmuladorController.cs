@@ -13,7 +13,6 @@ using System.Web.Http;
 
 namespace Antiguera.WebApi.Controllers
 {
-    [AllowAnonymous]
     [CustomAuthorize(Roles = "Administrador")]
     [RoutePrefix("api/antiguera/admin/emulador")]
     public class EmuladorController : ApiController
@@ -85,7 +84,7 @@ namespace Antiguera.WebApi.Controllers
         /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Retorna o emulador através do Id do mesmo</remarks>
-        /// <param name="Id"></param>
+        /// <param name="Id">Id do emulador</param>
         /// <returns></returns>
         // GET api/antiguera/admin/emulador/listaremuladoresporid
         [HttpGet]
@@ -150,7 +149,7 @@ namespace Antiguera.WebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Insere um novo emulador passando um objeto no body da requisição no método POST</remarks>
-        /// <param name="emuladorModel"></param>
+        /// <param name="emuladorModel">Objeto do emulador</param>
         /// <returns></returns>
         // POST api/antiguera/admin/emulador/inseriremulador
         [HttpPost]
@@ -162,6 +161,8 @@ namespace Antiguera.WebApi.Controllers
             {
                 if(ModelState.IsValid)
                 {
+                    emuladorModel.Created = DateTime.Now;
+
                     var emulador = Mapper.Map<EmuladorModel, Emulador>(emuladorModel);
 
                     _emuladorAppServico.Adicionar(emulador);
@@ -200,7 +201,7 @@ namespace Antiguera.WebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza o emulador passando o objeto no body da requisição pelo método PUT</remarks>
-        /// <param name="emuladorModel"></param>
+        /// <param name="emuladorModel">Objeto do emulador</param>
         /// <returns></returns>
         // PUT api/antiguera/admin/emulador/atualizaremulador
         [HttpPut]
@@ -212,6 +213,8 @@ namespace Antiguera.WebApi.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    emuladorModel.Modified = DateTime.Now;
+
                     var emulador = Mapper.Map<EmuladorModel, Emulador>(emuladorModel);
 
                     _emuladorAppServico.Atualizar(emulador);
@@ -250,7 +253,7 @@ namespace Antiguera.WebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Exclui o emulador passando o objeto no body da requisição pelo método DELETE</remarks>
-        /// <param name="emuladorModel"></param>
+        /// <param name="emuladorModel">Objeto do emulador</param>
         /// <returns></returns>
         // DELETE api/antiguera/admin/emulador/excluiremulador
         [HttpDelete]
@@ -300,7 +303,7 @@ namespace Antiguera.WebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Deleta uma lista de emuladores passando um array de Ids no body da requisição</remarks>
-        /// <param name="Ids"></param>
+        /// <param name="Ids">Ids de emuladores</param>
         /// <returns></returns>
         // DELETE api/antiguera/admin/emulador/apagaremuladores
         [HttpDelete]

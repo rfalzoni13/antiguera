@@ -1,12 +1,17 @@
 ﻿using Antiguera.Aplicacao.Interfaces;
 using Antiguera.Dominio.Entidades;
+using Antiguera.Infra.Cross.Infrastructure;
 using Antiguera.WebApi.Authorization;
 using Antiguera.WebApi.Models;
 using AutoMapper;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
 using NLog;
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 
 namespace AntigueraWebApi.Controllers
@@ -17,11 +22,13 @@ namespace AntigueraWebApi.Controllers
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private static StatusCode stats = new StatusCode();
-        private IUsuarioAppServico _usuarioAppServico;
+        private readonly IUsuarioAppServico _usuarioAppServico;
+        private readonly IAcessoAppServico _acessoAppServico;
 
-        public UsuarioController(IUsuarioAppServico usuarioAppServico)
+        public UsuarioController(IUsuarioAppServico usuarioAppServico, IAcessoAppServico acessoAppServico)
         {
             _usuarioAppServico = usuarioAppServico;
+            _acessoAppServico = acessoAppServico;
         }
 
         /// <summary>
@@ -32,7 +39,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Retorna o usuário através do Id do mesmo</remarks>
-        /// <param name="Id"></param>
+        /// <param name="Id">Id do usuário</param>
         /// <returns></returns>
         // GET api/antiguera/usuario/listarusuariosporid
         [HttpGet]
@@ -97,7 +104,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Efetua a busca do usuário pelo Login ou Email</remarks>
-        /// <param name="userData"></param>
+        /// <param name="userData">Objeto do usuário</param>
         /// <returns></returns>
         // GET api/antiguera/usuario/listarusuariosporloginouemail
         [HttpGet]
@@ -161,18 +168,57 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Insere um novo usuário passando um objeto no body da requisição no método POST</remarks>
-        /// <param name="usuarioModel"></param>
+        /// <param name="usuarioModel">Objeto do usuário</param>
         /// <returns></returns>
         // POST api/antiguera/usuario/inserirusuario
         [HttpPost]
+        [AllowAnonymous]
         [Route("inserirusuario")]
-        public HttpResponseMessage InserirUsuario([FromBody] UsuarioModel usuarioModel)
+        public async Task<HttpResponseMessage> InserirUsuario([FromBody] UsuarioModel usuarioModel)
         {
             logger.Info("InserirUsuario - Iniciado");
             try
             {
                 if (ModelState.IsValid)
                 {
+                    var manager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                    var appRole = HttpContext.Current.GetOwinContext().Get<ApplicationRoleManager>();
+
+                    var acesso = _acessoAppServico.BuscarPorId(usuarioModel.AcessoId);
+                    if (acesso != null)
+                    {
+                        var role = await appRole.FindByNameAsync(acesso.Nome);
+                        if (role != null)
+                        {
+                            role = new IdentityRole(acesso.Nome);
+                        }
+
+                        await appRole.CreateAsync(role);
+
+                        var user = new ApplicationUser()
+                        {
+                            FirstName = usuarioModel.Nome.Split(' ')[0],
+                            LastName = usuarioModel.Nome.Split(' ')[2],
+                            Email = usuarioModel.Email,
+                            UserName = usuarioModel.Login
+                        };
+
+                        await manager.CreateAsync(user, usuarioModel.Senha);
+
+                        await manager.AddToRoleAsync(user.Id, role.Name);
+                    }
+                    else
+                    {
+                        logger.Error("InserirUsuario - Id de acesso não localizado");
+                        stats.Status = HttpStatusCode.BadRequest;
+                        stats.Mensagem = "Id de acesso não localizado!";
+
+                        logger.Info("InserirUsuario - Finalizado");
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                    }
+
+                    usuarioModel.Created = DateTime.Now;
+
                     var senha = BCrypt.HashPassword(usuarioModel.Senha, BCrypt.GenerateSalt());
 
                     usuarioModel.Senha = senha;
@@ -215,7 +261,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza o usuário passando o objeto no body da requisição pelo método PUT</remarks>
-        /// <param name="usuarioModel"></param>
+        /// <param name="usuarioModel">Objeto do usuário</param>
         /// <returns></returns>
         // PUT api/antiguera/usuario/atualizarusuario
         [HttpPut]
@@ -227,6 +273,8 @@ namespace AntigueraWebApi.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    usuarioModel.Modified = DateTime.Now;
+
                     var usuario = Mapper.Map<UsuarioModel, Usuario>(usuarioModel);
 
                     _usuarioAppServico.Atualizar(usuario);
@@ -265,7 +313,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza a senha do usuário passando o objeto no body da requisição pelo método PUT</remarks>
-        /// <param name="usuarioModel"></param>
+        /// <param name="usuarioModel">Objeto do usuário</param>
         /// <returns></returns>
         // PUT api/antiguera/usuario/atualizarsenhausuario
         [HttpPut]
@@ -277,6 +325,8 @@ namespace AntigueraWebApi.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    usuarioModel.Modified = DateTime.Now;
+
                     var senha = BCrypt.HashPassword(usuarioModel.Senha, BCrypt.GenerateSalt());
 
                     usuarioModel.Senha = senha;

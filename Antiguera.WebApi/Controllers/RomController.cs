@@ -13,7 +13,6 @@ using System.Web.Http;
 
 namespace Antiguera.WebApi.Controllers
 {
-    [AllowAnonymous]
     [CustomAuthorize(Roles = "Administrador")]
     [RoutePrefix("api/antiguera/admin/rom")]
     public class RomController : ApiController
@@ -87,7 +86,7 @@ namespace Antiguera.WebApi.Controllers
         /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Retorna a rom através do Id da mesma</remarks>
-        /// <param name="Id"></param>
+        /// <param name="Id">Id da rom</param>
         /// <returns></returns>
         // GET api/antiguera/admin/rom/listarromsporid
         [HttpGet]
@@ -152,7 +151,7 @@ namespace Antiguera.WebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Insere uma nova rom passando um objeto no body da requisição no método POST</remarks>
-        /// <param name="romModel"></param>
+        /// <param name="romModel">Objeto da rom</param>
         /// <returns></returns>
         // POST api/antiguera/admin/rom/inserirrom
         [HttpPost]
@@ -164,6 +163,8 @@ namespace Antiguera.WebApi.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    romModel.Created = DateTime.Now;
+
                     var rom = Mapper.Map<RomModel, Rom>(romModel);
 
                     _romAppServico.Adicionar(rom);
@@ -202,7 +203,7 @@ namespace Antiguera.WebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza a rom passando o objeto no body da requisição pelo método PUT</remarks>
-        /// <param name="romModel"></param>
+        /// <param name="romModel">Objeto da rom</param>
         /// <returns></returns>
         // PUT api/antiguera/admin/rom/atualizarrom
         [HttpPut]
@@ -214,6 +215,8 @@ namespace Antiguera.WebApi.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    romModel.Modified = DateTime.Now;
+
                     var rom = Mapper.Map<RomModel, Rom>(romModel);
 
                     _romAppServico.Atualizar(rom);
@@ -252,7 +255,7 @@ namespace Antiguera.WebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Exclui a rom passando o objeto no body da requisição pelo método DELETE</remarks>
-        /// <param name="romModel"></param>
+        /// <param name="romModel">Objeto da rom</param>
         /// <returns></returns>
         // DELETE api/antiguera/admin/rom/excluirrom
         [HttpDelete]
@@ -302,7 +305,7 @@ namespace Antiguera.WebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Deleta uma lista de roms passando um array de Ids no body da requisição</remarks>
-        /// <param name="Ids"></param>
+        /// <param name="Ids">Objeto da rom</param>
         /// <returns></returns>
         // DELETE api/antiguera/admin/rom/apagarroms
         [HttpDelete]

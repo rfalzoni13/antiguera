@@ -12,7 +12,6 @@ using System.Web.Http;
 
 namespace AntigueraWebApi.Controllers
 {
-    [AllowAnonymous]
     [CustomAuthorize(Roles = "Administrador")]
     [RoutePrefix("api/antiguera/admin/jogo")]
     public class JogoController : ApiController
@@ -86,7 +85,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Retorna o jogo através do Id do mesmo</remarks>
-        /// <param name="Id"></param>
+        /// <param name="Id">Id do jogo</param>
         /// <returns></returns>
         // GET api/antiguera/admin/jogo/listarjogosporid
         [HttpGet]
@@ -151,7 +150,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Insere um novo jogo passando um objeto no body da requisição no método POST</remarks>
-        /// <param name="jogoModel"></param>
+        /// <param name="jogoModel">Objeto do jogo</param>
         /// <returns></returns>
         // POST api/antiguera/admin/jogo/inserirjogo
         [HttpPost]
@@ -163,6 +162,8 @@ namespace AntigueraWebApi.Controllers
             {
                 if(ModelState.IsValid)
                 {
+                    jogoModel.Created = DateTime.Now;
+
                     var jogo = Mapper.Map<JogoModel, Jogo>(jogoModel);
 
                     _jogoAppServico.Adicionar(jogo);
@@ -201,7 +202,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza o jogo passando o objeto no body da requisição pelo método PUT</remarks>
-        /// <param name="jogoModel"></param>
+        /// <param name="jogoModel">Objeto do jogo</param>
         /// <returns></returns>
         // PUT api/antiguera/admin/jogo/atualizarjogo
         [HttpPut]
@@ -213,6 +214,8 @@ namespace AntigueraWebApi.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    jogoModel.Modified = DateTime.Now;
+
                     var jogo = Mapper.Map<JogoModel, Jogo>(jogoModel);
 
                     _jogoAppServico.Atualizar(jogo);
@@ -251,7 +254,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Exclui o jogo passando o objeto no body da requisição pelo método DELETE</remarks>
-        /// <param name="jogoModel"></param>
+        /// <param name="jogoModel">Objeto do jogo</param>
         /// <returns></returns>
         // DELETE api/antiguera/admin/jogo/excluirjogo
         [HttpDelete]
@@ -301,7 +304,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Deleta uma lista de jogos passando um array de Ids no body da requisição</remarks>
-        /// <param name="Ids"></param>
+        /// <param name="Ids">Ids de jogos</param>
         /// <returns></returns>
         // DELETE api/antiguera/admin/jogo/apagarjogos
         [HttpDelete]

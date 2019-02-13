@@ -4,6 +4,7 @@ using Antiguera.Infra.Cross.Infrastructure;
 using Antiguera.WebApi.Authorization;
 using Antiguera.WebApi.Models;
 using AutoMapper;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using NLog;
 using System;
@@ -23,10 +24,12 @@ namespace AntigueraWebApi.Controllers
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private static StatusCode stats = new StatusCode();
         private readonly IUsuarioAppServico _usuarioAppServico;
+        private readonly IAcessoAppServico _acessoAppServico;
 
-        public AdminController(IUsuarioAppServico usuarioAppServico)
+        public AdminController(IUsuarioAppServico usuarioAppServico, IAcessoAppServico acessoAppServico)
         {
             _usuarioAppServico = usuarioAppServico;
+            _acessoAppServico = acessoAppServico;
         }
 
         /// <summary>
@@ -36,9 +39,10 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Login Admin através da base identity passando no body o objeto do usuário</remarks>
-        /// <param name="model"></param>
+        /// <param name="model">Objeto do login</param>
         /// <returns></returns>
         // POST api/antiguera/admin/login
+        [AllowAnonymous]
         [HttpPost]
         [Route("login")]
         public async Task<HttpResponseMessage> LoginAdmin([FromBody] LoginModel model)
@@ -148,7 +152,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Retorna o usuário através do Id do mesmo</remarks>
-        /// <param name="Id"></param>
+        /// <param name="Id">Id do usuário</param>
         /// <returns></returns>
         // GET api/antiguera/admin/listarusuariosporid
         [HttpGet]
@@ -213,7 +217,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Efetua a busca do usuário pelo Login ou Email</remarks>
-        /// <param name="userData"></param>
+        /// <param name="userData">String do login ou email</param>
         /// <returns></returns>
         // GET api/antiguera/admin/listarusuariosporloginouemail
         [HttpGet]
@@ -277,21 +281,59 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Insere um novo usuário passando um objeto no body da requisição no método POST</remarks>
-        /// <param name="usuarioModel"></param>
+        /// <param name="usuarioModel">Objeto do usuário</param>
         /// <returns></returns>
         // POST api/antiguera/admin/inserirusuario
         [HttpPost]
         [Route("inserirusuario")]
-        public HttpResponseMessage InserirUsuario([FromBody] UsuarioModel usuarioModel)
+        public async Task<HttpResponseMessage> InserirUsuario([FromBody] UsuarioModel usuarioModel)
         {
             logger.Info("InserirUsuario - Iniciado");
             try
             {
                 if(ModelState.IsValid)
                 {
+                    var manager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                    var appRole = HttpContext.Current.GetOwinContext().Get<ApplicationRoleManager>();
+
+                    var acesso = _acessoAppServico.BuscarPorId(usuarioModel.AcessoId);
+                    if(acesso != null)
+                    {
+                        var role = await appRole.FindByNameAsync(acesso.Nome);
+                        if(role != null)
+                        {
+                            role = new IdentityRole(acesso.Nome);
+                        }
+                        
+                        await appRole.CreateAsync(role);
+
+                        var user = new ApplicationUser()
+                        {
+                            FirstName = usuarioModel.Nome.Split(' ')[0],
+                            LastName = usuarioModel.Nome.Split(' ')[2],
+                            Email = usuarioModel.Email,
+                            UserName = usuarioModel.Login
+                        };
+
+                        await manager.CreateAsync(user, usuarioModel.Senha);
+
+                        await manager.AddToRoleAsync(user.Id, role.Name);
+                    }
+                    else
+                    {
+                        logger.Error("InserirUsuario - Id de acesso não localizado");
+                        stats.Status = HttpStatusCode.BadRequest;
+                        stats.Mensagem = "Id de acesso não localizado!";
+
+                        logger.Info("InserirUsuario - Finalizado");
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                    }
+
                     var senha = BCrypt.HashPassword(usuarioModel.Senha, BCrypt.GenerateSalt());
 
                     usuarioModel.Senha = senha;
+
+                    usuarioModel.Created = DateTime.Now;
 
                     var usuario = Mapper.Map<UsuarioModel, Usuario>(usuarioModel);
 
@@ -331,7 +373,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza o usuário passando o objeto no body da requisição pelo método PUT</remarks>
-        /// <param name="usuarioModel"></param>
+        /// <param name="usuarioModel">Objeto do usuário</param>
         /// <returns></returns>
         // PUT api/antiguera/admin/atualizarusuario
         [HttpPut]
@@ -343,6 +385,8 @@ namespace AntigueraWebApi.Controllers
             {
                 if(ModelState.IsValid)
                 {
+                    usuarioModel.Modified = DateTime.Now;
+
                     var usuario = Mapper.Map<UsuarioModel, Usuario>(usuarioModel);
 
                     _usuarioAppServico.Atualizar(usuario);
@@ -381,7 +425,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza o usuário administrador passando o objeto no body da requisição pelo método PUT</remarks>
-        /// <param name="usuarioModel"></param>
+        /// <param name="usuarioModel">Objeto do usuário</param>
         /// <returns></returns>
         // PUT api/antiguera/admin/atualizaradmin
         [HttpPut]
@@ -393,6 +437,8 @@ namespace AntigueraWebApi.Controllers
             {
                 if(ModelState.IsValid)
                 {
+                    usuarioModel.Modified = DateTime.Now;
+
                     var usuario = Mapper.Map<UsuarioModel, Usuario>(usuarioModel);
 
                     _usuarioAppServico.Atualizar(usuario);
@@ -431,7 +477,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza a senha do usuário passando o objeto no body da requisição pelo método PUT</remarks>
-        /// <param name="usuarioModel"></param>
+        /// <param name="usuarioModel">Objeto do usuário</param>
         /// <returns></returns>
         // PUT api/antiguera/admin/atualizarsenhausuario
         [HttpPut]
@@ -443,6 +489,8 @@ namespace AntigueraWebApi.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    usuarioModel.Modified = DateTime.Now;
+
                     var senha = BCrypt.HashPassword(usuarioModel.Senha, BCrypt.GenerateSalt());
 
                     usuarioModel.Senha = senha;
@@ -483,10 +531,9 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza a senha do administrador passando o objeto no body da requisição pelo método PUT</remarks>
-        /// <param name="usuarioModel"></param>
+        /// <param name="usuarioModel">Objeto do usuário</param>
         /// <returns></returns>
         // PUT api/antiguera/admin/atualizarsenhaadmin
-        [HttpPut]
         [Route("atualizarsenhaadmin")]
         public HttpResponseMessage AtualizarSenhaAdmin([FromBody]UsuarioModel usuarioModel)
         {
@@ -495,6 +542,8 @@ namespace AntigueraWebApi.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    usuarioModel.Modified = DateTime.Now;
+
                     var senha = BCrypt.HashPassword(usuarioModel.Senha, BCrypt.GenerateSalt());
 
                     usuarioModel.Senha = senha;
@@ -535,7 +584,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Exclui o usuário passando o objeto no body da requisição pelo método DELETE</remarks>
-        /// <param name="usuarioModel"></param>
+        /// <param name="usuarioModel">Objeto do usuário</param>
         /// <returns></returns>
         // DELETE api/antiguera/admin/excluirusuario
         [HttpDelete]
@@ -585,7 +634,7 @@ namespace AntigueraWebApi.Controllers
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Deleta uma lista de usuarios passando um array de Ids no body da requisição</remarks>
-        /// <param name="Ids"></param>
+        /// <param name="Ids">Ids de usuários</param>
         /// <returns></returns>
         // DELETE api/antiguera/admin/apagarusuarios
         [HttpDelete]
@@ -622,6 +671,284 @@ namespace AntigueraWebApi.Controllers
                 stats.Mensagem = e.Message;
 
                 logger.Info("ApagarUsuarios - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+            }
+        }
+
+        /// <summary>
+        /// Listar todos os acessos
+        /// </summary>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>Listagem de todos os acessos dos usuários</remarks>
+        /// <returns></returns>
+        // GET api/antiguera/admin/listartodososacessos
+        [HttpGet]
+        [Route("listartodososacessos")]
+        public HttpResponseMessage ListarTodosAcessos()
+        {
+            logger.Info("ListarTodosAcessos - Iniciado");
+            try
+            {
+                var retorno = _acessoAppServico.BuscarTodos();
+
+                if (retorno != null && retorno.Count() > 0)
+                {
+                    logger.Info("ListarTodosAcessos - Sucesso!");
+
+                    logger.Info("ListarTodosAcessos - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.OK, retorno);
+                }
+                else
+                {
+                    throw new HttpResponseException(HttpStatusCode.NotFound);
+                }
+            }
+
+            catch (HttpResponseException e)
+            {
+                logger.Warn("ListarTodosAcessos - Error: " + e);
+                stats.Status = HttpStatusCode.NotFound;
+                stats.Mensagem = "Nenhum registro encontrado!";
+
+                logger.Info("ListarTodosAcessos - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.NotFound, stats);
+            }
+
+            catch (Exception e)
+            {
+                logger.Error("ListarTodosAcessos - Error: " + e);
+                stats.Status = HttpStatusCode.InternalServerError;
+                stats.Mensagem = e.Message;
+
+                logger.Info("ListarTodosAcessos - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+            }
+        }
+
+        /// <summary>
+        /// Listar acesso pelo Id
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>Retorna o acesso do usuário através do Id do mesmo</remarks>
+        /// <param name="Id">Id do acesso</param>
+        /// <returns></returns>
+        // GET api/antiguera/admin/listaracessosporid
+        [HttpGet]
+        [Route("listaracessosporid")]
+        public HttpResponseMessage ListarAcessosPorId(int Id)
+        {
+            logger.Info("ListarAcessosPorId - Iniciado");
+            try
+            {
+                if (Id > 0)
+                {
+                    var usuario = _usuarioAppServico.BuscarPorId(Id);
+
+                    if (usuario != null)
+                    {
+                        logger.Info("ListarAcessosPorId - Sucesso!");
+
+                        logger.Info("ListarAcessosPorId - Finalizado");
+                        return Request.CreateResponse(HttpStatusCode.OK, usuario);
+                    }
+                    else
+                    {
+                        throw new HttpResponseException(HttpStatusCode.NotFound);
+                    }
+                }
+                else
+                {
+                    logger.Warn("ListarAcessosPorId - Parâmetro incorreto!");
+                    stats.Status = HttpStatusCode.BadRequest;
+                    stats.Mensagem = "Parâmetro incorreto!";
+
+                    logger.Info("ListarAcessosPorId - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                }
+            }
+            catch (HttpResponseException e)
+            {
+                logger.Error("ListarAcessosPorId - Error: " + e);
+                stats.Status = HttpStatusCode.NotFound;
+                stats.Mensagem = "Nenhum registro encontrado!";
+
+                logger.Info("ListarAcessosPorId - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.NotFound, stats);
+            }
+
+            catch (Exception e)
+            {
+                logger.Error("ListarAcessosPorId - Error: " + e);
+                stats.Status = HttpStatusCode.InternalServerError;
+                stats.Mensagem = e.Message;
+
+                logger.Info("ListarAcessosPorId - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+            }
+        }
+
+        /// <summary>
+        /// Inserir acesso
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>Insere um novo acesso de usuário passando um objeto no body da requisição no método POST</remarks>
+        /// <param name="acessoModel">Objeto do acesso</param>
+        /// <returns></returns>
+        // POST api/antiguera/admin/inseriracesso
+        [HttpPost]
+        [Route("inseriracesso")]
+        public async Task<HttpResponseMessage> InserirAcesso([FromBody] AcessoModel acessoModel)
+        {
+            logger.Info("InserirAcesso - Iniciado");
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var appRole = HttpContext.Current.GetOwinContext().Get<ApplicationRoleManager>();
+
+                    var role = await appRole.FindByNameAsync(acessoModel.Nome);
+                    if (role != null)
+                    {
+                        role = new IdentityRole(acessoModel.Nome);
+                    }
+
+                    await appRole.CreateAsync(role);
+
+
+                    acessoModel.Created = DateTime.Now;
+
+                    var acesso = Mapper.Map<AcessoModel, Acesso>(acessoModel);
+
+                    _acessoAppServico.Adicionar(acesso);
+
+                    logger.Info("InserirAcesso - Sucesso!");
+
+                    logger.Info("InserirAcesso - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.OK, "Acesso incluído com sucesso!");
+                }
+                else
+                {
+                    logger.Warn("InserirAcesso - Por favor, preencha os campos corretamente!");
+                    stats.Status = HttpStatusCode.BadRequest;
+                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+
+                    logger.Info("InserirAcesso - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                }
+            }
+
+            catch (Exception e)
+            {
+                logger.Error("InserirAcesso - Error: " + e);
+                stats.Status = HttpStatusCode.InternalServerError;
+                stats.Mensagem = e.Message;
+
+                logger.Info("InserirAcesso - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+            }
+        }
+
+        /// <summary>
+        /// Excluir acesso
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>Exclui o acesso usuário passando o objeto no body da requisição pelo método DELETE</remarks>
+        /// <param name="acessoModel">Objeto do acesso</param>
+        /// <returns></returns>
+        // DELETE api/antiguera/admin/excluiracesso
+        [HttpDelete]
+        [Route("excluiracesso")]
+        public HttpResponseMessage ExcluirAcesso([FromBody] AcessoModel acessoModel)
+        {
+            logger.Info("ExcluirAcesso - Iniciado");
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var acesso = Mapper.Map<AcessoModel, Acesso>(acessoModel);
+
+                    _acessoAppServico.Apagar(acesso);
+
+                    logger.Info("ExcluirAcesso - Sucesso!");
+
+                    logger.Info("ExcluirAcesso - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.OK, "Acesso excluído com sucesso!");
+                }
+                else
+                {
+                    logger.Warn("ExcluirAcesso - Por favor, preencha os campos corretamente!");
+                    stats.Status = HttpStatusCode.BadRequest;
+                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+
+                    logger.Info("ExcluirAcesso - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                }
+            }
+
+            catch (Exception e)
+            {
+                logger.Error("ExcluirAcesso - Error: " + e);
+                stats.Status = HttpStatusCode.InternalServerError;
+                stats.Mensagem = e.Message;
+
+                logger.Info("ExcluirAcesso - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+            }
+        }
+
+        /// <summary>
+        /// Apagar acessos
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>Deleta uma lista de acessos de usuarios passando um array de Ids no body da requisição</remarks>
+        /// <param name="Ids">Ids de acessos</param>
+        /// <returns></returns>
+        // DELETE api/antiguera/admin/apagaracessos
+        [HttpDelete]
+        [Route("apagaracessos")]
+        public HttpResponseMessage ApagarAcessos([FromBody] int[] Ids)
+        {
+            logger.Info("ApagarAcessos - Iniciado");
+            try
+            {
+                if (Ids.Count() > 0)
+                {
+                    _acessoAppServico.ApagarAcessos(Ids);
+
+                    logger.Info("ApagarAcessos - Sucesso!");
+
+                    logger.Info("ApagarAcessos - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.OK, "Acesso(s) excluído(s) com sucesso!");
+                }
+                else
+                {
+                    logger.Warn("ApagarAcessos - Array preenchido incorretamente!");
+                    stats.Status = HttpStatusCode.BadRequest;
+                    stats.Mensagem = "Array preenchido incorretamente!";
+
+                    logger.Info("ApagarAcessos - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                }
+            }
+
+            catch (Exception e)
+            {
+                logger.Error("ApagarAcessos - Error: " + e);
+                stats.Status = HttpStatusCode.InternalServerError;
+                stats.Mensagem = e.Message;
+
+                logger.Info("ApagarAcessos - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
             }
         }
