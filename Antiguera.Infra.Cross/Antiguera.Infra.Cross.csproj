@@ -94,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Infrastructure\ApplicationDbContext.cs" />
+    <Compile Include="Infrastructure\ApplicationRoleManager.cs" />
     <Compile Include="Infrastructure\ApplicationSignInManager.cs" />
     <Compile Include="Infrastructure\ApplicationUser.cs" />
     <Compile Include="Infrastructure\ApplicationUserManager.cs" />
