@@ -1,6 +1,7 @@
 ﻿using Antiguera.Administrador.Controllers.Base;
 using Antiguera.Administrador.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -10,9 +11,9 @@ using X.PagedList;
 namespace Antiguera.Administrador.Controllers
 {
     [Authorize]
-    public class JogoController : BaseController
+    public class UsuarioController : BaseController
     {
-        // GET: Jogo
+        // GET: Usuario
         public ActionResult Index(int pagina = 1)
         {
             try
@@ -32,7 +33,7 @@ namespace Antiguera.Administrador.Controllers
                     var token = PegarTokenAtual();
                     if (!string.IsNullOrEmpty(token))
                     {
-                        var lista = ListarJogos(token);
+                        var lista = ListarUsuarios(token);
                         if (TempData["Unauthorized"] != null)
                         {
                             Session["ErroMensagem"] = ViewBag.ErroMensagem;
@@ -49,7 +50,7 @@ namespace Antiguera.Administrador.Controllers
                         token = PegarTokenRefreshAtual();
                         if (!string.IsNullOrEmpty(token))
                         {
-                            var lista = ListarJogos(token);
+                            var lista = ListarUsuarios(token);
                             if (TempData["Unauthorized"] != null)
                             {
                                 Session["ErroMensagem"] = ViewBag.ErroMensagem;
@@ -88,7 +89,73 @@ namespace Antiguera.Administrador.Controllers
             {
                 if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
                 {
-                    return View();
+                    var model = new UsuarioModel();
+                    model.ListaAcessos = new List<SelectListItem>();
+
+                    model.ListaAcessos.Add(new SelectListItem() { Text = "Selecione uma opção...", Value = "0" });
+
+                    var token = PegarTokenAtual();
+                    if(!string.IsNullOrEmpty(token))
+                    {
+                        var acessos = ListarAcessos(token);
+                        if (TempData["Unauthorized"] != null)
+                        {
+                            token = PegarTokenRefreshAtual();
+                            if (!string.IsNullOrEmpty(token))
+                            {
+                                acessos = ListarAcessos(token);
+                                if (TempData["Unauthorized"] != null)
+                                {
+                                    Session["ErroMensagem"] = ViewBag.ErroMensagem;
+                                    HttpContext.GetOwinContext().Authentication.SignOut();
+                                    return RedirectToAction("Login", "Home");
+                                }
+                            }
+                            else
+                            {
+                                Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                                HttpContext.GetOwinContext().Authentication.SignOut();
+                                return RedirectToAction("Login", "Home");
+                            }
+                        }
+
+                        foreach(var acesso in acessos)
+                        {
+                            if(acesso != null)
+                            {
+                                model.ListaAcessos.Add(new SelectListItem() { Text = acesso.Nome, Value = acesso.Id.ToString() });
+                            }
+                        }
+                    }
+                    else
+                    {
+                        token = PegarTokenRefreshAtual();
+                        if(!string.IsNullOrEmpty(token))
+                        {
+                            var acessos = ListarAcessos(token);
+                            if(TempData["Unauthorized"] != null)
+                            {
+                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
+                                HttpContext.GetOwinContext().Authentication.SignOut();
+                                return RedirectToAction("Login");
+                            }
+
+                            foreach (var acesso in acessos)
+                            {
+                                if (acesso != null)
+                                {
+                                    model.ListaAcessos.Add(new SelectListItem() { Text = acesso.Nome, Value = acesso.Id.ToString() });
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                            HttpContext.GetOwinContext().Authentication.SignOut();
+                            return RedirectToAction("Login", "Home");
+                        }
+                    }
+                    return View(model);
                 }
                 else
                 {
@@ -105,12 +172,11 @@ namespace Antiguera.Administrador.Controllers
                 }
                 return RedirectToAction("Login", "Home");
             }
-            
         }
 
         // POST: Cadastrar
         [HttpPost]
-        public ActionResult Cadastrar(JogoModel model)
+        public ActionResult Cadastrar(UsuarioModel model)
         {
             try
             {
@@ -118,27 +184,19 @@ namespace Antiguera.Administrador.Controllers
                 {
                     if (model != null && ModelState.IsValid)
                     {
-                        if (model.FileJogo != null && model.FileJogo.ContentLength > 0)
+                        if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
                         {
-                            var gameFileName = Path.GetFileName(model.FileJogo.FileName);
-                            var gamePath = Path.Combine(Server.MapPath("~/Content/Games/"), gameFileName);
-                            model.FileJogo.SaveAs(gamePath);
-                            model.UrlArquivo = "/Content/Games/" + gameFileName;
-                        }
-
-                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                        {
-                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                            model.FileBoxArt.SaveAs(boxPath);
-                            model.UrlBoxArt = "/Content/Images/BoxArt/" + boxFileName;
+                            var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
+                            var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
+                            model.FileFoto.SaveAs(photoPath);
+                            model.UrlFotoUpload = "/Content/Images/Profile/" + fotoFileName;
                         }
 
                         var token = PegarTokenAtual();
 
                         if (!string.IsNullOrEmpty(token))
                         {
-                            if (CadastrarJogo(model, token))
+                            if (CadastrarUsuario(model, token))
                             {
                                 return View("Index");
                             }
@@ -149,7 +207,7 @@ namespace Antiguera.Administrador.Controllers
                                     token = PegarTokenRefreshAtual();
                                     if (!string.IsNullOrEmpty(token))
                                     {
-                                        if (CadastrarJogo(model, token))
+                                        if (CadastrarUsuario(model, token))
                                         {
                                             return View("Index");
                                         }
@@ -160,18 +218,11 @@ namespace Antiguera.Administrador.Controllers
                                                 Session["ErroMensagem"] = ViewBag.ErroMensagem;
                                                 HttpContext.GetOwinContext().Authentication.SignOut();
 
-                                                if (model.FileJogo != null && model.FileJogo.ContentLength > 0)
+                                                if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
                                                 {
-                                                    var gameFileName = Path.GetFileName(model.FileJogo.FileName);
-                                                    var gamePath = Path.Combine(Server.MapPath("~/Content/Games/"), gameFileName);
-                                                    System.IO.File.Delete(gamePath);
-                                                }
-
-                                                if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                                                {
-                                                    var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                                                    var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                                                    System.IO.File.Delete(boxPath);
+                                                    var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
+                                                    var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
+                                                    System.IO.File.Delete(photoPath);
                                                 }
 
                                                 return RedirectToAction("Login", "Home");
@@ -191,7 +242,7 @@ namespace Antiguera.Administrador.Controllers
                             token = PegarTokenRefreshAtual();
                             if (!string.IsNullOrEmpty(token))
                             {
-                                if (CadastrarJogo(model, token))
+                                if (CadastrarUsuario(model, token))
                                 {
                                     return View("Index");
                                 }
@@ -202,18 +253,11 @@ namespace Antiguera.Administrador.Controllers
                                         Session["ErroMensagem"] = ViewBag.ErroMensagem;
                                         HttpContext.GetOwinContext().Authentication.SignOut();
 
-                                        if (model.FileJogo != null && model.FileJogo.ContentLength > 0)
+                                        if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
                                         {
-                                            var gameFileName = Path.GetFileName(model.FileJogo.FileName);
-                                            var gamePath = Path.Combine(Server.MapPath("~/Content/Games/"), gameFileName);
-                                            System.IO.File.Delete(gamePath);
-                                        }
-
-                                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                                        {
-                                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                                            System.IO.File.Delete(boxPath);
+                                            var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
+                                            var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
+                                            System.IO.File.Delete(photoPath);
                                         }
 
                                         return RedirectToAction("Login", "Home");
@@ -254,13 +298,13 @@ namespace Antiguera.Administrador.Controllers
                     var token = PegarTokenAtual();
                     if (!string.IsNullOrEmpty(token))
                     {
-                        var model = BuscarJogoPorId(id, token);
+                        var model = BuscarUsuarioPorId(id, token);
                         if (TempData["Unauthorized"] != null)
                         {
                             token = PegarTokenRefreshAtual();
                             if (!string.IsNullOrEmpty(token))
                             {
-                                model = BuscarJogoPorId(id, token);
+                                model = BuscarUsuarioPorId(id, token);
                                 if (TempData["Unauthorized"] != null)
                                 {
                                     Session["ErroMensagem"] = ViewBag.ErroMensagem;
@@ -303,7 +347,7 @@ namespace Antiguera.Administrador.Controllers
                         token = PegarTokenRefreshAtual();
                         if (!string.IsNullOrEmpty(token))
                         {
-                            var model = BuscarJogoPorId(id, token);
+                            var model = BuscarUsuarioPorId(id, token);
                             if (TempData["Unauthorized"] != null)
                             {
                                 Session["ErroMensagem"] = ViewBag.ErroMensagem;
@@ -349,7 +393,7 @@ namespace Antiguera.Administrador.Controllers
 
         // POST: Editar
         [HttpPost]
-        public ActionResult Editar(JogoModel model)
+        public ActionResult Editar(UsuarioModel model)
         {
             try
             {
@@ -357,27 +401,19 @@ namespace Antiguera.Administrador.Controllers
                 {
                     if (model != null && ModelState.IsValid)
                     {
-                        if (model.FileJogo != null && model.FileJogo.ContentLength > 0)
+                        if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
                         {
-                            var gameFileName = Path.GetFileName(model.FileJogo.FileName);
-                            var gamePath = Path.Combine(Server.MapPath("~/Content/Games/"), gameFileName);
-                            model.FileJogo.SaveAs(gamePath);
-                            model.UrlArquivo = "/Content/Games/" + gameFileName;
-                        }
-
-                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                        {
-                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                            model.FileBoxArt.SaveAs(boxPath);
-                            model.UrlBoxArt = "/Content/Images/BoxArt/" + boxFileName;
+                            var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
+                            var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
+                            model.FileFoto.SaveAs(photoPath);
+                            model.UrlFotoUpload = "/Content/Images/Profile/" + fotoFileName;
                         }
 
                         var token = PegarTokenAtual();
 
                         if (!string.IsNullOrEmpty(token))
                         {
-                            if (AtualizarJogo(model, token))
+                            if (AtualizarUsuario(model, token))
                             {
                                 return View("Index");
                             }
@@ -388,7 +424,7 @@ namespace Antiguera.Administrador.Controllers
                                     token = PegarTokenRefreshAtual();
                                     if (!string.IsNullOrEmpty(token))
                                     {
-                                        if (AtualizarJogo(model, token))
+                                        if (AtualizarUsuario(model, token))
                                         {
                                             return View("Index");
                                         }
@@ -399,18 +435,11 @@ namespace Antiguera.Administrador.Controllers
                                                 Session["ErroMensagem"] = ViewBag.ErroMensagem;
                                                 HttpContext.GetOwinContext().Authentication.SignOut();
 
-                                                if (model.FileJogo != null && model.FileJogo.ContentLength > 0)
+                                                if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
                                                 {
-                                                    var gameFileName = Path.GetFileName(model.FileJogo.FileName);
-                                                    var gamePath = Path.Combine(Server.MapPath("~/Content/Games/"), gameFileName);
-                                                    System.IO.File.Delete(gamePath);
-                                                }
-
-                                                if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                                                {
-                                                    var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                                                    var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                                                    System.IO.File.Delete(boxPath);
+                                                    var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
+                                                    var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
+                                                    System.IO.File.Delete(photoPath);
                                                 }
 
                                                 return RedirectToAction("Login", "Home");
@@ -430,7 +459,7 @@ namespace Antiguera.Administrador.Controllers
                             token = PegarTokenRefreshAtual();
                             if (!string.IsNullOrEmpty(token))
                             {
-                                if (AtualizarJogo(model, token))
+                                if (AtualizarUsuario(model, token))
                                 {
                                     return View("Index");
                                 }
@@ -441,18 +470,11 @@ namespace Antiguera.Administrador.Controllers
                                         Session["ErroMensagem"] = ViewBag.ErroMensagem;
                                         HttpContext.GetOwinContext().Authentication.SignOut();
 
-                                        if (model.FileJogo != null && model.FileJogo.ContentLength > 0)
+                                        if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
                                         {
-                                            var gameFileName = Path.GetFileName(model.FileJogo.FileName);
-                                            var gamePath = Path.Combine(Server.MapPath("~/Content/Games/"), gameFileName);
-                                            System.IO.File.Delete(gamePath);
-                                        }
-
-                                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                                        {
-                                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                                            System.IO.File.Delete(boxPath);
+                                            var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
+                                            var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
+                                            System.IO.File.Delete(photoPath);
                                         }
 
                                         return RedirectToAction("Login", "Home");
@@ -499,13 +521,13 @@ namespace Antiguera.Administrador.Controllers
                         var token = PegarTokenAtual();
                         if (!string.IsNullOrEmpty(token))
                         {
-                            var model = BuscarJogoPorId(id, token);
+                            var model = BuscarUsuarioPorId(id, token);
 
                             if (TempData["Unauthorized"] != null)
                             {
                                 if (model != null)
                                 {
-                                    ExcluirJogo(model, token);
+                                    ExcluirUsuario(model, token);
                                 }
                             }
                             else
@@ -513,12 +535,12 @@ namespace Antiguera.Administrador.Controllers
                                 token = PegarTokenRefreshAtual();
                                 if (!string.IsNullOrEmpty(token))
                                 {
-                                    model = BuscarJogoPorId(id, token);
+                                    model = BuscarUsuarioPorId(id, token);
                                     if (TempData["Unauthorized"] != null)
                                     {
                                         if (model != null)
                                         {
-                                            ExcluirJogo(model, token);
+                                            ExcluirUsuario(model, token);
                                         }
                                     }
                                     else
@@ -537,12 +559,12 @@ namespace Antiguera.Administrador.Controllers
                             token = PegarTokenRefreshAtual();
                             if (!string.IsNullOrEmpty(token))
                             {
-                                var model = BuscarJogoPorId(id, token);
+                                var model = BuscarUsuarioPorId(id, token);
                                 if (TempData["Unauthorized"] != null)
                                 {
                                     if (model != null)
                                     {
-                                        ExcluirJogo(model, token);
+                                        ExcluirUsuario(model, token);
                                     }
                                 }
                                 else

@@ -396,6 +396,7 @@
     <Compile Include="Controllers\JogoController.cs" />
     <Compile Include="Controllers\ProgramaController.cs" />
     <Compile Include="Controllers\RomController.cs" />
+    <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -437,6 +438,8 @@
     <Content Include="Views\Rom\Cadastrar.cshtml" />
     <Content Include="Views\Rom\Index.cshtml" />
     <Content Include="Views\Rom\Editar.cshtml" />
+    <Content Include="Views\Usuario\Index.cshtml" />
+    <Content Include="Views\Usuario\Cadastrar.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -450,9 +453,9 @@
     <Folder Include="Content\Consoles\Roms\" />
     <Folder Include="Content\Games\" />
     <Folder Include="Content\Images\BoxArt\" />
+    <Folder Include="Content\Images\Profile\" />
     <Folder Include="Content\Programas\" />
     <Folder Include="Views\Admin\" />
-    <Folder Include="Views\Usuario\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Antiguera.Infra.Cross\Antiguera.Infra.Cross.csproj">

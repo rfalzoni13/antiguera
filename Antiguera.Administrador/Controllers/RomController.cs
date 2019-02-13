@@ -3,79 +3,339 @@ using Antiguera.Administrador.Models;
 using System;
 using System.IO;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using X.PagedList;
 
 namespace Antiguera.Administrador.Controllers
 {
+    [Authorize]
     public class RomController : BaseController
     {
         // GET: Rom
         public ActionResult Index(int pagina = 1)
         {
-            if (TempData["Mensagem"] != null)
+            try
             {
-                ViewBag.Mensagem = TempData["Mensagem"];
-            }
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    if (TempData["Mensagem"] != null)
+                    {
+                        ViewBag.Mensagem = TempData["Mensagem"];
+                    }
 
-            if (TempData["ErroMensagem"] != null)
+                    if (TempData["ErroMensagem"] != null)
+                    {
+                        ViewBag.ErroMensagem = TempData["ErroMensagem"];
+                    }
+
+                    var token = PegarTokenAtual();
+                    if (!string.IsNullOrEmpty(token))
+                    {
+                        var lista = ListarRoms(token);
+                        if (TempData["Unauthorized"] != null)
+                        {
+                            Session["ErroMensagem"] = ViewBag.ErroMensagem;
+                            HttpContext.GetOwinContext().Authentication.SignOut();
+                            return RedirectToAction("Login", "Home");
+                        }
+                        else
+                        {
+                            lista.OrderBy(j => j.Id).ToPagedList(pagina, 4);
+                        }
+                    }
+                    else
+                    {
+                        token = PegarTokenRefreshAtual();
+                        if (!string.IsNullOrEmpty(token))
+                        {
+                            var lista = ListarRoms(token);
+                            if (TempData["Unauthorized"] != null)
+                            {
+                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
+                                HttpContext.GetOwinContext().Authentication.SignOut();
+                                return RedirectToAction("Login", "Home");
+                            }
+                            else
+                            {
+                                lista.OrderBy(j => j.Id).ToPagedList(pagina, 4);
+                            }
+                        }
+                    }
+                    return View();
+                }
+                else
+                {
+                    Session["ErroMensagem"] = "Acesso restrito!";
+                    return RedirectToAction("Login", "Home");
+                }
+            }
+            catch (Exception ex)
             {
-                ViewBag.ErroMensagem = TempData["ErroMensagem"];
+                Session["ErroMensagem"] = "Erro: " + ex.Message;
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    HttpContext.GetOwinContext().Authentication.SignOut();
+                }
+                return RedirectToAction("Login", "Home");
             }
-
-            var lista = ListarRoms().OrderBy(j => j.Id).ToPagedList(pagina, 4);
-            return View();
         }
 
         // GET: Cadastrar
         public ActionResult Cadastrar()
         {
-            return View();
+            try
+            {
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    return View();
+                }
+                else
+                {
+                    Session["ErroMensagem"] = "Acesso restrito!";
+                    return RedirectToAction("Login", "Home");
+                }
+            }
+            catch (Exception ex)
+            {
+                Session["ErroMensagem"] = "Erro: " + ex.Message;
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    HttpContext.GetOwinContext().Authentication.SignOut();
+                }
+                return RedirectToAction("Login", "Home");
+            }
         }
 
         // POST: Cadastrar
         [HttpPost]
         public ActionResult Cadastrar(RomModel model)
         {
-            if (model != null && ModelState.IsValid)
+            try
             {
-                model.Created = DateTime.Now;
-
-                if (model.FileRom != null && model.FileRom.ContentLength > 0)
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
                 {
-                    var romFileName = Path.GetFileName(model.FileRom.FileName);
-                    var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
-                    model.FileRom.SaveAs(romPath);
-                    model.UrlArquivo = "/Content/Consoles/Roms/" + romFileName;
+                    if (model != null && ModelState.IsValid)
+                    {
+                        if (model.FileRom != null && model.FileRom.ContentLength > 0)
+                        {
+                            var romFileName = Path.GetFileName(model.FileRom.FileName);
+                            var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
+                            model.FileRom.SaveAs(romPath);
+                            model.UrlArquivo = "/Content/Consoles/Roms/" + romFileName;
+                        }
+
+                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                        {
+                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                            model.FileBoxArt.SaveAs(boxPath);
+                            model.UrlBoxArt = "/Content/Images/BoxArt/" + boxFileName;
+                        }
+
+                        var token = PegarTokenAtual();
+
+                        if (!string.IsNullOrEmpty(token))
+                        {
+                            if (CadastrarRom(model, token))
+                            {
+                                return View("Index");
+                            }
+                            else
+                            {
+                                if (TempData["Unauthorized"] != null)
+                                {
+                                    token = PegarTokenRefreshAtual();
+                                    if (!string.IsNullOrEmpty(token))
+                                    {
+                                        if (CadastrarRom(model, token))
+                                        {
+                                            return View("Index");
+                                        }
+                                        else
+                                        {
+                                            if (TempData["Unauthorized"] != null)
+                                            {
+                                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
+                                                HttpContext.GetOwinContext().Authentication.SignOut();
+
+                                                if (model.FileRom != null && model.FileRom.ContentLength > 0)
+                                                {
+                                                    var romFileName = Path.GetFileName(model.FileRom.FileName);
+                                                    var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
+                                                    System.IO.File.Delete(romPath);
+                                                }
+                                                
+                                                if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                                                {
+                                                    var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                                                    var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                                                    System.IO.File.Delete(boxPath);
+                                                }
+                                                return RedirectToAction("Login", "Home");
+                                            }
+                                            return View(model);
+                                        }
+                                    }
+                                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                                    HttpContext.GetOwinContext().Authentication.SignOut();
+                                    return RedirectToAction("Login", "Home");
+                                }
+                                return View(model);
+                            }
+                        }
+                        else
+                        {
+                            token = PegarTokenRefreshAtual();
+                            if (!string.IsNullOrEmpty(token))
+                            {
+                                if (CadastrarRom(model, token))
+                                {
+                                    return View("Index");
+                                }
+                                else
+                                {
+                                    if (TempData["Unauthorized"] != null)
+                                    {
+                                        Session["ErroMensagem"] = ViewBag.ErroMensagem;
+                                        HttpContext.GetOwinContext().Authentication.SignOut();
+
+                                        var romFileName = Path.GetFileName(model.FileRom.FileName);
+                                        var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
+                                        System.IO.File.Delete(romPath);
+
+                                        var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                                        var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                                        System.IO.File.Delete(boxPath);
+
+                                        return RedirectToAction("Login", "Home");
+                                    }
+                                }
+                            }
+                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                            HttpContext.GetOwinContext().Authentication.SignOut();
+                            return RedirectToAction("Login", "Home");
+                        }
+                    }
+                    return View(model);
                 }
-
-                if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                else
                 {
-                    var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                    var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                    model.FileBoxArt.SaveAs(boxPath);
-                    model.UrlBoxArt = "/Content/Images/BoxArt/" + boxFileName;
-                }
-
-                if (CadastrarRom(model))
-                {
-                    return RedirectToAction("Index");
+                    Session["ErroMensagem"] = "Acesso restrito!";
+                    return RedirectToAction("Login", "Home");
                 }
             }
-            return View(model);
+            catch (Exception ex)
+            {
+                Session["ErroMensagem"] = "Erro: " + ex.Message;
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    HttpContext.GetOwinContext().Authentication.SignOut();
+                }
+                return RedirectToAction("Login", "Home");
+            }
         }
 
         // GET: Editar
         public ActionResult Editar(int id)
         {
-            var model = BuscarRomPorId(id);
-            if (model != null)
+            try
             {
-                return View(model);
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    var token = PegarTokenAtual();
+                    if(!string.IsNullOrEmpty(token))
+                    {
+                        var model = BuscarRomPorId(id, token);
+                        if (TempData["Unauthorized"] != null)
+                        {
+                            token = PegarTokenRefreshAtual();
+                            if(!string.IsNullOrEmpty(token))
+                            {
+                                model = BuscarRomPorId(id, token);
+                                if (TempData["Unauthorized"] != null)
+                                {
+                                    Session["ErroMensagem"] = ViewBag.ErroMensagem;
+                                    HttpContext.GetOwinContext().Authentication.SignOut();
+                                    return RedirectToAction("Login", "Home");
+                                }
+                                else
+                                {
+                                    if (model != null)
+                                    {
+                                        return View(model);
+                                    }
+                                    else
+                                    {
+                                        return RedirectToAction("Index");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                                HttpContext.GetOwinContext().Authentication.SignOut();
+                                return RedirectToAction("Login", "Home");
+                            }
+                        }
+                        else
+                        {
+                            if (model != null)
+                            {
+                                return View(model);
+                            }
+                            else
+                            {
+                                return RedirectToAction("Index");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        token = PegarTokenRefreshAtual();
+                        if (!string.IsNullOrEmpty(token))
+                        {
+                            var model = BuscarRomPorId(id, token);
+                            if (TempData["Unauthorized"] != null)
+                            {
+                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
+                                HttpContext.GetOwinContext().Authentication.SignOut();
+                                return RedirectToAction("Login", "Home");
+                            }
+                            else
+                            {
+                                if (model != null)
+                                {
+                                    return View(model);
+                                }
+                                else
+                                {
+                                    return RedirectToAction("Index");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                            HttpContext.GetOwinContext().Authentication.SignOut();
+                            return RedirectToAction("Login", "Home");
+                        }
+                    }
+                }
+                else
+                {
+                    Session["ErroMensagem"] = "Acesso restrito!";
+                    return RedirectToAction("Login", "Home");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return RedirectToAction("Index");
+                Session["ErroMensagem"] = "Erro: " + ex.Message;
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    HttpContext.GetOwinContext().Authentication.SignOut();
+                }
+                return RedirectToAction("Login", "Home");
             }
         }
 
@@ -83,33 +343,228 @@ namespace Antiguera.Administrador.Controllers
         [HttpPost]
         public ActionResult Editar(RomModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                model.Modified = DateTime.Now;
-                if (AtualizarRom(model))
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
                 {
-                    return RedirectToAction("Index");
+                    if (model != null && ModelState.IsValid)
+                    {
+                        if (model.FileRom != null && model.FileRom.ContentLength > 0)
+                        {
+                            var romFileName = Path.GetFileName(model.FileRom.FileName);
+                            var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
+                            model.FileRom.SaveAs(romPath);
+                            model.UrlArquivo = "/Content/Consoles/Roms/" + romFileName;
+                        }
+
+                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                        {
+                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                            model.FileBoxArt.SaveAs(boxPath);
+                            model.UrlBoxArt = "/Content/Images/BoxArt/" + boxFileName;
+                        }
+
+                        var token = PegarTokenAtual();
+
+                        if (!string.IsNullOrEmpty(token))
+                        {
+                            if (AtualizarRom(model, token))
+                            {
+                                return View("Index");
+                            }
+                            else
+                            {
+                                if (TempData["Unauthorized"] != null)
+                                {
+                                    token = PegarTokenRefreshAtual();
+                                    if (!string.IsNullOrEmpty(token))
+                                    {
+                                        if (AtualizarRom(model, token))
+                                        {
+                                            return View("Index");
+                                        }
+                                        else
+                                        {
+                                            if (TempData["Unauthorized"] != null)
+                                            {
+                                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
+                                                HttpContext.GetOwinContext().Authentication.SignOut();
+
+                                                if (model.FileRom != null && model.FileRom.ContentLength > 0)
+                                                {
+                                                    var romFileName = Path.GetFileName(model.FileRom.FileName);
+                                                    var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
+                                                    System.IO.File.Delete(romPath);
+                                                }
+
+                                                if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                                                {
+                                                    var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                                                    var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                                                    System.IO.File.Delete(boxPath);
+                                                }
+
+                                                return RedirectToAction("Login", "Home");
+                                            }
+                                            return View(model);
+                                        }
+                                    }
+                                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                                    HttpContext.GetOwinContext().Authentication.SignOut();
+                                    return RedirectToAction("Login", "Home");
+                                }
+                                return View(model);
+                            }
+                        }
+                        else
+                        {
+                            token = PegarTokenRefreshAtual();
+                            if (!string.IsNullOrEmpty(token))
+                            {
+                                if (AtualizarRom(model, token))
+                                {
+                                    return View("Index");
+                                }
+                                else
+                                {
+                                    if (TempData["Unauthorized"] != null)
+                                    {
+                                        Session["ErroMensagem"] = ViewBag.ErroMensagem;
+                                        HttpContext.GetOwinContext().Authentication.SignOut();
+
+                                        if (model.FileRom != null && model.FileRom.ContentLength > 0)
+                                        {
+                                            var romFileName = Path.GetFileName(model.FileRom.FileName);
+                                            var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
+                                            System.IO.File.Delete(romPath);
+                                        }
+                                        
+                                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                                        {
+                                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                                            System.IO.File.Delete(boxPath);
+                                        }
+
+                                        return RedirectToAction("Login", "Home");
+                                    }
+                                }
+                            }
+                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                            HttpContext.GetOwinContext().Authentication.SignOut();
+                            return RedirectToAction("Login", "Home");
+                        }
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    Session["ErroMensagem"] = "Acesso restrito!";
+                    return RedirectToAction("Login", "Home");
                 }
             }
-            return View(model);
+            catch (Exception ex)
+            {
+                Session["ErroMensagem"] = "Erro: " + ex.Message;
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    HttpContext.GetOwinContext().Authentication.SignOut();
+                }
+                return RedirectToAction("Login", "Home");
+            }
         }
 
         // GET: Excluir
         public ActionResult Excluir(int id)
         {
-            if (id == 0)
+            try
             {
-                ViewBag.ErroMensagem = "Parâmetros incorretos!";
-            }
-            else
-            {
-                var model = BuscarRomPorId(id);
-                if (model != null)
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
                 {
-                    ExcluirRom(model);
+                    if (id == 0)
+                    {
+                        ViewBag.ErroMensagem = "Parâmetros incorretos!";
+                    }
+                    else
+                    {
+                        var token = PegarTokenAtual();
+                        if (!string.IsNullOrEmpty(token))
+                        {
+                            var model = BuscarRomPorId(id, token);
+
+                            if (TempData["Unauthorized"] != null)
+                            {
+                                if (model != null)
+                                {
+                                    ExcluirRom(model, token);
+                                }
+                            }
+                            else
+                            {
+                                token = PegarTokenRefreshAtual();
+                                if (!string.IsNullOrEmpty(token))
+                                {
+                                    model = BuscarRomPorId(id, token);
+                                    if (TempData["Unauthorized"] != null)
+                                    {
+                                        if(model != null)
+                                        {
+                                            ExcluirRom(model, token);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        HttpContext.GetOwinContext().Authentication.SignOut();
+                                        return RedirectToAction("Login", "Home");
+                                    }
+                                }
+                                Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                                HttpContext.GetOwinContext().Authentication.SignOut();
+                                return RedirectToAction("Login", "Home");
+                            }
+                        }
+                        else
+                        {
+                            token = PegarTokenRefreshAtual();
+                            if (!string.IsNullOrEmpty(token))
+                            {
+                                var model = BuscarRomPorId(id, token);
+                                if (TempData["Unauthorized"] != null)
+                                {
+                                    if (model != null)
+                                    {
+                                        ExcluirRom(model, token);
+                                    }
+                                }
+                                else
+                                {
+                                    HttpContext.GetOwinContext().Authentication.SignOut();
+                                    return RedirectToAction("Login", "Home");
+                                }
+                            }
+                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                            HttpContext.GetOwinContext().Authentication.SignOut();
+                            return RedirectToAction("Login", "Home");
+                        }
+                    }
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    Session["ErroMensagem"] = "Acesso restrito!";
+                    return RedirectToAction("Login", "Home");
                 }
             }
-            return RedirectToAction("Index");
+            catch (Exception ex)
+            {
+                Session["ErroMensagem"] = "Erro: " + ex.Message;
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    HttpContext.GetOwinContext().Authentication.SignOut();
+                }
+                return RedirectToAction("Login", "Home");
+            }
         }
     }
 }

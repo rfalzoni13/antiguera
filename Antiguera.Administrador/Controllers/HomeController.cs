@@ -4,7 +4,6 @@ using Antiguera.Infra.Cross.Infrastructure;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -18,51 +17,117 @@ namespace Antiguera.Administrador.Controllers
     public class HomeController : BaseController
     {
         // GET: Home
+        [Authorize]
         public ActionResult Index()
         {
-            HomeModel model = new HomeModel();
-            model.Usuarios = ListarUsuarios();
-            model.Jogos = ListarJogos();
-            return View(model);
+            try
+            {
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    HomeModel model = new HomeModel();
+
+                    var token = PegarTokenAtual();
+                    if (!string.IsNullOrEmpty(token))
+                    {
+                        model.Usuarios = ListarUsuarios(token);
+                        model.Jogos = ListarJogos(token);
+                        if (TempData["Unauthorized"] != null)
+                        {
+                            token = PegarTokenRefreshAtual();
+                            if (!string.IsNullOrEmpty(token))
+                            {
+                                model.Usuarios = ListarUsuarios(token);
+                                model.Jogos = ListarJogos(token);
+
+                                if (TempData["Unauthorized"] != null)
+                                {
+                                    Session["ErroMensagem"] = ViewBag.ErroMensagem;
+                                    HttpContext.GetOwinContext().Authentication.SignOut();
+                                    return RedirectToAction("Login");
+                                }
+                                else
+                                {
+                                    return View(model);
+                                }
+                            }
+                            else
+                            {
+                                Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                                HttpContext.GetOwinContext().Authentication.SignOut();
+                                return RedirectToAction("Login");
+                            }
+                        }
+                        return View(model);
+                    }
+                    else
+                    {
+                        Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                        HttpContext.GetOwinContext().Authentication.SignOut();
+                        return RedirectToAction("Login");
+                    }
+                }
+                else
+                {
+                    Session["ErroMensagem"] = "Acesso restrito!";
+                    return RedirectToAction("Login");
+                }
+            }
+            catch (Exception ex)
+            {
+                Session["ErroMensagem"] = "Erro: " + ex.Message;
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    HttpContext.GetOwinContext().Authentication.SignOut();
+                }
+                return RedirectToAction("Login");
+            }
         }
 
         public ActionResult Login()
         {
             LoginModel model = new LoginModel();
-
-            if (HttpContext.Request.Cookies.AllKeys.Contains("Antiguera"))
+            try
             {
-                if (HttpContext.Request.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                if (HttpContext.Request.Cookies.AllKeys.Contains("Antiguera"))
                 {
-                    var token = PegarTokenAtual();
-                    var refreshToken = PegarTokenRefreshAtual();
-
-                    if(!string.IsNullOrEmpty(token))
+                    if (HttpContext.Request.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
                     {
-                        var user = HttpContext.GetOwinContext().Authentication.User.Identity.Name;
+                        var token = PegarTokenAtual();
+                        var refreshToken = PegarTokenRefreshAtual();
 
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-
-                        using (var responseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPeloLoginOuEmail + user).Result)
+                        if (!string.IsNullOrEmpty(token))
                         {
-                            if (responseUsuario.IsSuccessStatusCode)
-                            {
-                                var resultUsuario = responseUsuario.Content.ReadAsAsync<UsuarioModel>().Result;
-                            }
-                            else if(!string.IsNullOrEmpty(refreshToken))
-                            {
-                                var newToken = RefreshToken(refreshToken);
-                                if(newToken != null)
-                                {
-                                    Cliente.DefaultRequestHeaders.Clear();
-                                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + newToken);
+                            var user = HttpContext.GetOwinContext().Authentication.User.Identity.Name;
 
-                                    using (var newResponseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios + user).Result)
+                            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+                            using (var responseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPeloLoginOuEmail + user).Result)
+                            {
+                                if (responseUsuario.IsSuccessStatusCode)
+                                {
+                                    var resultUsuario = responseUsuario.Content.ReadAsAsync<UsuarioModel>().Result;
+                                }
+                                else if (!string.IsNullOrEmpty(refreshToken))
+                                {
+                                    var newToken = RefreshToken(refreshToken);
+                                    if (newToken != null)
                                     {
-                                        if(newResponseUsuario.IsSuccessStatusCode)
+                                        Cliente.DefaultRequestHeaders.Clear();
+                                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + newToken);
+
+                                        using (var newResponseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios + user).Result)
                                         {
-                                            var resultUsuario = responseUsuario.Content.ReadAsAsync<UsuarioModel>().Result;
+                                            if (newResponseUsuario.IsSuccessStatusCode)
+                                            {
+                                                var resultUsuario = responseUsuario.Content.ReadAsAsync<UsuarioModel>().Result;
+                                            }
                                         }
+                                    }
+                                    else
+                                    {
+                                        ViewBag.ErroMensagem = "Sua sessão expirou, faça login novamente!";
+                                        HttpContext.GetOwinContext().Authentication.SignOut();
+                                        return View(model);
                                     }
                                 }
                                 else
@@ -72,14 +137,14 @@ namespace Antiguera.Administrador.Controllers
                                     return View(model);
                                 }
                             }
-                            else
-                            {
-                                ViewBag.ErroMensagem = "Sua sessão expirou, faça login novamente!";
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return View(model);
-                            }
+                            return RedirectToAction("Index");
                         }
-                        return RedirectToAction("Index");
+                        else
+                        {
+                            ViewBag.ErroMensagem = "Sua sessão expirou, faça login novamente!";
+                            HttpContext.GetOwinContext().Authentication.SignOut();
+                            return View(model);
+                        }
                     }
                     else
                     {
@@ -90,21 +155,29 @@ namespace Antiguera.Administrador.Controllers
                 }
                 else
                 {
-                    ViewBag.ErroMensagem = "Sua sessão expirou, faça login novamente!";
                     HttpContext.GetOwinContext().Authentication.SignOut();
+
+                    if (Session["logout"] != null)
+                    {
+                        ViewBag.StatusMensagem = Session["logout"];
+                        Session.Clear();
+                    }
+                    if(Session["ErroMensagem"] != null)
+                    {
+                        ViewBag.ErroMensagem = Session["ErroMensagem"];
+                        Session.Clear();
+                    }
+
                     return View(model);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                HttpContext.GetOwinContext().Authentication.SignOut();
-
-                if (Session["logout"] != null)
+                ViewBag.ErroMensagem = "Erro: " + ex.Message;
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
                 {
-                    ViewBag.StatusMensagem = Session["logout"];
-                    Session.Clear();
+                    HttpContext.GetOwinContext().Authentication.SignOut();
                 }
-
                 return View(model);
             }
         }
@@ -112,85 +185,109 @@ namespace Antiguera.Administrador.Controllers
         [HttpPost]
         public ActionResult Login(LoginModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                using (var responseFirstLogin = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlLoginAdmin, model).Result)
+                if (ModelState.IsValid)
                 {
-                    if (responseFirstLogin.IsSuccessStatusCode)
+                    using (var responseFirstLogin = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlLoginAdmin, model).Result)
                     {
-                        var token = ObterToken(model);
-
-                        if (token != null)
+                        if (responseFirstLogin.IsSuccessStatusCode)
                         {
-                            var user = responseFirstLogin.Content.ReadAsAsync<ApplicationUser>().Result;
+                            var token = ObterToken(model);
 
-                            var applicationSign = HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-
-                            if (model.RememberMe)
+                            if (token != null)
                             {
-                                AuthenticationProperties options = new AuthenticationProperties()
-                                {
-                                    AllowRefresh = true,
-                                    IsPersistent = true,
-                                    ExpiresUtc = DateTime.Now.AddSeconds(token.expires_in)
-                                };
+                                var user = responseFirstLogin.Content.ReadAsAsync<ApplicationUser>().Result;
 
-                                var claims = new[]
+                                var applicationSign = HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+
+                                if (model.RememberMe)
                                 {
+                                    AuthenticationProperties options = new AuthenticationProperties()
+                                    {
+                                        AllowRefresh = true,
+                                        IsPersistent = true,
+                                        ExpiresUtc = DateTime.Now.AddSeconds(token.expires_in)
+                                    };
+
+                                    var claims = new[]
+                                    {
                                     new Claim(ClaimTypes.Name, user.UserName),
                                     new Claim("AccessToken", token.access_token),
                                     new Claim("RefreshToken", token.refresh_token)
                                 };
 
-                                var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
+                                    var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
 
-                                HttpContext.Request.GetOwinContext().Authentication.SignIn(options, identity);
-                                applicationSign.SignIn(user, true, false);
-                            }
-                            else
-                            {
-                                Session["token"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(token.access_token));
-                                applicationSign.SignIn(user, false, false);
-                            }
-
-                            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token.access_token);
-
-                            using (var responseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPeloLoginOuEmail + model.UserName).Result)
-                            {
-                                if (responseUsuario.IsSuccessStatusCode)
+                                    HttpContext.Request.GetOwinContext().Authentication.SignIn(options, identity);
+                                    applicationSign.SignIn(user, true, false);
+                                }
+                                else
                                 {
-                                    var resultUsuario = responseUsuario.Content.ReadAsAsync<UsuarioModel>().Result;
+                                    Session["token"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(token.access_token));
+                                    applicationSign.SignIn(user, false, false);
+                                }
+
+                                Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token.access_token);
+
+                                using (var responseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPeloLoginOuEmail + model.UserName).Result)
+                                {
+                                    if (responseUsuario.IsSuccessStatusCode)
+                                    {
+                                        var resultUsuario = responseUsuario.Content.ReadAsAsync<UsuarioModel>().Result;
+                                    }
                                 }
                             }
+                            return RedirectToAction("Index");
                         }
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        ViewBag.ErroMensagem = responseFirstLogin.Content.ReadAsAsync<string>().Result;
-                        return View(model);
+                        else
+                        {
+                            ViewBag.ErroMensagem = responseFirstLogin.Content.ReadAsAsync<string>().Result;
+                            return View(model);
+                        }
                     }
                 }
+                else
+                {
+                    ViewBag.ErroMensagem = "Preencha todos os campos corretamente!";
+                    return View(model);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                ViewBag.ErroMensagem = "Preencha todos os campos corretamente!";
+                ViewBag.ErroMensagem = "Erro: " + ex.Message;
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    HttpContext.GetOwinContext().Authentication.SignOut();
+                }
                 return View(model);
             }
         }
 
         public ActionResult Logoff()
         {
-            if (Session != null)
+            try
             {
-                Session.Clear();
+                if (Session != null)
+                {
+                    Session.Clear();
+                }
+
+                HttpContext.GetOwinContext().Authentication.SignOut();
+
+                Session["logout"] = "Você foi desconectado!";
+
+                return RedirectToAction("Login");
             }
-
-            HttpContext.GetOwinContext().Authentication.SignOut();
-
-            Session["logout"] = "Você foi desconectado!";
-
-            return RedirectToAction("Login");
+            catch (Exception ex)
+            {
+                Session["ErroMensagem"] = "Erro: " + ex.Message;
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    HttpContext.GetOwinContext().Authentication.SignOut();
+                }
+                return RedirectToAction("Login");
+            }
         }
     }
 }

@@ -36,6 +36,16 @@ namespace Antiguera.Administrador.Config
         public string UrlExcluirUsuario => "api/antiguera/admin/excluirusuario";
 
         public string UrlApagarUsuarios => "api/antiguera/admin/apagarusuarios";
+
+        public string UrlListarTodosAcessos = "api/antiguera/admin/listartodososacessos";
+
+        public string UrlListarAcessoPorId = "api/antiguera/admin/listaracessosporid";
+
+        public string UrlInserirAcesso = "api/antiguera/admin/inseriracesso";
+
+        public string UrlExcluirAcesso = "api/antiguera/admin/excluiracesso";
+
+        public string UrlApagarAcessos = "api/antiguera/admin/apagaracessos";
         #endregion
 
         #region Emulador
