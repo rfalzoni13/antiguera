@@ -279,6 +279,7 @@ namespace AntigueraWebApi.Controllers
         /// </summary>
         /// <response code="400">Bad Request</response>
         /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Insere um novo usuário passando um objeto no body da requisição no método POST</remarks>
         /// <param name="usuarioModel">Objeto do usuário</param>
@@ -376,6 +377,7 @@ namespace AntigueraWebApi.Controllers
         /// </summary>
         /// <response code="400">Bad Request</response>
         /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza o usuário passando o objeto no body da requisição pelo método PUT</remarks>
         /// <param name="usuarioModel">Objeto do usuário</param>
@@ -476,6 +478,7 @@ namespace AntigueraWebApi.Controllers
         /// </summary>
         /// <response code="400">Bad Request</response>
         /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza o usuário administrador passando o objeto no body da requisição pelo método PUT</remarks>
         /// <param name="usuarioModel">Objeto do usuário</param>
@@ -576,6 +579,7 @@ namespace AntigueraWebApi.Controllers
         /// </summary>
         /// <response code="400">Bad Request</response>
         /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza a senha do usuário passando o objeto no body da requisição pelo método PUT</remarks>
         /// <param name="usuarioModel">Objeto do usuário</param>
@@ -650,6 +654,7 @@ namespace AntigueraWebApi.Controllers
         /// </summary>
         /// <response code="400">Bad Request</response>
         /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza a senha do administrador passando o objeto no body da requisição pelo método PUT</remarks>
         /// <param name="usuarioModel">Objeto do usuário</param>
@@ -723,6 +728,7 @@ namespace AntigueraWebApi.Controllers
         /// </summary>
         /// <response code="400">Bad Request</response>
         /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Exclui o usuário passando o objeto no body da requisição pelo método DELETE</remarks>
         /// <param name="usuarioModel">Objeto do usuário</param>
@@ -1018,6 +1024,7 @@ namespace AntigueraWebApi.Controllers
         /// </summary>
         /// <response code="400">Bad Request</response>
         /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Exclui o acesso usuário passando o objeto no body da requisição pelo método DELETE</remarks>
         /// <param name="acessoModel">Objeto do acesso</param>
