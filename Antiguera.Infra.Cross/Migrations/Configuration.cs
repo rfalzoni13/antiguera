@@ -15,20 +15,6 @@ namespace Antiguera.Infra.Cross.Migrations
 
         protected override void Seed(Antiguera.Infra.Cross.Infrastructure.ApplicationDbContext context)
         {
-            var manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
-
-            var user = new ApplicationUser()
-            {
-                UserName = "rfalzoni13",
-                Email = "renato.lopes.falzoni@gmail.com",
-                EmailConfirmed = true,
-                FirstName = "Renato",
-                LastName = "Falzoni",
-                Level = 1,
-                JoinDate = DateTime.Now
-            };
-
-            manager.Create(user, "123456");
         }
     }
 }
