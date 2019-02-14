@@ -306,27 +306,32 @@ namespace AntigueraWebApi.Controllers
                             await appRole.CreateAsync(role);
                         }
 
-                        var user = new ApplicationUser()
+                        var user = await manager.FindByNameAsync(usuarioModel.Login);
+
+                        if (user == null)
                         {
-                            FirstName = usuarioModel.Nome.Split(' ')[0],
-                            LastName = usuarioModel.Nome.Split(' ')[2],
-                            Email = usuarioModel.Email,
-                            UserName = usuarioModel.Login,
-                            JoinDate = DateTime.Now
-                        };
+                            user = new ApplicationUser()
+                            {
+                                FirstName = usuarioModel.Nome.Split(' ')[0],
+                                LastName = usuarioModel.Nome.Split(' ')[2],
+                                Email = usuarioModel.Email,
+                                UserName = usuarioModel.Login,
+                                JoinDate = DateTime.Now
+                            };
 
-                        await manager.CreateAsync(user, usuarioModel.Senha);
+                            await manager.CreateAsync(user, usuarioModel.Senha);
 
-                        await manager.AddToRoleAsync(user.Id, role.Name);
+                            await manager.AddToRoleAsync(user.Id, role.Name);
+                        }
                     }
                     else
                     {
                         logger.Error("InserirUsuario - Id de acesso não localizado");
-                        stats.Status = HttpStatusCode.BadRequest;
+                        stats.Status = HttpStatusCode.NotFound;
                         stats.Mensagem = "Id de acesso não localizado!";
 
                         logger.Info("InserirUsuario - Finalizado");
-                        return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                        return Request.CreateResponse(HttpStatusCode.NotFound, stats);
                     }
 
                     var senha = BCrypt.HashPassword(usuarioModel.Senha, BCrypt.GenerateSalt());
@@ -400,16 +405,37 @@ namespace AntigueraWebApi.Controllers
 
                         var user = await manager.FindByNameAsync(usuarioModel.Login);
 
-                        user.FirstName = usuarioModel.Nome.Split(' ')[0];
-                        user.LastName = usuarioModel.Nome.Split(' ')[2];
-                        user.Email = usuarioModel.Email;
-                        user.UserName = usuarioModel.Login;
+                        if(user != null)
+                        {
+                            user.FirstName = usuarioModel.Nome.Split(' ')[0];
+                            user.LastName = usuarioModel.Nome.Split(' ')[2];
+                            user.Email = usuarioModel.Email;
+                            user.UserName = usuarioModel.Login;
 
-                        var roles = await manager.GetRolesAsync(user.Id);
-                        await manager.RemoveFromRolesAsync(user.Id, roles.ToArray());
-                        await manager.AddToRoleAsync(user.Id, role.Name);
+                            var roles = await manager.GetRolesAsync(user.Id);
+                            await manager.RemoveFromRolesAsync(user.Id, roles.ToArray());
+                            await manager.AddToRoleAsync(user.Id, role.Name);
 
-                        await manager.UpdateAsync(user);
+                            await manager.UpdateAsync(user);
+                        }
+                        else
+                        {
+                            logger.Error("AtualizarUsuario - Usuário não localizado");
+                            stats.Status = HttpStatusCode.NotFound;
+                            stats.Mensagem = "Usuário não localizado!";
+
+                            logger.Info("AtualizarUsuario - Finalizado");
+                            return Request.CreateResponse(HttpStatusCode.NotFound, stats);
+                        }
+                    }
+                    else
+                    {
+                        logger.Error("AtualizarUsuario - Id de acesso não localizado");
+                        stats.Status = HttpStatusCode.NotFound;
+                        stats.Mensagem = "Id de acesso não localizado!";
+
+                        logger.Info("AtualizarUsuario - Finalizado");
+                        return Request.CreateResponse(HttpStatusCode.NotFound, stats);
                     }
 
                     usuarioModel.Modified = DateTime.Now;
@@ -479,16 +505,37 @@ namespace AntigueraWebApi.Controllers
 
                         var user = await manager.FindByNameAsync(usuarioModel.Login);
 
-                        user.FirstName = usuarioModel.Nome.Split(' ')[0];
-                        user.LastName = usuarioModel.Nome.Split(' ')[2];
-                        user.Email = usuarioModel.Email;
-                        user.UserName = usuarioModel.Login;
+                        if (user != null)
+                        {
+                            user.FirstName = usuarioModel.Nome.Split(' ')[0];
+                            user.LastName = usuarioModel.Nome.Split(' ')[2];
+                            user.Email = usuarioModel.Email;
+                            user.UserName = usuarioModel.Login;
 
-                        var roles = await manager.GetRolesAsync(user.Id);
-                        await manager.RemoveFromRolesAsync(user.Id, roles.ToArray());
-                        await manager.AddToRoleAsync(user.Id, role.Name);
+                            var roles = await manager.GetRolesAsync(user.Id);
+                            await manager.RemoveFromRolesAsync(user.Id, roles.ToArray());
+                            await manager.AddToRoleAsync(user.Id, role.Name);
 
-                        await manager.UpdateAsync(user);
+                            await manager.UpdateAsync(user);
+                        }
+                        else
+                        {
+                            logger.Error("AtualizarAdmin - Usuário não localizado");
+                            stats.Status = HttpStatusCode.NotFound;
+                            stats.Mensagem = "Usuário não localizado!";
+
+                            logger.Info("AtualizarAdmin - Finalizado");
+                            return Request.CreateResponse(HttpStatusCode.NotFound, stats);
+                        }
+                    }
+                    else
+                    {
+                        logger.Error("AtualizarAdmin - Id de acesso não localizado");
+                        stats.Status = HttpStatusCode.NotFound;
+                        stats.Mensagem = "Id de acesso não localizado!";
+
+                        logger.Info("AtualizarAdmin - Finalizado");
+                        return Request.CreateResponse(HttpStatusCode.NotFound, stats);
                     }
 
                     usuarioModel.Modified = DateTime.Now;
@@ -552,6 +599,15 @@ namespace AntigueraWebApi.Controllers
                         await manager.RemovePasswordAsync(user.Id);
 
                         await manager.AddPasswordAsync(user.Id, usuarioModel.Senha);
+                    }
+                    else
+                    {
+                        logger.Error("AtualizarSenhaUsuario - Usuário não localizado");
+                        stats.Status = HttpStatusCode.NotFound;
+                        stats.Mensagem = "Usuário não localizado!";
+
+                        logger.Info("AtualizarSenhaUsuario - Finalizado");
+                        return Request.CreateResponse(HttpStatusCode.NotFound, stats);
                     }
 
                     usuarioModel.Modified = DateTime.Now;
@@ -617,6 +673,15 @@ namespace AntigueraWebApi.Controllers
 
                         await manager.AddPasswordAsync(user.Id, usuarioModel.Senha);
                     }
+                    else
+                    {
+                        logger.Error("AtualizarSenhaAdmin - Usuário não localizado");
+                        stats.Status = HttpStatusCode.NotFound;
+                        stats.Mensagem = "Usuário não localizado!";
+
+                        logger.Info("AtualizarSenhaAdmin - Finalizado");
+                        return Request.CreateResponse(HttpStatusCode.NotFound, stats);
+                    }
 
                     usuarioModel.Modified = DateTime.Now;
 
@@ -679,6 +744,15 @@ namespace AntigueraWebApi.Controllers
                     if (user != null)
                     {
                         await manager.DeleteAsync(user);
+                    }
+                    else
+                    {
+                        logger.Error("ExcluirUsuario - Usuário não localizado");
+                        stats.Status = HttpStatusCode.NotFound;
+                        stats.Mensagem = "Usuário não localizado!";
+
+                        logger.Info("ExcluirUsuario - Finalizado");
+                        return Request.CreateResponse(HttpStatusCode.NotFound, stats);
                     }
 
                     var usuario = Mapper.Map<UsuarioModel, Usuario>(usuarioModel);
@@ -964,6 +1038,15 @@ namespace AntigueraWebApi.Controllers
                     if (role != null)
                     {
                         await appRole.DeleteAsync(role);
+                    }
+                    else
+                    {
+                        logger.Error("ExcluirAcesso - Id de acesso não localizado");
+                        stats.Status = HttpStatusCode.NotFound;
+                        stats.Mensagem = "Id de acesso não localizado!";
+
+                        logger.Info("ExcluirAcesso - Finalizado");
+                        return Request.CreateResponse(HttpStatusCode.NotFound, stats);
                     }
 
                     var acesso = Mapper.Map<AcessoModel, Acesso>(acessoModel);
