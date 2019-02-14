@@ -293,6 +293,7 @@ namespace AntigueraWebApi.Controllers
                         user.FirstName = usuarioModel.Nome.Split(' ')[0];
                         user.LastName = usuarioModel.Nome.Split(' ')[2];
                         user.Email = usuarioModel.Email;
+                        user.UserName = usuarioModel.Login;
 
                         var roles = await manager.GetRolesAsync(user.Id);
                         await manager.RemoveFromRolesAsync(user.Id, roles.ToArray());
