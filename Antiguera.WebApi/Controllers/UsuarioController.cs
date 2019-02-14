@@ -8,6 +8,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using NLog;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -200,7 +201,8 @@ namespace AntigueraWebApi.Controllers
                             FirstName = usuarioModel.Nome.Split(' ')[0],
                             LastName = usuarioModel.Nome.Split(' ')[2],
                             Email = usuarioModel.Email,
-                            UserName = usuarioModel.Login
+                            UserName = usuarioModel.Login,
+                            JoinDate = DateTime.Now
                         };
 
                         await manager.CreateAsync(user, usuarioModel.Senha);
@@ -266,13 +268,38 @@ namespace AntigueraWebApi.Controllers
         // PUT api/antiguera/usuario/atualizarusuario
         [HttpPut]
         [Route("atualizarusuario")]
-        public HttpResponseMessage AtualizarUsuario([FromBody]UsuarioModel usuarioModel)
+        public async Task<HttpResponseMessage> AtualizarUsuario([FromBody]UsuarioModel usuarioModel)
         {
             logger.Info("AtualizarUsuario - Iniciado");
             try
             {
                 if (ModelState.IsValid)
                 {
+                    var appRole = HttpContext.Current.GetOwinContext().Get<ApplicationRoleManager>();
+                    var manager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+
+                    var acesso = _acessoAppServico.BuscarPorId(usuarioModel.AcessoId);
+                    if (acesso != null)
+                    {
+                        var role = await appRole.FindByNameAsync(acesso.Nome);
+                        if (role == null)
+                        {
+                            role = new IdentityRole(acesso.Nome);
+                            await appRole.CreateAsync(role);
+                        }
+
+                        var user = await manager.FindByNameAsync(usuarioModel.Login);
+
+                        user.FirstName = usuarioModel.Nome.Split(' ')[0];
+                        user.LastName = usuarioModel.Nome.Split(' ')[2];
+                        user.Email = usuarioModel.Email;
+
+                        var roles = await manager.GetRolesAsync(user.Id);
+                        await manager.RemoveFromRolesAsync(user.Id, roles.ToArray());
+                        
+                        await manager.UpdateAsync(user);
+                    }
+
                     usuarioModel.Modified = DateTime.Now;
 
                     var usuario = Mapper.Map<UsuarioModel, Usuario>(usuarioModel);
@@ -318,13 +345,24 @@ namespace AntigueraWebApi.Controllers
         // PUT api/antiguera/usuario/atualizarsenhausuario
         [HttpPut]
         [Route("atualizarsenhausuario")]
-        public HttpResponseMessage AtualizarSenhaUsuario([FromBody]UsuarioModel usuarioModel)
+        public async Task<HttpResponseMessage> AtualizarSenhaUsuario([FromBody]UsuarioModel usuarioModel)
         {
             logger.Info("AtualizarSenhaUsuario - Iniciado");
             try
             {
                 if (ModelState.IsValid)
                 {
+                    var manager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+
+                    var user = await manager.FindByNameAsync(usuarioModel.Login);
+
+                    if (user != null)
+                    {
+                        await manager.RemovePasswordAsync(user.Id);
+
+                        await manager.AddPasswordAsync(user.Id, usuarioModel.Senha);
+                    }
+
                     usuarioModel.Modified = DateTime.Now;
 
                     var senha = BCrypt.HashPassword(usuarioModel.Senha, BCrypt.GenerateSalt());
