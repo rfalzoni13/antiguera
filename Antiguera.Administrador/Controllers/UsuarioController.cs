@@ -38,7 +38,7 @@ namespace Antiguera.Administrador.Controllers
                         {
                             Session["ErroMensagem"] = ViewBag.ErroMensagem;
                             HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login");
+                            return RedirectToAction("Login", "Home");
                         }
                         else
                         {
@@ -55,7 +55,7 @@ namespace Antiguera.Administrador.Controllers
                             {
                                 Session["ErroMensagem"] = ViewBag.ErroMensagem;
                                 HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login");
+                                return RedirectToAction("Login", "Home");
                             }
                             else
                             {
@@ -137,7 +137,7 @@ namespace Antiguera.Administrador.Controllers
                             {
                                 Session["ErroMensagem"] = ViewBag.ErroMensagem;
                                 HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login");
+                                return RedirectToAction("Login", "Home");
                             }
 
                             foreach (var acesso in acessos)
