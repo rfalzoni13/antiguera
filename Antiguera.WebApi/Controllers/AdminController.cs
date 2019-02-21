@@ -314,7 +314,7 @@ namespace AntigueraWebApi.Controllers
                             user = new ApplicationUser()
                             {
                                 FirstName = usuarioModel.Nome.Split(' ')[0],
-                                LastName = usuarioModel.Nome.Split(' ')[2],
+                                LastName = usuarioModel.Nome.Split(' ').LastOrDefault(),
                                 Email = usuarioModel.Email,
                                 UserName = usuarioModel.Login,
                                 JoinDate = DateTime.Now
@@ -410,7 +410,7 @@ namespace AntigueraWebApi.Controllers
                         if(user != null)
                         {
                             user.FirstName = usuarioModel.Nome.Split(' ')[0];
-                            user.LastName = usuarioModel.Nome.Split(' ')[2];
+                            user.LastName = usuarioModel.Nome.Split(' ').LastOrDefault();
                             user.Email = usuarioModel.Email;
                             user.UserName = usuarioModel.Login;
 
@@ -511,7 +511,7 @@ namespace AntigueraWebApi.Controllers
                         if (user != null)
                         {
                             user.FirstName = usuarioModel.Nome.Split(' ')[0];
-                            user.LastName = usuarioModel.Nome.Split(' ')[2];
+                            user.LastName = usuarioModel.Nome.Split(' ').LastOrDefault();
                             user.Email = usuarioModel.Email;
                             user.UserName = usuarioModel.Login;
 
