@@ -82,6 +82,11 @@
     display: none;
 }
 
+/*#photoBoxArt {
+    width: 220px;
+    height: 300px;
+}*/
+
 /* Safari */
 @-webkit-keyframes spin {
     0% {
