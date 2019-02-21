@@ -260,3 +260,5 @@ paket-files/
 __pycache__/
 *.pyc
 /Antiguera.WebApi/log.txt
+*.zip
+*.jpg
