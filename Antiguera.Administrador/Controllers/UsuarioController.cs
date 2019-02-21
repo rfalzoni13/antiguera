@@ -20,50 +20,23 @@ namespace Antiguera.Administrador.Controllers
             {
                 if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
                 {
-                    if (TempData["Mensagem"] != null)
+                    if (Session["Mensagem"] != null)
                     {
-                        ViewBag.Mensagem = TempData["Mensagem"];
+                        ViewBag.Mensagem = Session["Mensagem"];
                     }
 
-                    if (TempData["ErroMensagem"] != null)
+                    if (Session["ErroMensagem"] != null)
                     {
-                        ViewBag.ErroMensagem = TempData["ErroMensagem"];
+                        ViewBag.ErroMensagem = Session["ErroMensagem"];
                     }
 
-                    var token = PegarTokenAtual();
-                    if (!string.IsNullOrEmpty(token))
+                    var lista = ListarUsuarios();
+                    if (Session["Unauthorized"] != null)
                     {
-                        var lista = ListarUsuarios(token);
-                        if (TempData["Unauthorized"] != null)
-                        {
-                            Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-                        else
-                        {
-                            lista.OrderBy(j => j.Id).ToPagedList(pagina, 4);
-                        }
+                        HttpContext.GetOwinContext().Authentication.SignOut();
+                        return RedirectToAction("Login", "Home");
                     }
-                    else
-                    {
-                        token = PegarTokenRefreshAtual();
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            var lista = ListarUsuarios(token);
-                            if (TempData["Unauthorized"] != null)
-                            {
-                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-                            else
-                            {
-                                lista.OrderBy(j => j.Id).ToPagedList(pagina, 4);
-                            }
-                        }
-                    }
-                    return View();
+                    return View(lista.OrderBy(x => x.Id).ToPagedList(pagina, 4));
                 }
                 else
                 {
@@ -94,67 +67,21 @@ namespace Antiguera.Administrador.Controllers
 
                     model.ListaAcessos.Add(new SelectListItem() { Text = "Selecione uma opção...", Value = "0" });
 
-                    var token = PegarTokenAtual();
-                    if(!string.IsNullOrEmpty(token))
+                    var acessos = ListarAcessos();
+                    if (TempData["Unauthorized"] != null)
                     {
-                        var acessos = ListarAcessos(token);
-                        if (TempData["Unauthorized"] != null)
-                        {
-                            token = PegarTokenRefreshAtual();
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                acessos = ListarAcessos(token);
-                                if (TempData["Unauthorized"] != null)
-                                {
-                                    Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                    HttpContext.GetOwinContext().Authentication.SignOut();
-                                    return RedirectToAction("Login", "Home");
-                                }
-                            }
-                            else
-                            {
-                                Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-                        }
+                        HttpContext.GetOwinContext().Authentication.SignOut();
+                        return RedirectToAction("Login", "Home");
+                    }
 
-                        foreach(var acesso in acessos)
+                    foreach(var acesso in acessos)
+                    {
+                        if(acesso != null)
                         {
-                            if(acesso != null)
-                            {
-                                model.ListaAcessos.Add(new SelectListItem() { Text = acesso.Nome, Value = acesso.Id.ToString() });
-                            }
+                            model.ListaAcessos.Add(new SelectListItem() { Text = acesso.Nome, Value = acesso.Id.ToString() });
                         }
                     }
-                    else
-                    {
-                        token = PegarTokenRefreshAtual();
-                        if(!string.IsNullOrEmpty(token))
-                        {
-                            var acessos = ListarAcessos(token);
-                            if(TempData["Unauthorized"] != null)
-                            {
-                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-
-                            foreach (var acesso in acessos)
-                            {
-                                if (acesso != null)
-                                {
-                                    model.ListaAcessos.Add(new SelectListItem() { Text = acesso.Nome, Value = acesso.Id.ToString() });
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-                    }
+                    
                     return View(model);
                 }
                 else
@@ -184,92 +111,21 @@ namespace Antiguera.Administrador.Controllers
                 {
                     if (model != null && ModelState.IsValid)
                     {
-                        if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
+
+                        CadastrarUsuario(model);
+
+                        if (Session["Unauthorized"] != null)
                         {
-                            var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
-                            var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
-                            model.FileFoto.SaveAs(photoPath);
-                            model.UrlFotoUpload = "/Content/Images/Profile/" + fotoFileName;
-                        }
-
-                        var token = PegarTokenAtual();
-
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            if (CadastrarUsuario(model, token))
-                            {
-                                return View("Index");
-                            }
-                            else
-                            {
-                                if (TempData["Unauthorized"] != null)
-                                {
-                                    token = PegarTokenRefreshAtual();
-                                    if (!string.IsNullOrEmpty(token))
-                                    {
-                                        if (CadastrarUsuario(model, token))
-                                        {
-                                            return View("Index");
-                                        }
-                                        else
-                                        {
-                                            if (TempData["Unauthorized"] != null)
-                                            {
-                                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                                HttpContext.GetOwinContext().Authentication.SignOut();
-
-                                                if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
-                                                {
-                                                    var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
-                                                    var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
-                                                    System.IO.File.Delete(photoPath);
-                                                }
-
-                                                return RedirectToAction("Login", "Home");
-                                            }
-                                            return View(model);
-                                        }
-                                    }
-                                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                                    HttpContext.GetOwinContext().Authentication.SignOut();
-                                    return RedirectToAction("Login", "Home");
-                                }
-                                return View(model);
-                            }
-                        }
-                        else
-                        {
-                            token = PegarTokenRefreshAtual();
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                if (CadastrarUsuario(model, token))
-                                {
-                                    return View("Index");
-                                }
-                                else
-                                {
-                                    if (TempData["Unauthorized"] != null)
-                                    {
-                                        Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                        HttpContext.GetOwinContext().Authentication.SignOut();
-
-                                        if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
-                                        {
-                                            var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
-                                            var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
-                                            System.IO.File.Delete(photoPath);
-                                        }
-
-                                        return RedirectToAction("Login", "Home");
-                                    }
-                                }
-                            }
-                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
                             HttpContext.GetOwinContext().Authentication.SignOut();
                             return RedirectToAction("Login", "Home");
                         }
+
+                        return View("Index");
                     }
-                    return View(model);
+                    else
+                    {
+                        return View(model);
+                    }
                 }
                 else
                 {
@@ -295,84 +151,27 @@ namespace Antiguera.Administrador.Controllers
             {
                 if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
                 {
-                    var token = PegarTokenAtual();
-                    if (!string.IsNullOrEmpty(token))
+                    var model = BuscarUsuarioPorId(id);
+                    model.ListaAcessos = new List<SelectListItem>();
+
+                    model.ListaAcessos.Add(new SelectListItem() { Text = "Selecione uma opção...", Value = "0" });
+
+                    var acessos = ListarAcessos();
+                    if (TempData["Unauthorized"] != null)
                     {
-                        var model = BuscarUsuarioPorId(id, token);
-                        if (TempData["Unauthorized"] != null)
+                        HttpContext.GetOwinContext().Authentication.SignOut();
+                        return RedirectToAction("Login", "Home");
+                    }
+
+                    foreach (var acesso in acessos)
+                    {
+                        if (acesso != null)
                         {
-                            token = PegarTokenRefreshAtual();
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                model = BuscarUsuarioPorId(id, token);
-                                if (TempData["Unauthorized"] != null)
-                                {
-                                    Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                    HttpContext.GetOwinContext().Authentication.SignOut();
-                                    return RedirectToAction("Login", "Home");
-                                }
-                                else
-                                {
-                                    if (model != null)
-                                    {
-                                        return View(model);
-                                    }
-                                    else
-                                    {
-                                        return RedirectToAction("Index");
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-                        }
-                        else
-                        {
-                            if (model != null)
-                            {
-                                return View(model);
-                            }
-                            else
-                            {
-                                return RedirectToAction("Index");
-                            }
+                            model.ListaAcessos.Add(new SelectListItem() { Text = acesso.Nome, Value = acesso.Id.ToString() });
                         }
                     }
-                    else
-                    {
-                        token = PegarTokenRefreshAtual();
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            var model = BuscarUsuarioPorId(id, token);
-                            if (TempData["Unauthorized"] != null)
-                            {
-                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-                            else
-                            {
-                                if (model != null)
-                                {
-                                    return View(model);
-                                }
-                                else
-                                {
-                                    return RedirectToAction("Index");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-                    }
+
+                    return View(model);
                 }
                 else
                 {
@@ -401,92 +200,21 @@ namespace Antiguera.Administrador.Controllers
                 {
                     if (model != null && ModelState.IsValid)
                     {
-                        if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
+
+                        AtualizarUsuario(model);
+
+                        if (Session["Unauthorized"] != null)
                         {
-                            var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
-                            var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
-                            model.FileFoto.SaveAs(photoPath);
-                            model.UrlFotoUpload = "/Content/Images/Profile/" + fotoFileName;
-                        }
-
-                        var token = PegarTokenAtual();
-
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            if (AtualizarUsuario(model, token))
-                            {
-                                return View("Index");
-                            }
-                            else
-                            {
-                                if (TempData["Unauthorized"] != null)
-                                {
-                                    token = PegarTokenRefreshAtual();
-                                    if (!string.IsNullOrEmpty(token))
-                                    {
-                                        if (AtualizarUsuario(model, token))
-                                        {
-                                            return View("Index");
-                                        }
-                                        else
-                                        {
-                                            if (TempData["Unauthorized"] != null)
-                                            {
-                                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                                HttpContext.GetOwinContext().Authentication.SignOut();
-
-                                                if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
-                                                {
-                                                    var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
-                                                    var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
-                                                    System.IO.File.Delete(photoPath);
-                                                }
-
-                                                return RedirectToAction("Login", "Home");
-                                            }
-                                            return View(model);
-                                        }
-                                    }
-                                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                                    HttpContext.GetOwinContext().Authentication.SignOut();
-                                    return RedirectToAction("Login", "Home");
-                                }
-                                return View(model);
-                            }
-                        }
-                        else
-                        {
-                            token = PegarTokenRefreshAtual();
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                if (AtualizarUsuario(model, token))
-                                {
-                                    return View("Index");
-                                }
-                                else
-                                {
-                                    if (TempData["Unauthorized"] != null)
-                                    {
-                                        Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                        HttpContext.GetOwinContext().Authentication.SignOut();
-
-                                        if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
-                                        {
-                                            var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
-                                            var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
-                                            System.IO.File.Delete(photoPath);
-                                        }
-
-                                        return RedirectToAction("Login", "Home");
-                                    }
-                                }
-                            }
-                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
                             HttpContext.GetOwinContext().Authentication.SignOut();
                             return RedirectToAction("Login", "Home");
                         }
+
+                        return View("Index");
                     }
-                    return View(model);
+                    else
+                    {
+                        return View(model);
+                    }
                 }
                 else
                 {
@@ -518,62 +246,16 @@ namespace Antiguera.Administrador.Controllers
                     }
                     else
                     {
-                        var token = PegarTokenAtual();
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            var model = BuscarUsuarioPorId(id, token);
+                        var model = BuscarEmuladorPorId(id);
 
-                            if (TempData["Unauthorized"] != null)
-                            {
-                                if (model != null)
-                                {
-                                    ExcluirUsuario(model, token);
-                                }
-                            }
-                            else
-                            {
-                                token = PegarTokenRefreshAtual();
-                                if (!string.IsNullOrEmpty(token))
-                                {
-                                    model = BuscarUsuarioPorId(id, token);
-                                    if (TempData["Unauthorized"] != null)
-                                    {
-                                        if (model != null)
-                                        {
-                                            ExcluirUsuario(model, token);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        HttpContext.GetOwinContext().Authentication.SignOut();
-                                        return RedirectToAction("Login", "Home");
-                                    }
-                                }
-                                Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-                        }
-                        else
+                        if (Session["Unauthorized"] != null)
                         {
-                            token = PegarTokenRefreshAtual();
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                var model = BuscarUsuarioPorId(id, token);
-                                if (TempData["Unauthorized"] != null)
-                                {
-                                    if (model != null)
-                                    {
-                                        ExcluirUsuario(model, token);
-                                    }
-                                }
-                                else
-                                {
-                                    HttpContext.GetOwinContext().Authentication.SignOut();
-                                    return RedirectToAction("Login", "Home");
-                                }
-                            }
-                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                            HttpContext.GetOwinContext().Authentication.SignOut();
+                            return RedirectToAction("Login", "Home");
+                        }
+                        ExcluirEmulador(model);
+                        if (Session["Unauthorized"] != null)
+                        {
                             HttpContext.GetOwinContext().Authentication.SignOut();
                             return RedirectToAction("Login", "Home");
                         }

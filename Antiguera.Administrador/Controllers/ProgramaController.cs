@@ -29,40 +29,13 @@ namespace Antiguera.Administrador.Controllers
                         ViewBag.ErroMensagem = TempData["ErroMensagem"];
                     }
 
-                    var token = PegarTokenAtual();
-                    if (!string.IsNullOrEmpty(token))
+                    var lista = ListarProgramas();
+                    if (Session["Unauthorized"] != null)
                     {
-                        var lista = ListarProgramas(token);
-                        if (TempData["Unauthorized"] != null)
-                        {
-                            Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-                        else
-                        {
-                            lista.OrderBy(j => j.Id).ToPagedList(pagina, 4);
-                        }
+                        HttpContext.GetOwinContext().Authentication.SignOut();
+                        return RedirectToAction("Login", "Home");
                     }
-                    else
-                    {
-                        token = PegarTokenRefreshAtual();
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            var lista = ListarProgramas(token);
-                            if (TempData["Unauthorized"] != null)
-                            {
-                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-                            else
-                            {
-                                lista.OrderBy(j => j.Id).ToPagedList(pagina, 4);
-                            }
-                        }
-                    }
-                    return View();
+                    return View(lista.OrderBy(x => x.Id).ToPagedList(pagina, 4));
                 }
                 else
                 {
@@ -117,114 +90,21 @@ namespace Antiguera.Administrador.Controllers
                 {
                     if (model != null && ModelState.IsValid)
                     {
-                        if (model.FilePrograma != null && model.FilePrograma.ContentLength > 0)
+
+                        CadastrarPrograma(model);
+
+                        if (Session["Unauthorized"] != null)
                         {
-                            var programaFileName = Path.GetFileName(model.FilePrograma.FileName);
-                            var progPath = Path.Combine(Server.MapPath("~/Content/Programas/"), programaFileName);
-                            model.FilePrograma.SaveAs(progPath);
-                            model.UrlArquivo = "/Content/Programas/" + programaFileName;
-                        }
-
-                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                        {
-                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                            model.FileBoxArt.SaveAs(boxPath);
-                            model.UrlBoxArt = "/Content/Images/BoxArt/" + boxFileName;
-                        }
-
-                        var token = PegarTokenAtual();
-
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            if (CadastrarPrograma(model, token))
-                            {
-                                return View("Index");
-                            }
-                            else
-                            {
-                                if (TempData["Unauthorized"] != null)
-                                {
-                                    token = PegarTokenRefreshAtual();
-                                    if (!string.IsNullOrEmpty(token))
-                                    {
-                                        if (CadastrarPrograma(model, token))
-                                        {
-                                            return View("Index");
-                                        }
-                                        else
-                                        {
-                                            if (TempData["Unauthorized"] != null)
-                                            {
-                                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                                HttpContext.GetOwinContext().Authentication.SignOut();
-
-                                                if (model.FilePrograma != null && model.FilePrograma.ContentLength > 0)
-                                                {
-                                                    var programaFileName = Path.GetFileName(model.FilePrograma.FileName);
-                                                    var progPath = Path.Combine(Server.MapPath("~/Content/Programas/"), programaFileName);
-                                                    System.IO.File.Delete(progPath);
-                                                }
-
-                                                if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                                                {
-                                                    var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                                                    var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                                                    System.IO.File.Delete(boxPath);
-                                                }
-
-                                                return RedirectToAction("Login", "Home");
-                                            }
-                                            return View(model);
-                                        }
-                                    }
-                                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                                    HttpContext.GetOwinContext().Authentication.SignOut();
-                                    return RedirectToAction("Login", "Home");
-                                }
-                                return View(model);
-                            }
-                        }
-                        else
-                        {
-                            token = PegarTokenRefreshAtual();
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                if (CadastrarPrograma(model, token))
-                                {
-                                    return View("Index");
-                                }
-                                else
-                                {
-                                    if (TempData["Unauthorized"] != null)
-                                    {
-                                        Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                        HttpContext.GetOwinContext().Authentication.SignOut();
-
-                                        if (model.FilePrograma != null && model.FilePrograma.ContentLength > 0)
-                                        {
-                                            var programaFileName = Path.GetFileName(model.FilePrograma.FileName);
-                                            var progPath = Path.Combine(Server.MapPath("~/Content/Programas/"), programaFileName);
-                                            System.IO.File.Delete(progPath);
-                                        }
-
-                                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                                        {
-                                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                                            System.IO.File.Delete(boxPath);
-                                        }
-
-                                        return RedirectToAction("Login", "Home");
-                                    }
-                                }
-                            }
-                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
                             HttpContext.GetOwinContext().Authentication.SignOut();
                             return RedirectToAction("Login", "Home");
                         }
+
+                        return View("Index");
                     }
-                    return View(model);
+                    else
+                    {
+                        return View(model);
+                    }
                 }
                 else
                 {
@@ -250,88 +130,26 @@ namespace Antiguera.Administrador.Controllers
             {
                 if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
                 {
-                    var token = PegarTokenAtual();
-                    if (!string.IsNullOrEmpty(token))
+                    var model = BuscarProgramaPorId(id);
+                    if (Session["Unauthorized"] != null)
                     {
-                        var model = BuscarProgramaPorId(id, token);
-                        if (TempData["Unauthorized"] != null)
-                        {
-                            token = PegarTokenRefreshAtual();
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                model = BuscarProgramaPorId(id, token);
-                                if (TempData["Unauthorized"] != null)
-                                {
-                                    Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                    HttpContext.GetOwinContext().Authentication.SignOut();
-                                    return RedirectToAction("Login", "Home");
-                                }
-                                else
-                                {
-                                    if (model != null)
-                                    {
-                                        return View(model);
-                                    }
-                                    else
-                                    {
-                                        return RedirectToAction("Index");
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-                        }
-                        else
-                        {
-                            if (model != null)
-                            {
-                                return View(model);
-                            }
-                            else
-                            {
-                                return RedirectToAction("Index");
-                            }
-                        }
+                        HttpContext.GetOwinContext().Authentication.SignOut();
+                        return RedirectToAction("Login", "Home");
+                    }
+
+                    if (model != null)
+                    {
+                        return View(model);
                     }
                     else
                     {
-                        token = PegarTokenRefreshAtual();
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            var model = BuscarProgramaPorId(id, token);
-                            if (TempData["Unauthorized"] != null)
-                            {
-                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-                            else
-                            {
-                                if (model != null)
-                                {
-                                    return View(model);
-                                }
-                                else
-                                {
-                                    return RedirectToAction("Index");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
+                        return RedirectToAction("Index");
                     }
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Acesso restrito!";
+                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                    HttpContext.GetOwinContext().Authentication.SignOut();
                     return RedirectToAction("Login", "Home");
                 }
             }
@@ -356,114 +174,21 @@ namespace Antiguera.Administrador.Controllers
                 {
                     if (model != null && ModelState.IsValid)
                     {
-                        if (model.FilePrograma != null && model.FilePrograma.ContentLength > 0)
+
+                        AtualizarPrograma(model);
+
+                        if (Session["Unauthorized"] != null)
                         {
-                            var programaFileName = Path.GetFileName(model.FilePrograma.FileName);
-                            var progPath = Path.Combine(Server.MapPath("~/Content/Programas/"), programaFileName);
-                            model.FilePrograma.SaveAs(progPath);
-                            model.UrlArquivo = "/Content/Programas/" + programaFileName;
-                        }
-
-                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                        {
-                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                            model.FileBoxArt.SaveAs(boxPath);
-                            model.UrlBoxArt = "/Content/Images/BoxArt/" + boxFileName;
-                        }
-
-                        var token = PegarTokenAtual();
-
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            if (AtualizarPrograma(model, token))
-                            {
-                                return View("Index");
-                            }
-                            else
-                            {
-                                if (TempData["Unauthorized"] != null)
-                                {
-                                    token = PegarTokenRefreshAtual();
-                                    if (!string.IsNullOrEmpty(token))
-                                    {
-                                        if (AtualizarPrograma(model, token))
-                                        {
-                                            return View("Index");
-                                        }
-                                        else
-                                        {
-                                            if (TempData["Unauthorized"] != null)
-                                            {
-                                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                                HttpContext.GetOwinContext().Authentication.SignOut();
-
-                                                if (model.FilePrograma != null && model.FilePrograma.ContentLength > 0)
-                                                {
-                                                    var programaFileName = Path.GetFileName(model.FilePrograma.FileName);
-                                                    var progPath = Path.Combine(Server.MapPath("~/Content/Programas/"), programaFileName);
-                                                    System.IO.File.Delete(progPath);
-                                                }
-
-                                                if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                                                {
-                                                    var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                                                    var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                                                    System.IO.File.Delete(boxPath);
-                                                }
-
-                                                return RedirectToAction("Login", "Home");
-                                            }
-                                            return View(model);
-                                        }
-                                    }
-                                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                                    HttpContext.GetOwinContext().Authentication.SignOut();
-                                    return RedirectToAction("Login", "Home");
-                                }
-                                return View(model);
-                            }
-                        }
-                        else
-                        {
-                            token = PegarTokenRefreshAtual();
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                if (AtualizarPrograma(model, token))
-                                {
-                                    return View("Index");
-                                }
-                                else
-                                {
-                                    if (TempData["Unauthorized"] != null)
-                                    {
-                                        Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                        HttpContext.GetOwinContext().Authentication.SignOut();
-
-                                        if (model.FilePrograma != null && model.FilePrograma.ContentLength > 0)
-                                        {
-                                            var programaFileName = Path.GetFileName(model.FilePrograma.FileName);
-                                            var progPath = Path.Combine(Server.MapPath("~/Content/Programas/"), programaFileName);
-                                            System.IO.File.Delete(progPath);
-                                        }
-
-                                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                                        {
-                                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                                            System.IO.File.Delete(boxPath);
-                                        }
-
-                                        return RedirectToAction("Login", "Home");
-                                    }
-                                }
-                            }
-                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
                             HttpContext.GetOwinContext().Authentication.SignOut();
                             return RedirectToAction("Login", "Home");
                         }
+
+                        return View("Index");
                     }
-                    return View(model);
+                    else
+                    {
+                        return View(model);
+                    }
                 }
                 else
                 {
@@ -495,62 +220,16 @@ namespace Antiguera.Administrador.Controllers
                     }
                     else
                     {
-                        var token = PegarTokenAtual();
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            var model = BuscarProgramaPorId(id, token);
+                        var model = BuscarProgramaPorId(id);
 
-                            if (TempData["Unauthorized"] != null)
-                            {
-                                if (model != null)
-                                {
-                                    ExcluirPrograma(model, token);
-                                }
-                            }
-                            else
-                            {
-                                token = PegarTokenRefreshAtual();
-                                if (!string.IsNullOrEmpty(token))
-                                {
-                                    model = BuscarProgramaPorId(id, token);
-                                    if (TempData["Unauthorized"] != null)
-                                    {
-                                        if (model != null)
-                                        {
-                                            ExcluirPrograma(model, token);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        HttpContext.GetOwinContext().Authentication.SignOut();
-                                        return RedirectToAction("Login", "Home");
-                                    }
-                                }
-                                Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-                        }
-                        else
+                        if (Session["Unauthorized"] != null)
                         {
-                            token = PegarTokenRefreshAtual();
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                var model = BuscarProgramaPorId(id, token);
-                                if (TempData["Unauthorized"] != null)
-                                {
-                                    if (model != null)
-                                    {
-                                        ExcluirPrograma(model, token);
-                                    }
-                                }
-                                else
-                                {
-                                    HttpContext.GetOwinContext().Authentication.SignOut();
-                                    return RedirectToAction("Login", "Home");
-                                }
-                            }
-                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                            HttpContext.GetOwinContext().Authentication.SignOut();
+                            return RedirectToAction("Login", "Home");
+                        }
+                        ExcluirPrograma(model);
+                        if (Session["Unauthorized"] != null)
+                        {
                             HttpContext.GetOwinContext().Authentication.SignOut();
                             return RedirectToAction("Login", "Home");
                         }

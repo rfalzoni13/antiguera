@@ -19,50 +19,23 @@ namespace Antiguera.Administrador.Controllers
             {
                 if(HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
                 {
-                    if (TempData["Mensagem"] != null)
+                    if (Session["Mensagem"] != null)
                     {
-                        ViewBag.Mensagem = TempData["Mensagem"];
+                        ViewBag.Mensagem = Session["Mensagem"];
                     }
 
-                    if (TempData["ErroMensagem"] != null)
+                    if (Session["ErroMensagem"] != null)
                     {
-                        ViewBag.ErroMensagem = TempData["ErroMensagem"];
+                        ViewBag.ErroMensagem = Session["ErroMensagem"];
                     }
 
-                    var token = PegarTokenAtual();
-                    if(!string.IsNullOrEmpty(token))
+                    var lista = ListarEmuladores();
+                    if (Session["Unauthorized"] != null)
                     {
-                        var lista = ListarEmuladores(token);
-                        if (TempData["Unauthorized"] != null)
-                        {
-                            Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-                        else
-                        {
-                            lista.OrderBy(j => j.Id).ToPagedList(pagina, 4);
-                        }
+                        HttpContext.GetOwinContext().Authentication.SignOut();
+                        return RedirectToAction("Login", "Home");
                     }
-                    else
-                    {
-                        token = PegarTokenRefreshAtual();
-                        if(!string.IsNullOrEmpty(token))
-                        {
-                            var lista = ListarEmuladores(token);
-                            if (TempData["Unauthorized"] != null)
-                            {
-                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-                            else
-                            {
-                                lista.OrderBy(j => j.Id).ToPagedList(pagina, 4);
-                            }
-                        }
-                    }
-                    return View();
+                    return View(lista.OrderBy(x => x.Id).ToPagedList(pagina, 4));
                 }
                 else
                 {
@@ -117,92 +90,21 @@ namespace Antiguera.Administrador.Controllers
                 {
                     if (model != null && ModelState.IsValid)
                     {
-                        if (model.FileEmulador != null && model.FileEmulador.ContentLength > 0)
+                        
+                        CadastrarEmulador(model);
+                        
+                        if(Session["Unauthorized"] != null)
                         {
-                            var emuladorFileName = Path.GetFileName(model.FileEmulador.FileName);
-                            var emuPath = Path.Combine(Server.MapPath("~/Content/Consoles/Emuladores/"), emuladorFileName);
-                            model.FileEmulador.SaveAs(emuPath);
-                            model.UrlArquivo = "/Content/Consoles/Emuladores/" + emuladorFileName;
-                        }
-
-                        var token = PegarTokenAtual();
-
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            if (CadastrarEmulador(model, token))
-                            {
-                                return View("Index");
-                            }
-                            else
-                            {
-                                if (TempData["Unauthorized"] != null)
-                                {
-                                    token = PegarTokenRefreshAtual();
-                                    if (!string.IsNullOrEmpty(token))
-                                    {
-                                        if (CadastrarEmulador(model, token))
-                                        {
-                                            return View("Index");
-                                        }
-                                        else
-                                        {
-                                            if (TempData["Unauthorized"] != null)
-                                            {
-                                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                                HttpContext.GetOwinContext().Authentication.SignOut();
-
-                                                if (model.FileEmulador != null && model.FileEmulador.ContentLength > 0)
-                                                {
-                                                    var emuladorFileName = Path.GetFileName(model.FileEmulador.FileName);
-                                                    var emuPath = Path.Combine(Server.MapPath("~/Content/Consoles/Emuladores/"), emuladorFileName);
-                                                    System.IO.File.Delete(emuPath);
-                                                }
-
-                                                return RedirectToAction("Login", "Home");
-                                            }
-                                            return View(model);
-                                        }
-                                    }
-                                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                                    HttpContext.GetOwinContext().Authentication.SignOut();
-                                    return RedirectToAction("Login", "Home");
-                                }
-                                return View(model);
-                            }
-                        }
-                        else
-                        {
-                            token = PegarTokenRefreshAtual();
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                if (CadastrarEmulador(model, token))
-                                {
-                                    return View("Index");
-                                }
-                                else
-                                {
-                                    if (TempData["Unauthorized"] != null)
-                                    {
-                                        Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                        HttpContext.GetOwinContext().Authentication.SignOut();
-
-                                        if (model.FileEmulador != null && model.FileEmulador.ContentLength > 0)
-                                        {
-                                            var emuladorFileName = Path.GetFileName(model.FileEmulador.FileName);
-                                            var emuPath = Path.Combine(Server.MapPath("~/Content/Consoles/Emuladores/"), emuladorFileName);
-                                            System.IO.File.Delete(emuPath);
-                                        }
-
-                                        return RedirectToAction("Login", "Home");
-                                    }
-                                }
-                            }
-                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
                             HttpContext.GetOwinContext().Authentication.SignOut();
                             return RedirectToAction("Login", "Home");
                         }
+
+                        return View("Index");
                     }
-                    return View(model);
+                    else
+                    {
+                        return View(model);
+                    }
                 }
                 else
                 {
@@ -228,88 +130,26 @@ namespace Antiguera.Administrador.Controllers
             {
                 if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
                 {
-                    var token = PegarTokenAtual();
-                    if (!string.IsNullOrEmpty(token))
+                    var model = BuscarEmuladorPorId(id);
+                    if (Session["Unauthorized"] != null)
                     {
-                        var model = BuscarEmuladorPorId(id, token);
-                        if (TempData["Unauthorized"] != null)
-                        {
-                            token = PegarTokenRefreshAtual();
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                model = BuscarEmuladorPorId(id, token);
-                                if (TempData["Unauthorized"] != null)
-                                {
-                                    Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                    HttpContext.GetOwinContext().Authentication.SignOut();
-                                    return RedirectToAction("Login", "Home");
-                                }
-                                else
-                                {
-                                    if (model != null)
-                                    {
-                                        return View(model);
-                                    }
-                                    else
-                                    {
-                                        return RedirectToAction("Index");
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-                        }
-                        else
-                        {
-                            if (model != null)
-                            {
-                                return View(model);
-                            }
-                            else
-                            {
-                                return RedirectToAction("Index");
-                            }
-                        }
+                        HttpContext.GetOwinContext().Authentication.SignOut();
+                        return RedirectToAction("Login", "Home");
+                    }
+
+                    if (model != null)
+                    {
+                        return View(model);
                     }
                     else
                     {
-                        token = PegarTokenRefreshAtual();
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            var model = BuscarEmuladorPorId(id, token);
-                            if (TempData["Unauthorized"] != null)
-                            {
-                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-                            else
-                            {
-                                if (model != null)
-                                {
-                                    return View(model);
-                                }
-                                else
-                                {
-                                    return RedirectToAction("Index");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-                    }
+                        return RedirectToAction("Index");
+                    }      
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Acesso restrito!";
+                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                    HttpContext.GetOwinContext().Authentication.SignOut();
                     return RedirectToAction("Login", "Home");
                 }
             }
@@ -334,92 +174,21 @@ namespace Antiguera.Administrador.Controllers
                 {
                     if (model != null && ModelState.IsValid)
                     {
-                        if (model.FileEmulador != null && model.FileEmulador.ContentLength > 0)
+
+                        AtualizarEmulador(model);
+
+                        if (Session["Unauthorized"] != null)
                         {
-                            var emuladorFileName = Path.GetFileName(model.FileEmulador.FileName);
-                            var emuPath = Path.Combine(Server.MapPath("~/Content/Consoles/Emuladores/"), emuladorFileName);
-                            model.FileEmulador.SaveAs(emuPath);
-                            model.UrlArquivo = "/Content/Consoles/Emuladores/" + emuladorFileName;
-                        }
-
-                        var token = PegarTokenAtual();
-
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            if (AtualizarEmulador(model, token))
-                            {
-                                return View("Index");
-                            }
-                            else
-                            {
-                                if (TempData["Unauthorized"] != null)
-                                {
-                                    token = PegarTokenRefreshAtual();
-                                    if (!string.IsNullOrEmpty(token))
-                                    {
-                                        if (AtualizarEmulador(model, token))
-                                        {
-                                            return View("Index");
-                                        }
-                                        else
-                                        {
-                                            if (TempData["Unauthorized"] != null)
-                                            {
-                                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                                HttpContext.GetOwinContext().Authentication.SignOut();
-
-                                                if (model.FileEmulador != null && model.FileEmulador.ContentLength > 0)
-                                                {
-                                                    var emuladorFileName = Path.GetFileName(model.FileEmulador.FileName);
-                                                    var emuPath = Path.Combine(Server.MapPath("~/Content/Consoles/Emuladores/"), emuladorFileName);
-                                                    System.IO.File.Delete(emuPath);
-                                                }
-
-                                                return RedirectToAction("Login", "Home");
-                                            }
-                                            return View(model);
-                                        }
-                                    }
-                                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                                    HttpContext.GetOwinContext().Authentication.SignOut();
-                                    return RedirectToAction("Login", "Home");
-                                }
-                                return View(model);
-                            }
-                        }
-                        else
-                        {
-                            token = PegarTokenRefreshAtual();
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                if (AtualizarEmulador(model, token))
-                                {
-                                    return View("Index");
-                                }
-                                else
-                                {
-                                    if (TempData["Unauthorized"] != null)
-                                    {
-                                        Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                        HttpContext.GetOwinContext().Authentication.SignOut();
-
-                                        if (model.FileEmulador != null && model.FileEmulador.ContentLength > 0)
-                                        {
-                                            var emuladorFileName = Path.GetFileName(model.FileEmulador.FileName);
-                                            var emuPath = Path.Combine(Server.MapPath("~/Content/Consoles/Emuladores/"), emuladorFileName);
-                                            System.IO.File.Delete(emuPath);
-                                        }
-
-                                        return RedirectToAction("Login", "Home");
-                                    }
-                                }
-                            }
-                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
                             HttpContext.GetOwinContext().Authentication.SignOut();
                             return RedirectToAction("Login", "Home");
                         }
+
+                        return View("Index");
                     }
-                    return View(model);
+                    else
+                    {
+                        return View(model);
+                    }
                 }
                 else
                 {
@@ -451,62 +220,16 @@ namespace Antiguera.Administrador.Controllers
                     }
                     else
                     {
-                        var token = PegarTokenAtual();
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            var model = BuscarEmuladorPorId(id, token);
+                        var model = BuscarEmuladorPorId(id);
 
-                            if (TempData["Unauthorized"] != null)
-                            {
-                                if (model != null)
-                                {
-                                    ExcluirEmulador(model, token);
-                                }
-                            }
-                            else
-                            {
-                                token = PegarTokenRefreshAtual();
-                                if (!string.IsNullOrEmpty(token))
-                                {
-                                    model = BuscarEmuladorPorId(id, token);
-                                    if (TempData["Unauthorized"] != null)
-                                    {
-                                        if (model != null)
-                                        {
-                                            ExcluirEmulador(model, token);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        HttpContext.GetOwinContext().Authentication.SignOut();
-                                        return RedirectToAction("Login", "Home");
-                                    }
-                                }
-                                Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-                        }
-                        else
+                        if (Session["Unauthorized"] != null)
                         {
-                            token = PegarTokenRefreshAtual();
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                var model = BuscarEmuladorPorId(id, token);
-                                if (TempData["Unauthorized"] != null)
-                                {
-                                    if (model != null)
-                                    {
-                                        ExcluirEmulador(model, token);
-                                    }
-                                }
-                                else
-                                {
-                                    HttpContext.GetOwinContext().Authentication.SignOut();
-                                    return RedirectToAction("Login", "Home");
-                                }
-                            }
-                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                            HttpContext.GetOwinContext().Authentication.SignOut();
+                            return RedirectToAction("Login", "Home");
+                        }
+                        ExcluirEmulador(model);
+                        if (Session["Unauthorized"] != null)
+                        {
                             HttpContext.GetOwinContext().Authentication.SignOut();
                             return RedirectToAction("Login", "Home");
                         }

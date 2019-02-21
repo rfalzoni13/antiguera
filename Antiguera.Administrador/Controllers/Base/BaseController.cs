@@ -1,8 +1,11 @@
 ﻿using Antiguera.Administrador.Config;
+using Antiguera.Administrador.DTOs;
 using Antiguera.Administrador.Models;
+using AutoMapper;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -24,67 +27,181 @@ namespace Antiguera.Administrador.Controllers.Base
         {
             HeaderModel model = new HeaderModel();
 
-            var token = PegarTokenAtual();
-            if(!string.IsNullOrEmpty(token))
-            {
-                model.Usuarios = ListarUsuarios(token);
+            model.Usuarios = ListarUsuarios();
 
-                model.Jogos = ListarJogos(token);
-            }
-            else
-            {
-                token = PegarTokenRefreshAtual();
-                if(!string.IsNullOrEmpty(token))
-                {
-                    model.Usuarios = ListarUsuarios(token);
+            model.Jogos = ListarJogos();
 
-                    model.Jogos = ListarJogos(token);
-                }
-            }
+            model.Emuladores = ListarEmuladores();
+
+            model.Roms = ListarRoms();
+
+            model.Programas = ListarProgramas();
+                       
             return PartialView(model);
         }
         #endregion
 
         #region Módulo Usuário
         [NonAction]
-        protected List<UsuarioModel> ListarUsuarios(string token)
+        protected List<UsuarioModel> ListarUsuarios()
         {
-            if(Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            var token = string.Empty;
+
+            if(Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+            
+            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
             }
             Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
 
-            using (var responseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result)
-            {
-                if (responseUsuario.IsSuccessStatusCode)
-                {
-                    return responseUsuario.Content.ReadAsAsync<List<UsuarioModel>>().Result;
-                }
-                else if (responseUsuario.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    var result = responseUsuario.Content.ReadAsAsync<StatusCode>().Result;
-                    TempData["Unauthorized"] = result.Status;
-                    TempData["ErroMensagem"] = result.Mensagem;
-                }
-                else if (responseUsuario.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var result = responseUsuario.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
-                }
+            var response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
 
+            if (response.IsSuccessStatusCode)
+            {
+                return response.Content.ReadAsAsync<List<UsuarioModel>>().Result;
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                if (Session["newToken"] != null)
+                {
+                    var refreshToken = Session["newToken"].ToString();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                }
                 else
                 {
-                    var result = responseUsuario.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroListaMensagem = result.Mensagem;
+                    var modelToken = RefreshToken();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                 }
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    return response.Content.ReadAsAsync<List<UsuarioModel>>().Result;
+                }
+                else if(response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["Unauthorized"] = result.Status;
+                    Session["ErroMensagem"] = result.Mensagem;
+                }
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["ErroMensagem"] = result.Mensagem;
+                }
+            }
+            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+            }
+
+            else
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroListaMensagem = result.Mensagem;
             }
             return new List<UsuarioModel>();
         }
 
         [NonAction]
-        protected UsuarioModel BuscarUsuarioPorId(int Id, string token)
+        protected UsuarioModel BuscarUsuarioPorId(int Id)
         {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
+            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            {
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+            }
+            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            var response = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPorId + Id).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return response.Content.ReadAsAsync<UsuarioModel>().Result;
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                if (Session["newToken"] != null)
+                {
+                    var refreshToken = Session["newToken"].ToString();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                }
+                else
+                {
+                    var modelToken = RefreshToken();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                }
+
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    return response.Content.ReadAsAsync<UsuarioModel>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["Unauthorized"] = result.Status;
+                    Session["ErroMensagem"] = result.Mensagem;
+                    return null;
+                }
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["ErroMensagem"] = result.Mensagem;
+                    return null;
+                }
+            }
+            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+                return null;
+            }
+
+            else
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+                return null;
+            }
+        }
+
+        [NonAction]
+        protected UsuarioModel BuscarUsuarioPorLoginOuEmail(string userData)
+        {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
             if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
@@ -92,79 +209,174 @@ namespace Antiguera.Administrador.Controllers.Base
 
             Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
 
-            using (var responseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPorId + Id).Result)
+            var response = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPeloLoginOuEmail + userData).Result;
+
+            if (response.IsSuccessStatusCode)
             {
-                if (responseUsuario.IsSuccessStatusCode)
+                return response.Content.ReadAsAsync<UsuarioModel>().Result;
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                if (Session["newToken"] != null)
                 {
-                    return responseUsuario.Content.ReadAsAsync<UsuarioModel>().Result;
-
+                    var refreshToken = Session["newToken"].ToString();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
                 }
-                else if (responseUsuario.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    var result = responseUsuario.Content.ReadAsAsync<StatusCode>().Result;
-                    TempData["Unauthorized"] = result.Status;
-                    TempData["ErroMensagem"] = result.Mensagem;
-                    return null;
-                }
-                else if (responseUsuario.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var result = responseUsuario.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
-                    return null;
-                }
-
                 else
                 {
-                    var result = responseUsuario.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    var modelToken = RefreshToken();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                }
+
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    return response.Content.ReadAsAsync<UsuarioModel>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["Unauthorized"] = result.Status;
+                    Session["ErroMensagem"] = result.Mensagem;
                     return null;
                 }
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["ErroMensagem"] = result.Mensagem;
+                    return null;
+                }
+            }
+            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+                return null;
+            }
+
+            else
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+                return null;
             }
         }
 
         [NonAction]
-        protected UsuarioModel BuscarUsuarioPorLoginOuEmail(string userData, string token)
+        protected void CadastrarUsuario(UsuarioModel model)
         {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
             if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
             }
-
             Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
 
-            using (var responseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPeloLoginOuEmail + userData).Result)
+            if (model != null)
             {
-                if (responseUsuario.IsSuccessStatusCode)
+                if (!string.IsNullOrEmpty(model.NomeFoto))
                 {
-                    return responseUsuario.Content.ReadAsAsync<UsuarioModel>().Result;
+                    model.UrlFotoUpload = "/Content/Images/Profile/" + model.NomeFoto;
+                }
 
-                }
-                else if (responseUsuario.StatusCode == HttpStatusCode.Unauthorized)
+                var usuarioDTO = Mapper.Map<UsuarioModel, UsuarioDTO>(model);
+
+                var response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirUsuario, usuarioDTO).Result;
+
+                if (response.IsSuccessStatusCode)
                 {
-                    var result = responseUsuario.Content.ReadAsAsync<StatusCode>().Result;
-                    TempData["Unauthorized"] = result.Status;
-                    TempData["ErroMensagem"] = result.Mensagem;
-                    return null;
+                    if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
+                    {
+                        var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
+                        var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
+                        model.FileFoto.SaveAs(photoPath);
+                    }
+
+                    ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
                 }
-                else if (responseUsuario.StatusCode == HttpStatusCode.InternalServerError)
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    var result = responseUsuario.Content.ReadAsAsync<StatusCode>().Result;
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
+                        {
+                            var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
+                            var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
+                            model.FileFoto.SaveAs(photoPath);
+                        }
+
+                        ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
+                    }
+                    else
+                    {
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                    }
+                }
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     ViewBag.ErroMensagem = result.Mensagem;
-                    return null;
                 }
 
                 else
                 {
-                    var result = responseUsuario.Content.ReadAsAsync<StatusCode>().Result;
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     ViewBag.ErroMensagem = result.Mensagem;
-                    return null;
                 }
+            }
+            else
+            {
+                ViewBag.ErroMensagem = "Parâmetros incorretos!";
             }
         }
 
         [NonAction]
-        protected bool CadastrarUsuario(UsuarioModel model, string token)
+        protected void AtualizarUsuario(UsuarioModel model)
         {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
             if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
@@ -174,92 +386,306 @@ namespace Antiguera.Administrador.Controllers.Base
 
             if (model != null)
             {
-                using (var response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirUsuario, model).Result)
+                if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
                 {
+                    if (!string.IsNullOrEmpty(model.UrlFotoUpload))
+                    {
+                        var fileName = model.UrlFotoUpload.Split('/')[4];
+                        var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fileName);
+                        if (System.IO.File.Exists(photoPath))
+                        {
+                            System.IO.File.Delete(photoPath);
+                            model.UrlFotoUpload = "/Content/Images/Profile/" + model.NomeFoto;
+                        }
+                        else
+                        {
+                            model.UrlFotoUpload = null;
+                        }
+                    }
+                }
+
+                var usuarioDTO = Mapper.Map<UsuarioModel, UsuarioDTO>(model);
+
+                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarUsuario, usuarioDTO).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
+                    {
+                        var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
+                        var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
+                        model.FileFoto.SaveAs(photoPath);
+                    }
+
+                    ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
+                        {
+                            var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
+                            var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
+                            model.FileFoto.SaveAs(photoPath);
+                        }
+
+                        ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
+                    }
+                    else
+                    {
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                    }
+                }
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+            }
+            else
+            {
+                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+            }
+        }
+
+        [NonAction]
+        protected void AtualizarAdmin(UsuarioModel model)
+        {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
+            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            {
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+            }
+
+            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            if (model != null)
+            {
+                if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
+                {
+                    if (!string.IsNullOrEmpty(model.UrlFotoUpload))
+                    {
+                        var fileName = model.UrlFotoUpload.Split('/')[4];
+                        var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fileName);
+                        if (System.IO.File.Exists(photoPath))
+                        {
+                            System.IO.File.Delete(photoPath);
+                            model.UrlFotoUpload = "/Content/Images/Profile/" + model.NomeFoto;
+                        }
+                        else
+                        {
+                            model.UrlFotoUpload = null;
+                        }
+                    }
+                }
+
+                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarAdmin, model).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
+                    {
+                        var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
+                        var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
+                        model.FileFoto.SaveAs(photoPath);
+                    }
+
+                    ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
+                        {
+                            var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
+                            var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
+                            model.FileFoto.SaveAs(photoPath);
+                        }
+
+                        ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
+                    }
+                    else
+                    {
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                    }
+                }
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                    
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                    
+                }
+            }
+            else
+            {
+                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+                
+            }
+        }
+
+        [NonAction]
+        protected void AtualizarSenhaUsuario(UsuarioModel model)
+        {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
+            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            {
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+            }
+
+            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            if (model != null)
+            {
+                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarSenhaUsuario, model).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;  
+                }
+
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
-                        return true;
                     }
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
-                        return false;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
                 }
-            }
-            else
-            {
-                return false;
-            }
-        }
 
-        [NonAction]
-        protected bool AtualizarUsuario(UsuarioModel model, string token)
-        {
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-
-            if (model != null)
-            {
-                using (var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarUsuario, model).Result)
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
-                        return true;
-                    }
-                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
-                        return false;
-                    }
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
 
-                    else
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
                 }
             }
             else
             {
                 ViewBag.ErroMensagem = "Parâmetros incorretos!";
-                return false;
+                
             }
         }
 
         [NonAction]
-        protected bool AtualizarAdmin(UsuarioModel model, string token)
+        protected void AtualizarSenhaAdmin(UsuarioModel model)
         {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
             if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
@@ -269,96 +695,77 @@ namespace Antiguera.Administrador.Controllers.Base
 
             if (model != null)
             {
-                using (var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarAdmin, model).Result)
+                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarSenhaAdmin, model).Result;
+
+                if (response.IsSuccessStatusCode)
                 {
+                    ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
                     if (response.IsSuccessStatusCode)
                     {
-                        ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
-                        return true;
+                        ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
                     }
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
-                        return false;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
-
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
+                }
+
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;   
                 }
             }
             else
             {
                 ViewBag.ErroMensagem = "Parâmetros incorretos!";
-                return false;
             }
         }
 
         [NonAction]
-        protected bool AtualizarSenhaUsuario(UsuarioModel model, string token)
+        protected void ExcluirUsuario(UsuarioModel model)
         {
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
             {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-
-            if (model != null)
-            {
-                using (var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarSenhaUsuario, model).Result)
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
-                        return true;
-                    }
-
-                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
-                        return false;
-                    }
-
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-
-                    else
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-                }
+                token = Session["newToken"].ToString();
             }
             else
             {
-                ViewBag.ErroMensagem = "Parâmetros incorretos!";
-                return false;
+                token = GetToken();
             }
-        }
 
-        [NonAction]
-        protected bool AtualizarSenhaAdmin(UsuarioModel model, string token)
-        {
             if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
@@ -368,91 +775,70 @@ namespace Antiguera.Administrador.Controllers.Base
 
             if (model != null)
             {
-                using (var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarSenhaAdmin, model).Result)
+                if (!string.IsNullOrEmpty(model.UrlFotoUpload))
                 {
-                    if (response.IsSuccessStatusCode)
+                    var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), model.UrlFotoUpload);
+                    if (System.IO.File.Exists(photoPath))
                     {
-                        ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
-                        return true;
-                    }
-                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
-                        return false;
-                    }
-
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-
-                    else
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
+                        System.IO.File.Delete(photoPath);
                     }
                 }
-            }
-            else
-            {
-                ViewBag.ErroMensagem = "Parâmetros incorretos!";
-                return false;
-            }
-        }
 
-        [NonAction]
-        protected void ExcluirUsuario(UsuarioModel model, string token)
-        {
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-
-            if (model != null)
-            {
                 HttpRequestMessage request = new HttpRequestMessage
                 {
                     Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json"),
                     Method = HttpMethod.Delete,
                     RequestUri = new Uri(url.UrlApi + url.UrlExcluirUsuario)
                 };
-                using (var response = Cliente.SendAsync(request).Result)
+                var response = Cliente.SendAsync(request).Result;
+
+                if (response.IsSuccessStatusCode)
                 {
+                    ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                }
+
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
                     }
-
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
-                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                    }
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                    }
-
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
+                }
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
                 }
             }
         }
@@ -460,44 +846,91 @@ namespace Antiguera.Administrador.Controllers.Base
 
         #region Módulo Permissões
         [NonAction]
-        protected List<AcessoModel> ListarAcessos(string token)
+        protected List<AcessoModel> ListarAcessos()
         {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
             if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
             }
             Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
 
-            using (var responseAcesso = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosAcessos).Result)
-            {
-                if (responseAcesso.IsSuccessStatusCode)
-                {
-                    return responseAcesso.Content.ReadAsAsync<List<AcessoModel>>().Result;
-                }
-                else if (responseAcesso.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    var result = responseAcesso.Content.ReadAsAsync<StatusCode>().Result;
-                    TempData["Unauthorized"] = result.Status;
-                    TempData["ErroMensagem"] = result.Mensagem;
-                }
-                else if (responseAcesso.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var result = responseAcesso.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
-                }
+            var response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosAcessos).Result;
 
+            if (response.IsSuccessStatusCode)
+            {
+                return response.Content.ReadAsAsync<List<AcessoModel>>().Result;
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                if (Session["newToken"] != null)
+                {
+                    var refreshToken = Session["newToken"].ToString();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                }
                 else
                 {
-                    var result = responseAcesso.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroListaMensagem = result.Mensagem;
+                    var modelToken = RefreshToken();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                 }
+
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    return response.Content.ReadAsAsync<List<AcessoModel>>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["Unauthorized"] = result.Status;
+                    Session["ErroMensagem"] = result.Mensagem;
+                }
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["ErroMensagem"] = result.Mensagem;
+                }
+            }
+            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+            }
+
+            else
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroListaMensagem = result.Mensagem;
             }
             return new List<AcessoModel>();
         }
 
         [NonAction]
-        protected AcessoModel BuscarAcessoPorId(int Id, string token)
+        protected AcessoModel BuscarAcessoPorId(int Id)
         {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
             if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
@@ -505,39 +938,75 @@ namespace Antiguera.Administrador.Controllers.Base
 
             Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
 
-            using (var responseAcesso = Cliente.GetAsync(url.UrlApi + url.UrlListarAcessoPorId + Id).Result)
+            var response = Cliente.GetAsync(url.UrlApi + url.UrlListarAcessoPorId + Id).Result;
+
+            if (response.IsSuccessStatusCode)
             {
-                if (responseAcesso.IsSuccessStatusCode)
+                return response.Content.ReadAsAsync<AcessoModel>().Result;
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                if (Session["newToken"] != null)
                 {
-                    return responseAcesso.Content.ReadAsAsync<AcessoModel>().Result;
-
+                    var refreshToken = Session["newToken"].ToString();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
                 }
-                else if (responseAcesso.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    var result = responseAcesso.Content.ReadAsAsync<StatusCode>().Result;
-                    TempData["Unauthorized"] = result.Status;
-                    TempData["ErroMensagem"] = result.Mensagem;
-                    return null;
-                }
-                else if (responseAcesso.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var result = responseAcesso.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
-                    return null;
-                }
-
                 else
                 {
-                    var result = responseAcesso.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    var modelToken = RefreshToken();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                }
+
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    return response.Content.ReadAsAsync<AcessoModel>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["Unauthorized"] = result.Status;
+                    Session["ErroMensagem"] = result.Mensagem;
                     return null;
                 }
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["ErroMensagem"] = result.Mensagem;
+                    return null;
+                }
+            }
+            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+                return null;
+            }
+
+            else
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+                return null;
             }
         }
         
         [NonAction]
-        protected bool CadastrarAcesso(AcessoModel model, string token)
+        protected void CadastrarAcesso(AcessoModel model)
         {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
             if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
@@ -547,44 +1016,75 @@ namespace Antiguera.Administrador.Controllers.Base
 
             if (model != null)
             {
-                using (var response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirAcesso, model).Result)
+                var acessoDTO = Mapper.Map<AcessoModel, AcessoDTO>(model);
+
+                var response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirAcesso, acessoDTO).Result;
+
+                if (response.IsSuccessStatusCode)
                 {
+                    ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
-                        return true;
                     }
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
-                        return false;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
                 }
-            }
-            else
-            {
-                return false;
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
             }
         }
 
         [NonAction]
-        protected void ExcluirAcesso(AcessoModel model, string token)
+        protected void ExcluirAcesso(AcessoModel model)
         {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
             if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
@@ -600,36 +1100,61 @@ namespace Antiguera.Administrador.Controllers.Base
                     Method = HttpMethod.Delete,
                     RequestUri = new Uri(url.UrlApi + url.UrlExcluirAcesso)
                 };
-                using (var response = Cliente.SendAsync(request).Result)
+                var response = Cliente.SendAsync(request).Result;
+
+                if (response.IsSuccessStatusCode)
                 {
+                    ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                }
+
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
                     }
-
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
-                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                    }
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                    }
-
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["Unauthorized"] = result.Status;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
                 }
             }
         }
@@ -637,133 +1162,170 @@ namespace Antiguera.Administrador.Controllers.Base
 
         #region Módulo Emulador
         [NonAction]
-        protected List<EmuladorModel> ListarEmuladores(string token)
+        protected List<EmuladorModel> ListarEmuladores()
         {
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
             {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-
-            using (var responseEmulador = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosEmuladores).Result)
-            {
-                if (responseEmulador.IsSuccessStatusCode)
-                {
-                    return responseEmulador.Content.ReadAsAsync<List<EmuladorModel>>().Result;
-                }
-                else if (responseEmulador.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    var result = responseEmulador.Content.ReadAsAsync<StatusCode>().Result;
-                    TempData["Unauthorized"] = result.Status;
-                    TempData["ErroMensagem"] = result.Mensagem;
-                }
-                else if (responseEmulador.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var result = responseEmulador.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
-                }
-
-                else
-                {
-                    var result = responseEmulador.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroListaMensagem = result.Mensagem;
-                }
-                return new List<EmuladorModel>();
-            }
-        }
-
-        [NonAction]
-        protected EmuladorModel BuscarEmuladorPorId(int Id, string token)
-        {
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-            
-            using (var responseEmulador = Cliente.GetAsync(url.UrlApi + url.UrlListarEmuladorPorId + Id).Result)
-            {
-                if (responseEmulador.IsSuccessStatusCode)
-                {
-                    return responseEmulador.Content.ReadAsAsync<EmuladorModel>().Result;
-
-                }
-                else if (responseEmulador.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    var result = responseEmulador.Content.ReadAsAsync<StatusCode>().Result;
-                    TempData["Unauthorized"] = result.Status;
-                    TempData["ErroMensagem"] = result.Mensagem;
-                    return null;
-                }
-
-                else if (responseEmulador.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var result = responseEmulador.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
-                    return null;
-                }
-
-                else
-                {
-                    var result = responseEmulador.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
-                    return null;
-                }
-            }
-        }
-
-        [NonAction]
-        protected bool CadastrarEmulador(EmuladorModel model, string token)
-        {
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-
-            if (model != null)
-            {
-                using (var response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirEmulador, model).Result)
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
-                        return true;
-                    }
-                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
-                        return false;
-                    }
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-
-                    else
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-                }
+                token = Session["newToken"].ToString();
             }
             else
             {
-                return false;
+                token = GetToken();
+            }
+
+            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            {
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+            }
+
+            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            var response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosEmuladores).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return response.Content.ReadAsAsync<List<EmuladorModel>>().Result;
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                if (Session["newToken"] != null)
+                {
+                    var refreshToken = Session["newToken"].ToString();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                }
+                else
+                {
+                    var modelToken = RefreshToken();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                }
+
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    return response.Content.ReadAsAsync<List<EmuladorModel>>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["Unauthorized"] = result.Status;
+                    Session["ErroMensagem"] = result.Mensagem;
+                }
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["ErroMensagem"] = result.Mensagem;
+                }
+            }
+            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+            }
+
+            else
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroListaMensagem = result.Mensagem;
+            }
+            return new List<EmuladorModel>();
+        }
+
+        [NonAction]
+        protected EmuladorModel BuscarEmuladorPorId(int Id)
+        {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
+            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            {
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+            }
+
+            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            var response = Cliente.GetAsync(url.UrlApi + url.UrlListarEmuladorPorId + Id).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return response.Content.ReadAsAsync<EmuladorModel>().Result;
+
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                if (Session["newToken"] != null)
+                {
+                    var refreshToken = Session["newToken"].ToString();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                }
+                else
+                {
+                    var modelToken = RefreshToken();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                }
+
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    return response.Content.ReadAsAsync<EmuladorModel>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["Unauthorized"] = result.Status;
+                    Session["ErroMensagem"] = result.Mensagem;
+                    return null;
+                }
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["ErroMensagem"] = result.Mensagem;
+                    return null;
+                }
+            }
+
+            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+                return null;
+            }
+
+            else
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+                return null;
             }
         }
 
         [NonAction]
-        protected bool AtualizarEmulador(EmuladorModel model, string token)
+        protected void CadastrarEmulador(EmuladorModel model)
         {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
             if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
@@ -773,45 +1335,97 @@ namespace Antiguera.Administrador.Controllers.Base
 
             if (model != null)
             {
-                using (var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarEmulador, model).Result)
+                if (!string.IsNullOrEmpty(model.NomeArquivo))
                 {
+                    model.UrlArquivo = "/Content/Consoles/Emuladores/" + model.NomeArquivo;
+                }
+
+                var emuladorDTO = Mapper.Map<EmuladorModel, EmuladorDTO>(model);
+
+                var response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirEmulador, emuladorDTO).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    if (model.FileEmulador != null && model.FileEmulador.ContentLength > 0)
+                    {
+                        var emuladorFileName = Path.GetFileName(model.FileEmulador.FileName);
+                        var emuPath = Path.Combine(Server.MapPath("~/Content/Consoles/Emuladores/"), emuladorFileName);
+                        model.FileEmulador.SaveAs(emuPath);
+                    }
+
+                    ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
                     if (response.IsSuccessStatusCode)
                     {
-                        ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
-                        return true;
+                        if (model.FileEmulador != null && model.FileEmulador.ContentLength > 0)
+                        {
+                            var emuladorFileName = Path.GetFileName(model.FileEmulador.FileName);
+                            var emuPath = Path.Combine(Server.MapPath("~/Content/Consoles/Emuladores/"), emuladorFileName);
+                            model.FileEmulador.SaveAs(emuPath);
+                        }
+
+                        ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
                     }
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
-                        return false;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
+                }
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
                 }
             }
             else
             {
                 ViewBag.ErroMensagem = "Parâmetros incorretos!";
-                return false;
             }
         }
 
         [NonAction]
-        protected void ExcluirEmulador(EmuladorModel model, string token)
+        protected void AtualizarEmulador(EmuladorModel model)
         {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
             if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
@@ -821,14 +1435,156 @@ namespace Antiguera.Administrador.Controllers.Base
 
             if (model != null)
             {
+                if (model.FileEmulador != null && model.FileEmulador.ContentLength > 0)
+                {
+                    if (!string.IsNullOrEmpty(model.UrlArquivo))
+                    {
+                        var emuladorFileName = model.UrlArquivo.Split('/')[4];
+                        var emuPath = Path.Combine(Server.MapPath("~/Content/Consoles/Emuladores/"), emuladorFileName);
+                        if (System.IO.File.Exists(emuPath))
+                        {
+                            System.IO.File.Delete(emuPath);
+                            model.UrlArquivo = "/Content/Consoles/Emuladores/" + model.NomeArquivo;
+                        }
+                        else
+                        {
+                            model.UrlArquivo = null;
+                        }
+                    }
+                }
+
+                var emuladorDTO = Mapper.Map<EmuladorModel, EmuladorDTO>(model);
+
+                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarEmulador, emuladorDTO).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    if (model.FileEmulador != null && model.FileEmulador.ContentLength > 0)
+                    {
+                        var emuladorFileName = Path.GetFileName(model.FileEmulador.FileName);
+                        var emuPath = Path.Combine(Server.MapPath("~/Content/Consoles/Emuladores/"), emuladorFileName);
+                        model.FileEmulador.SaveAs(emuPath);
+                    }
+
+                    ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        if (model.FileEmulador != null && model.FileEmulador.ContentLength > 0)
+                        {
+                            var emuladorFileName = Path.GetFileName(model.FileEmulador.FileName);
+                            var emuPath = Path.Combine(Server.MapPath("~/Content/Consoles/Emuladores/"), emuladorFileName);
+                            model.FileEmulador.SaveAs(emuPath);
+                        }
+
+                        ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
+                    }
+                    else
+                    {
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                    }
+                }
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+            }
+            else
+            {
+                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+            }
+        }
+
+        [NonAction]
+        protected void ExcluirEmulador(EmuladorModel model)
+        {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
+            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            {
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+            }
+
+            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            if (model != null)
+            {
+                if (!string.IsNullOrEmpty(model.UrlArquivo))
+                {
+                    var emuPath = Path.Combine(Server.MapPath("~/Content/Consoles/Emuladores/"), model.UrlArquivo);
+                    if (System.IO.File.Exists(emuPath))
+                    {
+                        System.IO.File.Delete(emuPath);
+                    }
+                }
+
                 HttpRequestMessage request = new HttpRequestMessage
                 {
                     Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json"),
                     Method = HttpMethod.Delete,
                     RequestUri = new Uri(url.UrlApi + url.UrlExcluirEmulador)
                 };
-                using (var response = Cliente.SendAsync(request).Result)
+                var response = Cliente.SendAsync(request).Result;
+
+                if (response.IsSuccessStatusCode)
                 {
+                    ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
@@ -836,152 +1592,199 @@ namespace Antiguera.Administrador.Controllers.Base
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                    }
-
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
                 }
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+            }
+            else
+            {
+                ViewBag.ErroMensagem = "Parâmetros incorretos!";
             }
         }
         #endregion
 
         #region Módulo Rom
         [NonAction]
-        protected List<RomModel> ListarRoms(string token)
+        protected List<RomModel> ListarRoms()
         {
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
             {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-
-            using (var responseRom = Cliente.GetAsync(url.UrlApi + url.UrlListarTodasRoms).Result)
-            {
-                if (responseRom.IsSuccessStatusCode)
-                {
-                    return responseRom.Content.ReadAsAsync<List<RomModel>>().Result;
-                }
-                else if (responseRom.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    var result = responseRom.Content.ReadAsAsync<StatusCode>().Result;
-                    TempData["Unauthorized"] = result.Status;
-                    TempData["ErroMensagem"] = result.Mensagem;
-                }
-                else if (responseRom.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var result = responseRom.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
-                }
-
-                else
-                {
-                    var result = responseRom.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroListaMensagem = result.Mensagem;
-                }
-                return new List<RomModel>();
-            }
-        }
-
-        [NonAction]
-        protected RomModel BuscarRomPorId(int Id, string token)
-        {
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-
-            using (var responseRom = Cliente.GetAsync(url.UrlApi + url.UrlListarRomPorId + Id).Result)
-            {
-                if (responseRom.IsSuccessStatusCode)
-                {
-                    return responseRom.Content.ReadAsAsync<RomModel>().Result;
-
-                }
-                else if (responseRom.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    var result = responseRom.Content.ReadAsAsync<StatusCode>().Result;
-                    TempData["Unauthorized"] = result.Status;
-                    TempData["ErroMensagem"] = result.Mensagem;
-                    return null;
-                }
-                else if (responseRom.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var result = responseRom.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
-                    return null;
-                }
-
-                else
-                {
-                    var result = responseRom.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
-                    return null;
-                }
-            }
-        }
-
-        [NonAction]
-        protected bool CadastrarRom(RomModel model, string token)
-        {
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-
-            if (model != null)
-            {
-                using (var response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirRom, model).Result)
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
-                        return true;
-                    }
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
-                        return false;
-                    }
-                    else
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-                }
+                token = Session["newToken"].ToString();
             }
             else
             {
-                return false;
+                token = GetToken();
+            }
+
+            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            {
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+            }
+
+            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            var response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodasRoms).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return response.Content.ReadAsAsync<List<RomModel>>().Result;
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                if (Session["newToken"] != null)
+                {
+                    var refreshToken = Session["newToken"].ToString();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                }
+                else
+                {
+                    var modelToken = RefreshToken();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                }
+
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    return response.Content.ReadAsAsync<List<RomModel>>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["Unauthorized"] = result.Status;
+                    Session["ErroMensagem"] = result.Mensagem;
+                }
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["ErroMensagem"] = result.Mensagem;
+                }
+            }
+            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+            }
+
+            else
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroListaMensagem = result.Mensagem;
+            }
+            return new List<RomModel>();
+        }
+
+        [NonAction]
+        protected RomModel BuscarRomPorId(int Id)
+        {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
+            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            {
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+            }
+
+            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            var response = Cliente.GetAsync(url.UrlApi + url.UrlListarRomPorId + Id).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return response.Content.ReadAsAsync<RomModel>().Result;
+
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                if (Session["newToken"] != null)
+                {
+                    var refreshToken = Session["newToken"].ToString();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                }
+                else
+                {
+                    var modelToken = RefreshToken();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                }
+
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    return response.Content.ReadAsAsync<RomModel>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["Unauthorized"] = result.Status;
+                    Session["ErroMensagem"] = result.Mensagem;
+                    return null;
+                }
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["ErroMensagem"] = result.Mensagem;
+                    return null;
+                }
+            }
+            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+                return null;
+            }
+
+            else
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+                return null;
             }
         }
 
         [NonAction]
-        protected bool AtualizarRom(RomModel model, string token)
+        protected void CadastrarRom(RomModel model)
         {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
             if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
@@ -991,45 +1794,262 @@ namespace Antiguera.Administrador.Controllers.Base
 
             if (model != null)
             {
-                using (var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarRom, model).Result)
+                if (!string.IsNullOrEmpty(model.NomeArquivo))
                 {
+                    model.UrlArquivo = "/Content/Consoles/Roms/" + model.NomeArquivo;
+                }
+
+                if (!string.IsNullOrEmpty(model.NomeFoto))
+                {
+                    model.UrlBoxArt = "/Content/Images/BoxArt/" + model.NomeFoto;
+                }
+
+                var romDTO = Mapper.Map<RomModel, RomDTO>(model);
+
+                var response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirRom, romDTO).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    if (model.FileRom != null && model.FileRom.ContentLength > 0)
+                    {
+                        var romFileName = Path.GetFileName(model.FileRom.FileName);
+                        var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
+                        model.FileRom.SaveAs(romPath);
+                    }
+
+                    if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                    {
+                        var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                        var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                        model.FileBoxArt.SaveAs(boxPath);
+                    }
+
+                    ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
                     if (response.IsSuccessStatusCode)
                     {
-                        ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
-                        return true;
+                        if (model.FileRom != null && model.FileRom.ContentLength > 0)
+                        {
+                            var romFileName = Path.GetFileName(model.FileRom.FileName);
+                            var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
+                            model.FileRom.SaveAs(romPath);
+                        }
+
+                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                        {
+                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                            model.FileBoxArt.SaveAs(boxPath);
+                        }
+
+                        ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
                     }
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
-                        return false;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
+                }
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+
                 }
             }
             else
             {
                 ViewBag.ErroMensagem = "Parâmetros incorretos!";
-                return false;
             }
         }
 
         [NonAction]
-        protected void ExcluirRom(RomModel model, string token)
+        protected void AtualizarRom(RomModel model)
         {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
+            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            {
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+            }
+
+            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            if (model != null)
+            {
+                if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                {
+                    if (!string.IsNullOrEmpty(model.UrlBoxArt))
+                    {
+                        var fileName = model.UrlBoxArt.Split('/')[4];
+                        var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), fileName);
+                        if (System.IO.File.Exists(boxPath))
+                        {
+                            System.IO.File.Delete(boxPath);
+                            model.UrlBoxArt = "/Content/Images/BoxArt/" + model.NomeFoto;
+                        }
+                        else
+                        {
+                            model.UrlBoxArt = null;
+                        }
+                    }
+                }
+
+                if (model.FileRom != null && model.FileRom.ContentLength > 0)
+                {
+                    if (!string.IsNullOrEmpty(model.UrlArquivo))
+                    {
+                        var fileName = model.UrlArquivo.Split('/')[4];
+                        var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), fileName);
+                        if (System.IO.File.Exists(romPath))
+                        {
+                            System.IO.File.Delete(romPath);
+                            model.UrlArquivo = "/Content/Consoles/Roms/" + model.NomeArquivo;
+                        }
+                        else
+                        {
+                            model.UrlArquivo = null;
+                        }
+                    }
+                }
+
+                var romDTO = Mapper.Map<RomModel, RomDTO>(model);
+
+                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarRom, romDTO).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    if (model.FileRom != null && model.FileRom.ContentLength > 0)
+                    {
+                        var romFileName = Path.GetFileName(model.FileRom.FileName);
+                        var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
+                        model.FileRom.SaveAs(romPath);
+                    }
+
+                    if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                    {
+                        var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                        var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                        model.FileBoxArt.SaveAs(boxPath);
+                    }
+
+                    ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        if (model.FileRom != null && model.FileRom.ContentLength > 0)
+                        {
+                            var romFileName = Path.GetFileName(model.FileRom.FileName);
+                            var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
+                            model.FileRom.SaveAs(romPath);
+                        }
+
+                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                        {
+                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                            model.FileBoxArt.SaveAs(boxPath);
+                        }
+
+                        ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
+                    }
+                    else
+                    {
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                    }
+                }
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+            }
+            else
+            {
+                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+            }
+        }
+
+        [NonAction]
+        protected void ExcluirRom(RomModel model)
+        {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
             if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
@@ -1038,14 +2058,52 @@ namespace Antiguera.Administrador.Controllers.Base
 
             if (model != null)
             {
+                if (!string.IsNullOrEmpty(model.UrlArquivo))
+                {
+                    var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), model.UrlArquivo);
+                    if (System.IO.File.Exists(romPath))
+                    {
+                        System.IO.File.Delete(romPath);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(model.UrlBoxArt))
+                {
+                    var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), model.UrlBoxArt);
+                    if (System.IO.File.Exists(boxPath))
+                    {
+                        System.IO.File.Delete(boxPath);
+                    }
+                }
+
                 HttpRequestMessage request = new HttpRequestMessage
                 {
                     Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json"),
                     Method = HttpMethod.Delete,
                     RequestUri = new Uri(url.UrlApi + url.UrlExcluirRom)
                 };
-                using (var response = Cliente.SendAsync(request).Result)
+                var response = Cliente.SendAsync(request).Result;
+
+                if (response.IsSuccessStatusCode)
                 {
+                    ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
@@ -1053,200 +2111,318 @@ namespace Antiguera.Administrador.Controllers.Base
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                    }
-
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
                 }
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+            }
+            else
+            {
+                ViewBag.ErroMensagem = "Parâmetros incorretos!";
             }
         }
         #endregion
 
         #region Módulo Jogo
         [NonAction]
-        protected List<JogoModel> ListarJogos(string token)
+        protected List<JogoModel> ListarJogos()
         {
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
             {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-
-            using (var responseJogo = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosJogos).Result)
-            {
-                if (responseJogo.IsSuccessStatusCode)
-                {
-                    return responseJogo.Content.ReadAsAsync<List<JogoModel>>().Result;
-                }
-                else if (responseJogo.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    var result = responseJogo.Content.ReadAsAsync<StatusCode>().Result;
-                    TempData["Unauthorized"] = result.Status;
-                    TempData["ErroMensagem"] = result.Mensagem;
-                }
-                else if (responseJogo.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var result = responseJogo.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
-                }
-
-                else
-                {
-                    var result = responseJogo.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroListaMensagem = result.Mensagem;
-                }
-                return new List<JogoModel>();
-            }
-        }
-
-        [NonAction]
-        protected JogoModel BuscarJogoPorId(int Id, string token)
-        {
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-
-            using (var responseJogo = Cliente.GetAsync(url.UrlApi + url.UrlListarJogoPorId + Id).Result)
-            {
-                if (responseJogo.IsSuccessStatusCode)
-                {
-                    return responseJogo.Content.ReadAsAsync<JogoModel>().Result;
-
-                }
-                else if (responseJogo.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    var result = responseJogo.Content.ReadAsAsync<StatusCode>().Result;
-                    TempData["Unauthorized"] = result.Status;
-                    TempData["ErroMensagem"] = result.Mensagem;
-                    return null;
-                }
-                else if (responseJogo.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var result = responseJogo.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
-                    return null;
-                }
-
-                else
-                {
-                    var result = responseJogo.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
-                    return null;
-                }
-            }
-        }
-
-        [NonAction]
-        protected bool CadastrarJogo(JogoModel model, string token)
-        {
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-
-            if (model != null)
-            {
-                using (var response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirJogo, model).Result)
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
-                        return true;
-                    }
-                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
-                        return false;
-                    }
-
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-
-                    else
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-                }
+                token = Session["newToken"].ToString();
             }
             else
             {
-                return false;
+                token = GetToken();
             }
-        }
 
-        [NonAction]
-        protected bool AtualizarJogo(JogoModel model, string token)
-        {
             if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
             }
 
+            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            var response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosJogos).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return response.Content.ReadAsAsync<List<JogoModel>>().Result;
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                if (Session["newToken"] != null)
+                {
+                    var refreshToken = Session["newToken"].ToString();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                }
+                else
+                {
+                    var modelToken = RefreshToken();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                }
+
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    return response.Content.ReadAsAsync<List<JogoModel>>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["Unauthorized"] = result.Status;
+                    Session["ErroMensagem"] = result.Mensagem;
+                }
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["ErroMensagem"] = result.Mensagem;
+                }
+            }
+            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+            }
+
+            else
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroListaMensagem = result.Mensagem;
+            }
+            return new List<JogoModel>();
+        }
+
+        [NonAction]
+        protected JogoModel BuscarJogoPorId(int Id)
+        {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
+            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            {
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+            }
+
+            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            var response = Cliente.GetAsync(url.UrlApi + url.UrlListarJogoPorId + Id).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return response.Content.ReadAsAsync<JogoModel>().Result;
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                if (Session["newToken"] != null)
+                {
+                    var refreshToken = Session["newToken"].ToString();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                }
+                else
+                {
+                    var modelToken = RefreshToken();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                }
+
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    return response.Content.ReadAsAsync<JogoModel>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["Unauthorized"] = result.Status;
+                    Session["ErroMensagem"] = result.Mensagem;
+                    return null;
+                }
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["ErroMensagem"] = result.Mensagem;
+                    return null;
+                }
+            }
+            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+                return null;
+            }
+
+            else
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+                return null;
+            }
+        }
+
+        [NonAction]
+        protected void CadastrarJogo(JogoModel model)
+        {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
+            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            {
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+            }
+
+            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
             if (model != null)
             {
-                using (var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarJogo, model).Result)
+                if(!string.IsNullOrEmpty(model.NomeArquivo))
                 {
+                    model.UrlArquivo = "/Content/Games/" + model.NomeArquivo;
+                }
+
+                if(!string.IsNullOrEmpty(model.NomeFoto))
+                {
+                    model.UrlBoxArt = "/Content/Images/BoxArt/" + model.NomeFoto;
+                }
+
+                var jogoDTO = Mapper.Map<JogoModel, JogoDTO>(model);
+
+                var response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirJogo, jogoDTO).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    if (model.FileJogo != null && model.FileJogo.ContentLength > 0)
+                    {
+                        var gameFileName = Path.GetFileName(model.FileJogo.FileName);
+                        var gamePath = Path.Combine(Server.MapPath("~/Content/Games/"), gameFileName);
+                        model.FileJogo.SaveAs(gamePath);
+                    }
+                    if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                    {
+                        var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                        var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                        model.FileBoxArt.SaveAs(boxPath);
+                    }
+
+                    Session["Mensagem"] = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
                     if (response.IsSuccessStatusCode)
                     {
-                        ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
-                        return true;
+                        if (model.FileJogo != null && model.FileJogo.ContentLength > 0)
+                        {
+                            var gameFileName = Path.GetFileName(model.FileJogo.FileName);
+                            var gamePath = Path.Combine(Server.MapPath("~/Content/Games/"), gameFileName);
+                            model.FileJogo.SaveAs(gamePath);
+                            model.UrlArquivo = "/Content/Games/" + gameFileName;
+                        }
+                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                        {
+                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                            model.FileBoxArt.SaveAs(boxPath);
+                            model.UrlBoxArt = "/Content/Images/BoxArt/" + boxFileName;
+                        }
+
+                        Session["Mensagem"] = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
                     }
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
-                        return false;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
+                }
+
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
                 }
             }
             else
             {
                 ViewBag.ErroMensagem = "Parâmetros incorretos!";
-                return false;
             }
         }
 
         [NonAction]
-        protected void ExcluirJogo(JogoModel model, string token)
+        protected void AtualizarJogo(JogoModel model)
         {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
             if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
@@ -1256,170 +2432,400 @@ namespace Antiguera.Administrador.Controllers.Base
 
             if (model != null)
             {
+                if(model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                {
+                    if(!string.IsNullOrEmpty(model.UrlBoxArt))
+                    {
+                        var fileName = model.UrlBoxArt.Split('/')[4];
+                        var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), fileName);
+                        if(System.IO.File.Exists(boxPath))
+                        {
+                            System.IO.File.Delete(boxPath);
+                            model.UrlBoxArt = "/Content/Images/BoxArt/" + model.NomeFoto;
+                        }
+                        else
+                        {
+                            model.UrlBoxArt = null;
+                        }
+                    }
+                }
+
+                if(model.FileJogo != null && model.FileJogo.ContentLength > 0)
+                {
+                    if(!string.IsNullOrEmpty(model.UrlArquivo))
+                    {
+                        var fileName = model.UrlArquivo.Split('/')[3];
+                        var gamepath = Path.Combine(Server.MapPath("~/Content/Games/"), fileName);
+                        if(System.IO.File.Exists(gamepath))
+                        {
+                            System.IO.File.Delete(gamepath);
+                            model.UrlArquivo = "/Content/Games/" + model.NomeArquivo;
+                        }
+                        else
+                        {
+                            model.UrlArquivo = null;
+                        }
+                    }
+                }
+
+                var jogoDTO = Mapper.Map<JogoModel, JogoDTO>(model);
+
+                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarJogo, jogoDTO).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    if (model.FileJogo != null && model.FileJogo.ContentLength > 0)
+                    {
+                        var gameFileName = Path.GetFileName(model.FileJogo.FileName);
+                        var gamePath = Path.Combine(Server.MapPath("~/Content/Games/"), gameFileName);
+                        model.FileJogo.SaveAs(gamePath);
+                        model.UrlArquivo = "/Content/Games/" + gameFileName;
+                    }
+                    if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                    {
+                        var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                        var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                        model.FileBoxArt.SaveAs(boxPath);
+                        model.UrlBoxArt = "/Content/Images/BoxArt/" + boxFileName;
+                    }
+
+                    Session["Mensagem"] = response.Content.ReadAsAsync<string>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        if (model.FileJogo != null && model.FileJogo.ContentLength > 0)
+                        {
+                            var gameFileName = Path.GetFileName(model.FileJogo.FileName);
+                            var gamePath = Path.Combine(Server.MapPath("~/Content/Games/"), gameFileName);
+                            model.FileJogo.SaveAs(gamePath);
+                            model.UrlArquivo = "/Content/Games/" + gameFileName;
+                        }
+                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                        {
+                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                            model.FileBoxArt.SaveAs(boxPath);
+                            model.UrlBoxArt = "/Content/Images/BoxArt/" + boxFileName;
+                        }
+
+                        Session["Mensagem"] = response.Content.ReadAsAsync<string>().Result;
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
+                    }
+                    else
+                    {
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                    }
+                }
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+            }
+            else
+            {
+                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+            }
+        }
+
+        [NonAction]
+        protected void ExcluirJogo(JogoModel model)
+        {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
+            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            {
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+            }
+
+            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            if (model != null)
+            {
+                if(!string.IsNullOrEmpty(model.UrlArquivo))
+                {
+                    var gamePath = Path.Combine(Server.MapPath("~/Content/Games/"), model.UrlArquivo);
+                    if (System.IO.File.Exists(gamePath))
+                    {
+                        System.IO.File.Delete(gamePath);
+                    }
+                }
+
+                if(!string.IsNullOrEmpty(model.UrlBoxArt))
+                {
+                    var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), model.UrlBoxArt);
+                    if (System.IO.File.Exists(boxPath))
+                    {
+                        System.IO.File.Delete(boxPath);
+                    }
+                }
+
                 HttpRequestMessage request = new HttpRequestMessage
                 {
                     Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json"),
                     Method = HttpMethod.Delete,
                     RequestUri = new Uri(url.UrlApi + url.UrlExcluirJogo)
                 };
-                using (var response = Cliente.SendAsync(request).Result)
+                var response = Cliente.SendAsync(request).Result;
+
+                if (response.IsSuccessStatusCode)
                 {
+                    Session["Mensagem"] = response.Content.ReadAsAsync<string>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
                     if (response.IsSuccessStatusCode)
                     {
-                        ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                        Session["Mensagem"] = response.Content.ReadAsAsync<string>().Result;
                     }
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                    }
-
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
                 }
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["ErroMensagem"] = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["ErroMensagem"] = result.Mensagem;
+                }
+            }
+            else
+            {
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
         }
         #endregion
 
         #region Módulo Programa
         [NonAction]
-        protected List<ProgramaModel> ListarProgramas(string token)
+        protected List<ProgramaModel> ListarProgramas()
         {
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
             {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-
-            using (var responsePrograma = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosProgramas).Result)
-            {
-                if (responsePrograma.IsSuccessStatusCode)
-                {
-                    return responsePrograma.Content.ReadAsAsync<List<ProgramaModel>>().Result;
-                }
-                else if (responsePrograma.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    var result = responsePrograma.Content.ReadAsAsync<StatusCode>().Result;
-                    TempData["Unauthorized"] = result.Status;
-                    TempData["ErroMensagem"] = result.Mensagem;
-                }
-
-                else if (responsePrograma.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var result = responsePrograma.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
-                }
-
-                else
-                {
-                    var result = responsePrograma.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroListaMensagem = result.Mensagem;
-                }
-                return new List<ProgramaModel>();
-            }
-        }
-
-        [NonAction]
-        protected ProgramaModel BuscarProgramaPorId(int Id, string token)
-        {
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-
-            using (var responsePrograma = Cliente.GetAsync(url.UrlApi + url.UrlListarProgramaPorId + Id).Result)
-            {
-                if (responsePrograma.IsSuccessStatusCode)
-                {
-                    return responsePrograma.Content.ReadAsAsync<ProgramaModel>().Result;
-
-                }
-                else if (responsePrograma.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    var result = responsePrograma.Content.ReadAsAsync<StatusCode>().Result;
-                    TempData["Unauthorized"] = result.Status;
-                    TempData["ErroMensagem"] = result.Mensagem;
-                    return null;
-                }
-                else if (responsePrograma.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var result = responsePrograma.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
-                    return null;
-                }
-
-                else
-                {
-                    var result = responsePrograma.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
-                    return null;
-                }
-            }
-        }
-
-        [NonAction]
-        protected bool CadastrarPrograma(ProgramaModel model, string token)
-        {
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-
-            if (model != null)
-            {
-                using (var response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirPrograma, model).Result)
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
-                        return true;
-                    }
-                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
-                        return false;
-                    }
-
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-
-                    else
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-                }
+                token = Session["newToken"].ToString();
             }
             else
             {
-                return false;
+                token = GetToken();
+            }
+
+            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            {
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+            }
+
+            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            var response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosProgramas).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return response.Content.ReadAsAsync<List<ProgramaModel>>().Result;
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                if (Session["newToken"] != null)
+                {
+                    var refreshToken = Session["newToken"].ToString();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                }
+                else
+                {
+                    var modelToken = RefreshToken();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                }
+
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    return response.Content.ReadAsAsync<List<ProgramaModel>>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["Unauthorized"] = result.Status;
+                    Session["ErroMensagem"] = result.Mensagem;
+                }
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["ErroMensagem"] = result.Mensagem;
+                }
+            }
+
+            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+            }
+
+            else
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroListaMensagem = result.Mensagem;
+            }
+            return new List<ProgramaModel>();
+        }
+
+        [NonAction]
+        protected ProgramaModel BuscarProgramaPorId(int Id)
+        {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
+            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            {
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+            }
+
+            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            var response = Cliente.GetAsync(url.UrlApi + url.UrlListarProgramaPorId + Id).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return response.Content.ReadAsAsync<ProgramaModel>().Result;
+
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                if (Session["newToken"] != null)
+                {
+                    var refreshToken = Session["newToken"].ToString();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                }
+                else
+                {
+                    var modelToken = RefreshToken();
+                    Cliente.DefaultRequestHeaders.Remove("Authorization");
+                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                }
+
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    return response.Content.ReadAsAsync<ProgramaModel>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["Unauthorized"] = result.Status;
+                    Session["ErroMensagem"] = result.Mensagem;
+                    return null;
+                }
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    Session["ErroMensagem"] = result.Mensagem;
+                    return null;
+                }
+            }
+            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+                return null;
+            }
+
+            else
+            {
+                var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                ViewBag.ErroMensagem = result.Mensagem;
+                return null;
             }
         }
 
         [NonAction]
-        protected bool AtualizarPrograma(ProgramaModel model, string token)
+        protected void CadastrarPrograma(ProgramaModel model)
         {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
             if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
@@ -1429,45 +2835,117 @@ namespace Antiguera.Administrador.Controllers.Base
 
             if (model != null)
             {
-                using (var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarPrograma, model).Result)
+                if (!string.IsNullOrEmpty(model.NomeArquivo))
                 {
+                    model.UrlArquivo = "/Content/Programas/" + model.NomeArquivo;
+                }
+
+                if (!string.IsNullOrEmpty(model.NomeFoto))
+                {
+                    model.UrlBoxArt = "/Content/Images/BoxArt/" + model.NomeFoto;
+                }
+
+                var programaDTO = Mapper.Map<ProgramaModel, ProgramaDTO>(model);
+
+                var response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirPrograma, programaDTO).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    if (model.FilePrograma != null && model.FilePrograma.ContentLength > 0)
+                    {
+                        var programaFileName = Path.GetFileName(model.FilePrograma.FileName);
+                        var progPath = Path.Combine(Server.MapPath("~/Content/Programas/"), programaFileName);
+                        model.FilePrograma.SaveAs(progPath);
+                    }
+
+                    if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                    {
+                        var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                        var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                        model.FileBoxArt.SaveAs(boxPath);
+                    }
+
+                    ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
                     if (response.IsSuccessStatusCode)
                     {
-                        ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
-                        return true;
+                        if (model.FilePrograma != null && model.FilePrograma.ContentLength > 0)
+                        {
+                            var programaFileName = Path.GetFileName(model.FilePrograma.FileName);
+                            var progPath = Path.Combine(Server.MapPath("~/Content/Programas/"), programaFileName);
+                            model.FilePrograma.SaveAs(progPath);
+                        }
+
+                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                        {
+                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                            model.FileBoxArt.SaveAs(boxPath);
+                        }
+
+                        ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
                     }
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
-                        return false;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
-                    }
-
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                        return false;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
+                }
+
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
                 }
             }
             else
             {
                 ViewBag.ErroMensagem = "Parâmetros incorretos!";
-                return false;
             }
         }
 
         [NonAction]
-        protected void ExcluirPrograma(ProgramaModel model, string token)
+        protected void AtualizarPrograma(ProgramaModel model)
         {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
             if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
             {
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
@@ -1477,14 +2955,192 @@ namespace Antiguera.Administrador.Controllers.Base
 
             if (model != null)
             {
+                if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                {
+                    if (!string.IsNullOrEmpty(model.UrlBoxArt))
+                    {
+                        var fileName = model.UrlBoxArt.Split('/')[4];
+                        var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), fileName);
+                        if (System.IO.File.Exists(boxPath))
+                        {
+                            System.IO.File.Delete(boxPath);
+                            model.UrlBoxArt = "/Content/Images/BoxArt/" + model.NomeFoto;
+                        }
+                        else
+                        {
+                            model.UrlBoxArt = null;
+                        }
+                    }
+                }
+
+                if (model.FilePrograma != null && model.FilePrograma.ContentLength > 0)
+                {
+                    if (!string.IsNullOrEmpty(model.UrlArquivo))
+                    {
+                        var programaFileName = model.UrlArquivo.Split('/')[3];
+                        var progPath = Path.Combine(Server.MapPath("~/Content/Programas/"), programaFileName);
+                        if (System.IO.File.Exists(progPath))
+                        {
+                            System.IO.File.Delete(progPath);
+                            model.UrlArquivo = "/Content/Programas/" + model.NomeArquivo;
+                        }
+                        else
+                        {
+                            model.UrlArquivo = null;
+                        }
+                    }
+                }
+
+                var programaDTO = Mapper.Map<ProgramaModel, ProgramaDTO>(model);
+
+                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarPrograma, programaDTO).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    if (model.FilePrograma != null && model.FilePrograma.ContentLength > 0)
+                    {
+                        var programaFileName = Path.GetFileName(model.FilePrograma.FileName);
+                        var progPath = Path.Combine(Server.MapPath("~/Content/Programas/"), programaFileName);
+                        model.FilePrograma.SaveAs(progPath);
+                    }
+
+                    if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                    {
+                        var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                        var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                        model.FileBoxArt.SaveAs(boxPath);
+                    }
+
+                    ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        if (model.FilePrograma != null && model.FilePrograma.ContentLength > 0)
+                        {
+                            var programaFileName = Path.GetFileName(model.FilePrograma.FileName);
+                            var progPath = Path.Combine(Server.MapPath("~/Content/Programas/"), programaFileName);
+                            model.FilePrograma.SaveAs(progPath);
+                            model.UrlArquivo = "/Content/Programas/" + programaFileName;
+                        }
+
+                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
+                        {
+                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
+                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
+                            model.FileBoxArt.SaveAs(boxPath);
+                            model.UrlBoxArt = "/Content/Images/BoxArt/" + boxFileName;
+                        }
+
+                        ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
+                    }
+                    else
+                    {
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                    }
+                }
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+            }
+            else
+            {
+                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+            }
+        }
+
+        [NonAction]
+        protected void ExcluirPrograma(ProgramaModel model)
+        {
+            var token = string.Empty;
+
+            if (Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+
+            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            {
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+            }
+
+            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            if (model != null)
+            {
+                var progPath = Path.Combine(Server.MapPath("~/Content/Programas/"), model.UrlArquivo);
+                if (System.IO.File.Exists(progPath))
+                {
+                    System.IO.File.Delete(progPath);
+                }
+                var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), model.UrlBoxArt);
+                if (System.IO.File.Exists(boxPath))
+                {
+                    System.IO.File.Delete(boxPath);
+                }
+
                 HttpRequestMessage request = new HttpRequestMessage
                 {
                     Content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json"),
                     Method = HttpMethod.Delete,
                     RequestUri = new Uri(url.UrlApi + url.UrlExcluirPrograma)
                 };
-                using (var response = Cliente.SendAsync(request).Result)
+                var response = Cliente.SendAsync(request).Result;
+
+                if (response.IsSuccessStatusCode)
                 {
+                    ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    if (Session["newToken"] != null)
+                    {
+                        var refreshToken = Session["newToken"].ToString();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+                    }
+                    else
+                    {
+                        var modelToken = RefreshToken();
+                        Cliente.DefaultRequestHeaders.Remove("Authorization");
+                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+                    }
+
+                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         ViewBag.Mensagem = ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
@@ -1492,21 +3148,30 @@ namespace Antiguera.Administrador.Controllers.Base
                     else if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        TempData["Unauthorized"] = result.Status;
-                        TempData["ErroMensagem"] = result.Mensagem;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
-                    else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
-                    }
-
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        ViewBag.ErroMensagem = result.Mensagem;
+                        Session["ErroMensagem"] = result.Mensagem;
                     }
                 }
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+            }
+            else
+            {
+                ViewBag.ErroMensagem = "Parâmetros incorretos!";
             }
         }
         #endregion
@@ -1548,11 +3213,22 @@ namespace Antiguera.Administrador.Controllers.Base
         }
 
         [NonAction]
-        protected ResponseLoginModel RefreshToken(string token)
+        protected ResponseLoginModel RefreshToken()
         {
+            var token = string.Empty;
+
+            if (Session["newRefreshToken"] != null)
+            {
+                token = Session["newRefreshToken"].ToString();
+            }
+            else
+            {
+                token = GetRefreshToken();
+            }
+
             var content = new List<KeyValuePair<string, string>>(new[]
             {
-                new KeyValuePair<string, string>("grant_type", "password"),
+                new KeyValuePair<string, string>("grant_type", "refresh_token"),
                 new KeyValuePair<string, string>("refresh_token", token)
             });
 
@@ -1563,6 +3239,9 @@ namespace Antiguera.Administrador.Controllers.Base
                 if (responseSecondLogin.IsSuccessStatusCode)
                 {
                     var resultLogin = responseSecondLogin.Content.ReadAsAsync<ResponseLoginModel>().Result;
+
+                    Session["newToken"] = resultLogin.access_token;
+                    Session["newRefreshToken"] = resultLogin.refresh_token;
 
                     return resultLogin;
                 }
@@ -1582,9 +3261,9 @@ namespace Antiguera.Administrador.Controllers.Base
         }
 
         [NonAction]
-        protected string PegarTokenAtual()
+        private string GetToken()
         {
-            string token = string.Empty;
+            var token = string.Empty;
 
             foreach (var item in HttpContext.GetOwinContext().Authentication.User.Claims)
             {
@@ -1597,9 +3276,9 @@ namespace Antiguera.Administrador.Controllers.Base
         }
 
         [NonAction]
-        protected string PegarTokenRefreshAtual()
+        private string GetRefreshToken()
         {
-            string token = string.Empty;
+            var token = string.Empty;
 
             foreach (var item in HttpContext.GetOwinContext().Authentication.User.Claims)
             {

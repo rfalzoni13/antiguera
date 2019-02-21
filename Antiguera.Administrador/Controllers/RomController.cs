@@ -19,50 +19,23 @@ namespace Antiguera.Administrador.Controllers
             {
                 if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
                 {
-                    if (TempData["Mensagem"] != null)
+                    if (Session["Mensagem"] != null)
                     {
-                        ViewBag.Mensagem = TempData["Mensagem"];
+                        ViewBag.Mensagem = Session["Mensagem"];
                     }
 
-                    if (TempData["ErroMensagem"] != null)
+                    if (Session["ErroMensagem"] != null)
                     {
-                        ViewBag.ErroMensagem = TempData["ErroMensagem"];
+                        ViewBag.ErroMensagem = Session["ErroMensagem"];
                     }
 
-                    var token = PegarTokenAtual();
-                    if (!string.IsNullOrEmpty(token))
+                    var lista = ListarRoms();
+                    if (Session["Unauthorized"] != null)
                     {
-                        var lista = ListarRoms(token);
-                        if (TempData["Unauthorized"] != null)
-                        {
-                            Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-                        else
-                        {
-                            lista.OrderBy(j => j.Id).ToPagedList(pagina, 4);
-                        }
+                        HttpContext.GetOwinContext().Authentication.SignOut();
+                        return RedirectToAction("Login", "Home");
                     }
-                    else
-                    {
-                        token = PegarTokenRefreshAtual();
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            var lista = ListarRoms(token);
-                            if (TempData["Unauthorized"] != null)
-                            {
-                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-                            else
-                            {
-                                lista.OrderBy(j => j.Id).ToPagedList(pagina, 4);
-                            }
-                        }
-                    }
-                    return View();
+                    return View(lista.OrderBy(x => x.Id).ToPagedList(pagina, 4));
                 }
                 else
                 {
@@ -117,107 +90,21 @@ namespace Antiguera.Administrador.Controllers
                 {
                     if (model != null && ModelState.IsValid)
                     {
-                        if (model.FileRom != null && model.FileRom.ContentLength > 0)
+
+                        CadastrarRom(model);
+
+                        if (Session["Unauthorized"] != null)
                         {
-                            var romFileName = Path.GetFileName(model.FileRom.FileName);
-                            var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
-                            model.FileRom.SaveAs(romPath);
-                            model.UrlArquivo = "/Content/Consoles/Roms/" + romFileName;
-                        }
-
-                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                        {
-                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                            model.FileBoxArt.SaveAs(boxPath);
-                            model.UrlBoxArt = "/Content/Images/BoxArt/" + boxFileName;
-                        }
-
-                        var token = PegarTokenAtual();
-
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            if (CadastrarRom(model, token))
-                            {
-                                return View("Index");
-                            }
-                            else
-                            {
-                                if (TempData["Unauthorized"] != null)
-                                {
-                                    token = PegarTokenRefreshAtual();
-                                    if (!string.IsNullOrEmpty(token))
-                                    {
-                                        if (CadastrarRom(model, token))
-                                        {
-                                            return View("Index");
-                                        }
-                                        else
-                                        {
-                                            if (TempData["Unauthorized"] != null)
-                                            {
-                                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                                HttpContext.GetOwinContext().Authentication.SignOut();
-
-                                                if (model.FileRom != null && model.FileRom.ContentLength > 0)
-                                                {
-                                                    var romFileName = Path.GetFileName(model.FileRom.FileName);
-                                                    var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
-                                                    System.IO.File.Delete(romPath);
-                                                }
-                                                
-                                                if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                                                {
-                                                    var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                                                    var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                                                    System.IO.File.Delete(boxPath);
-                                                }
-                                                return RedirectToAction("Login", "Home");
-                                            }
-                                            return View(model);
-                                        }
-                                    }
-                                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                                    HttpContext.GetOwinContext().Authentication.SignOut();
-                                    return RedirectToAction("Login", "Home");
-                                }
-                                return View(model);
-                            }
-                        }
-                        else
-                        {
-                            token = PegarTokenRefreshAtual();
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                if (CadastrarRom(model, token))
-                                {
-                                    return View("Index");
-                                }
-                                else
-                                {
-                                    if (TempData["Unauthorized"] != null)
-                                    {
-                                        Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                        HttpContext.GetOwinContext().Authentication.SignOut();
-
-                                        var romFileName = Path.GetFileName(model.FileRom.FileName);
-                                        var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
-                                        System.IO.File.Delete(romPath);
-
-                                        var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                                        var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                                        System.IO.File.Delete(boxPath);
-
-                                        return RedirectToAction("Login", "Home");
-                                    }
-                                }
-                            }
-                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
                             HttpContext.GetOwinContext().Authentication.SignOut();
                             return RedirectToAction("Login", "Home");
                         }
+
+                        return View("Index");
                     }
-                    return View(model);
+                    else
+                    {
+                        return View(model);
+                    }
                 }
                 else
                 {
@@ -243,88 +130,26 @@ namespace Antiguera.Administrador.Controllers
             {
                 if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
                 {
-                    var token = PegarTokenAtual();
-                    if(!string.IsNullOrEmpty(token))
+                    var model = BuscarRomPorId(id);
+                    if (Session["Unauthorized"] != null)
                     {
-                        var model = BuscarRomPorId(id, token);
-                        if (TempData["Unauthorized"] != null)
-                        {
-                            token = PegarTokenRefreshAtual();
-                            if(!string.IsNullOrEmpty(token))
-                            {
-                                model = BuscarRomPorId(id, token);
-                                if (TempData["Unauthorized"] != null)
-                                {
-                                    Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                    HttpContext.GetOwinContext().Authentication.SignOut();
-                                    return RedirectToAction("Login", "Home");
-                                }
-                                else
-                                {
-                                    if (model != null)
-                                    {
-                                        return View(model);
-                                    }
-                                    else
-                                    {
-                                        return RedirectToAction("Index");
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-                        }
-                        else
-                        {
-                            if (model != null)
-                            {
-                                return View(model);
-                            }
-                            else
-                            {
-                                return RedirectToAction("Index");
-                            }
-                        }
+                        HttpContext.GetOwinContext().Authentication.SignOut();
+                        return RedirectToAction("Login", "Home");
+                    }
+
+                    if (model != null)
+                    {
+                        return View(model);
                     }
                     else
                     {
-                        token = PegarTokenRefreshAtual();
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            var model = BuscarRomPorId(id, token);
-                            if (TempData["Unauthorized"] != null)
-                            {
-                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-                            else
-                            {
-                                if (model != null)
-                                {
-                                    return View(model);
-                                }
-                                else
-                                {
-                                    return RedirectToAction("Index");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
+                        return RedirectToAction("Index");
                     }
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Acesso restrito!";
+                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                    HttpContext.GetOwinContext().Authentication.SignOut();
                     return RedirectToAction("Login", "Home");
                 }
             }
@@ -349,114 +174,21 @@ namespace Antiguera.Administrador.Controllers
                 {
                     if (model != null && ModelState.IsValid)
                     {
-                        if (model.FileRom != null && model.FileRom.ContentLength > 0)
+
+                        AtualizarRom(model);
+
+                        if (Session["Unauthorized"] != null)
                         {
-                            var romFileName = Path.GetFileName(model.FileRom.FileName);
-                            var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
-                            model.FileRom.SaveAs(romPath);
-                            model.UrlArquivo = "/Content/Consoles/Roms/" + romFileName;
-                        }
-
-                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                        {
-                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                            model.FileBoxArt.SaveAs(boxPath);
-                            model.UrlBoxArt = "/Content/Images/BoxArt/" + boxFileName;
-                        }
-
-                        var token = PegarTokenAtual();
-
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            if (AtualizarRom(model, token))
-                            {
-                                return View("Index");
-                            }
-                            else
-                            {
-                                if (TempData["Unauthorized"] != null)
-                                {
-                                    token = PegarTokenRefreshAtual();
-                                    if (!string.IsNullOrEmpty(token))
-                                    {
-                                        if (AtualizarRom(model, token))
-                                        {
-                                            return View("Index");
-                                        }
-                                        else
-                                        {
-                                            if (TempData["Unauthorized"] != null)
-                                            {
-                                                Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                                HttpContext.GetOwinContext().Authentication.SignOut();
-
-                                                if (model.FileRom != null && model.FileRom.ContentLength > 0)
-                                                {
-                                                    var romFileName = Path.GetFileName(model.FileRom.FileName);
-                                                    var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
-                                                    System.IO.File.Delete(romPath);
-                                                }
-
-                                                if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                                                {
-                                                    var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                                                    var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                                                    System.IO.File.Delete(boxPath);
-                                                }
-
-                                                return RedirectToAction("Login", "Home");
-                                            }
-                                            return View(model);
-                                        }
-                                    }
-                                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                                    HttpContext.GetOwinContext().Authentication.SignOut();
-                                    return RedirectToAction("Login", "Home");
-                                }
-                                return View(model);
-                            }
-                        }
-                        else
-                        {
-                            token = PegarTokenRefreshAtual();
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                if (AtualizarRom(model, token))
-                                {
-                                    return View("Index");
-                                }
-                                else
-                                {
-                                    if (TempData["Unauthorized"] != null)
-                                    {
-                                        Session["ErroMensagem"] = ViewBag.ErroMensagem;
-                                        HttpContext.GetOwinContext().Authentication.SignOut();
-
-                                        if (model.FileRom != null && model.FileRom.ContentLength > 0)
-                                        {
-                                            var romFileName = Path.GetFileName(model.FileRom.FileName);
-                                            var romPath = Path.Combine(Server.MapPath("~/Content/Consoles/Roms/"), romFileName);
-                                            System.IO.File.Delete(romPath);
-                                        }
-                                        
-                                        if (model.FileBoxArt != null && model.FileBoxArt.ContentLength > 0)
-                                        {
-                                            var boxFileName = Path.GetFileName(model.FileBoxArt.FileName);
-                                            var boxPath = Path.Combine(Server.MapPath("~/Content/Images/BoxArt/"), boxFileName);
-                                            System.IO.File.Delete(boxPath);
-                                        }
-
-                                        return RedirectToAction("Login", "Home");
-                                    }
-                                }
-                            }
-                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
                             HttpContext.GetOwinContext().Authentication.SignOut();
                             return RedirectToAction("Login", "Home");
                         }
+
+                        return View("Index");
                     }
-                    return View(model);
+                    else
+                    {
+                        return View(model);
+                    }
                 }
                 else
                 {
@@ -488,62 +220,16 @@ namespace Antiguera.Administrador.Controllers
                     }
                     else
                     {
-                        var token = PegarTokenAtual();
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            var model = BuscarRomPorId(id, token);
+                        var model = BuscarRomPorId(id);
 
-                            if (TempData["Unauthorized"] != null)
-                            {
-                                if (model != null)
-                                {
-                                    ExcluirRom(model, token);
-                                }
-                            }
-                            else
-                            {
-                                token = PegarTokenRefreshAtual();
-                                if (!string.IsNullOrEmpty(token))
-                                {
-                                    model = BuscarRomPorId(id, token);
-                                    if (TempData["Unauthorized"] != null)
-                                    {
-                                        if(model != null)
-                                        {
-                                            ExcluirRom(model, token);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        HttpContext.GetOwinContext().Authentication.SignOut();
-                                        return RedirectToAction("Login", "Home");
-                                    }
-                                }
-                                Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                                HttpContext.GetOwinContext().Authentication.SignOut();
-                                return RedirectToAction("Login", "Home");
-                            }
-                        }
-                        else
+                        if (Session["Unauthorized"] != null)
                         {
-                            token = PegarTokenRefreshAtual();
-                            if (!string.IsNullOrEmpty(token))
-                            {
-                                var model = BuscarRomPorId(id, token);
-                                if (TempData["Unauthorized"] != null)
-                                {
-                                    if (model != null)
-                                    {
-                                        ExcluirRom(model, token);
-                                    }
-                                }
-                                else
-                                {
-                                    HttpContext.GetOwinContext().Authentication.SignOut();
-                                    return RedirectToAction("Login", "Home");
-                                }
-                            }
-                            Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                            HttpContext.GetOwinContext().Authentication.SignOut();
+                            return RedirectToAction("Login", "Home");
+                        }
+                        ExcluirRom(model);
+                        if (Session["Unauthorized"] != null)
+                        {
                             HttpContext.GetOwinContext().Authentication.SignOut();
                             return RedirectToAction("Login", "Home");
                         }
