@@ -1,9 +1,15 @@
 ﻿@model Antiguera.Administrador.Models.UsuarioModel
 
 @{
-    ViewBag.Title = "Cadastrar novo usuário";
+    ViewBag.Title = "Editar usuário";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<style>
+    .col-md-4 p {
+        margin: 5px 75px -25px;
+    }
+</style>
 
 @section styles {
     @Styles.Render("~/bundles/bootstrap-datepicker")
@@ -14,7 +20,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            Cadastrar novo usuário
+            Editar usuário
         </h1>
         <ol class="breadcrumb">
             <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -25,7 +31,7 @@
 
     <section class="content container-fluid">
         <div class="container">
-            @using (Html.BeginForm("Cadastrar", "Usuario", FormMethod.Post, new { @class = "form-admin", enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("Editar", "Usuario", FormMethod.Post, new { @class = "form-admin", enctype = "multipart/form-data" }))
             {
                 if (ViewBag.ErroMensagem != null)
                 {
@@ -47,6 +53,7 @@
                     </div>
                 }
 
+                @Html.HiddenFor(x => x.Id)
                 <div class="row">
                     <div class="col-md-3">
                         @Html.LabelFor(x => x.Nome)
@@ -68,16 +75,6 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-3">
-                        @Html.LabelFor(x => x.Senha)
-                        @Html.TextBoxFor(x => x.Senha, new { @type = "password", @class = "form-control" })
-                    </div>
-                    <div class="col-md-3">
-                        @Html.LabelFor(x => x.ConfirmarSenha)
-                        @Html.TextBoxFor(x => x.ConfirmarSenha, new { @type = "password", @class = "form-control" })
-                    </div>
-                </div>
-                <div class="row">
                     @if (Model.ListaAcessos != null)
                     {
                         <div class="col-md-3">
@@ -88,15 +85,27 @@
                 </div>
                 <br />
                 <div class="row">
+                    @if (!string.IsNullOrEmpty(Model.UrlFotoUpload))
+                    {
                     <div class="col-md-4">
                         @Html.LabelFor(x => x.FileFoto)
-                        @Html.TextBoxFor(x => x.FileFoto, new { @type = "File", @accept = ".jpg, .png" })
+                        @Html.TextBoxFor(x => x.FileFoto, new { @type = "file", @style = "display:none" })
+                        <p id="textFoto">@(Model.UrlFotoUpload.Split('/')[4])</p>
+                        <button type="button" id="ClickFoto" class="btn btn-primary">Alterar</button>
                     </div>
+                    }
+                    else
+                    {
+                    <div class="col-md-4">
+                        @Html.LabelFor(x => x.FileFoto)
+                        @Html.TextBoxFor(x => x.FileFoto, new { @type = "file" })
+                    </div>
+                    }
                 </div>
                 <br />
                 <div class="row">
                     <div class="col-md-2">
-                        <button class="btn btn-success btn-block" type="submit">Cadastrar</button>
+                        <button class="btn btn-success btn-block" type="submit">Salvar</button>
                     </div>
                     <div class="col-md-2">
                         @Html.ActionLink("Voltar", "Index", null, new { @class = "btn btn-default btn-block" })
@@ -108,4 +117,19 @@
     </section>
 </div>
 
+@section scripts {
+
+    <script>
+
+        $("#ClickFoto").on("click", function () {
+            $("#FileFoto").click();
+        });
+
+        $("#FileFoto").change(function (e) {
+            var fileName = e.target.files[0].name;
+            $("#textFoto").html(fileName);
+        });
+
+    </script>
+}
 
