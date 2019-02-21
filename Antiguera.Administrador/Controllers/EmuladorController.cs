@@ -22,11 +22,13 @@ namespace Antiguera.Administrador.Controllers
                     if (Session["Mensagem"] != null)
                     {
                         ViewBag.Mensagem = Session["Mensagem"];
+                        Session.Clear();
                     }
 
                     if (Session["ErroMensagem"] != null)
                     {
                         ViewBag.ErroMensagem = Session["ErroMensagem"];
+                        Session.Clear();
                     }
 
                     var lista = ListarEmuladores();
@@ -227,7 +229,12 @@ namespace Antiguera.Administrador.Controllers
                             HttpContext.GetOwinContext().Authentication.SignOut();
                             return RedirectToAction("Login", "Home");
                         }
-                        ExcluirEmulador(model);
+
+                        if(model != null)
+                        {
+                            ExcluirEmulador(model);
+                        }
+                        
                         if (Session["Unauthorized"] != null)
                         {
                             HttpContext.GetOwinContext().Authentication.SignOut();

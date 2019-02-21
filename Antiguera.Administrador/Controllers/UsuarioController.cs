@@ -23,11 +23,13 @@ namespace Antiguera.Administrador.Controllers
                     if (Session["Mensagem"] != null)
                     {
                         ViewBag.Mensagem = Session["Mensagem"];
+                        Session.Clear();
                     }
 
                     if (Session["ErroMensagem"] != null)
                     {
                         ViewBag.ErroMensagem = Session["ErroMensagem"];
+                        Session.Clear();
                     }
 
                     var lista = ListarUsuarios();
@@ -120,7 +122,7 @@ namespace Antiguera.Administrador.Controllers
                             return RedirectToAction("Login", "Home");
                         }
 
-                        return View("Index");
+                        return RedirectToAction("Index");
                     }
                     else
                     {
@@ -198,9 +200,19 @@ namespace Antiguera.Administrador.Controllers
             {
                 if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
                 {
+                    var oldModel = BuscarUsuarioPorId(model.Id);
+                    if (oldModel != null)
+                    {
+                        model.Senha = oldModel.Senha;
+                        model.Created = oldModel.Created;
+                        model.UrlFotoUpload = oldModel.UrlFotoUpload;
+                    }
+
+                    ModelState.Remove("Senha");
+                    ModelState.Remove("ConfirmarSenha");
+
                     if (model != null && ModelState.IsValid)
                     {
-
                         AtualizarUsuario(model);
 
                         if (Session["Unauthorized"] != null)
@@ -209,7 +221,7 @@ namespace Antiguera.Administrador.Controllers
                             return RedirectToAction("Login", "Home");
                         }
 
-                        return View("Index");
+                        return RedirectToAction("Index");
                     }
                     else
                     {
@@ -246,14 +258,19 @@ namespace Antiguera.Administrador.Controllers
                     }
                     else
                     {
-                        var model = BuscarEmuladorPorId(id);
+                        var model = BuscarUsuarioPorId(id);
 
                         if (Session["Unauthorized"] != null)
                         {
                             HttpContext.GetOwinContext().Authentication.SignOut();
                             return RedirectToAction("Login", "Home");
                         }
-                        ExcluirEmulador(model);
+
+                        if(model != null)
+                        {
+                            ExcluirUsuario(model);
+                        }                        
+
                         if (Session["Unauthorized"] != null)
                         {
                             HttpContext.GetOwinContext().Authentication.SignOut();

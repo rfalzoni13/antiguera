@@ -23,11 +23,13 @@ namespace Antiguera.Administrador.Controllers
                     if (Session["Mensagem"] != null)
                     {
                         ViewBag.Mensagem = Session["Mensagem"];
+                        Session.Clear();
                     }
 
                     if (Session["ErroMensagem"] != null)
                     {
                         ViewBag.ErroMensagem = Session["ErroMensagem"];
+                        Session.Clear();
                     }
 
                     var lista = ListarJogos();
@@ -234,6 +236,7 @@ namespace Antiguera.Administrador.Controllers
                         {
                             ExcluirJogo(model);
                         }
+
                         if (Session["Unauthorized"] != null)
                         {
                             HttpContext.GetOwinContext().Authentication.SignOut();

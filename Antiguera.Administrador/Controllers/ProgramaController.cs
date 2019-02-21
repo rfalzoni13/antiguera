@@ -22,11 +22,13 @@ namespace Antiguera.Administrador.Controllers
                     if (TempData["Mensagem"] != null)
                     {
                         ViewBag.Mensagem = TempData["Mensagem"];
+                        Session.Clear();
                     }
 
                     if (TempData["ErroMensagem"] != null)
                     {
                         ViewBag.ErroMensagem = TempData["ErroMensagem"];
+                        Session.Clear();
                     }
 
                     var lista = ListarProgramas();
@@ -227,7 +229,12 @@ namespace Antiguera.Administrador.Controllers
                             HttpContext.GetOwinContext().Authentication.SignOut();
                             return RedirectToAction("Login", "Home");
                         }
-                        ExcluirPrograma(model);
+
+                        if(model != null)
+                        {
+                            ExcluirPrograma(model);
+                        }
+                        
                         if (Session["Unauthorized"] != null)
                         {
                             HttpContext.GetOwinContext().Authentication.SignOut();
