@@ -61,37 +61,61 @@
                     <!-- Menu toggle button -->
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-bell-o"></i>
-                        @if (Model.Usuarios.Count > 0 || Model.Jogos.Count > 0)
+                        @if (Model.Usuarios.Count > 0 || Model.Jogos.Count > 0 || Model.Programas.Count > 0)
                         {
-                            <span class="label label-danger">@(Model.Usuarios.Count + Model.Jogos.Count)</span>
+                            int contagem = 0;
+
+                            if(Model.Usuarios.Count > 0)
+                            {
+                                contagem++;
+                            }
+                            if(Model.Jogos.Count > 0)
+                            {
+                                contagem++;
+                            }
+                            if(Model.Programas.Count > 0)
+                            {
+                                contagem++;
+                            }
+
+                            <span class="label label-danger">@contagem</span>
                         }
                     </a>
-                        @if (Model.Usuarios.Count > 0 || Model.Jogos.Count > 0)
+                        @if (Model.Usuarios.Count > 0 || Model.Jogos.Count > 0 || Model.Programas.Count > 0)
                         {
                         <ul class="dropdown-menu">
-                            <li class="header text-center">Painel de notificações</li>
+                            <li class="header"><i class="fa fa-bell-o"></i> Painel de notificações</li>
                             <li>
                             <!-- Inner Menu: contains the notifications -->
-                            <ul class="menu">
-                                @if(Model.Usuarios.Count > 0)
-                                {
-                                    <li>
-                                        <!-- start notification -->
-                                        <a href="@Url.Action("Index", "Usuario")">
-                                            <i class="fa fa-users text-aqua"></i> Você tem @Model.Usuarios.Count.ToString() @(Model.Usuarios.Count > 1 ? "novos usuários" : "novo usuário")
-                                        </a>
-                                    </li>
-                                }
-                                @if(Model.Jogos.Count > 0)
-                                {
-                                    <li>
-                                        <!-- start notification -->
-                                        <a href="@Url.Action("Index", "Jogos")">
-                                            <i class="fa fa-gamepad text-green"></i> Você tem @Model.Jogos.Count.ToString() @(Model.Jogos.Count > 1 ? "novos jogos" : "novo jogo")
-                                        </a>
-                                    </li>
-                                }
-                                <!-- end notification -->
+                                <ul class="menu">
+                                    @if (Model.Usuarios.Count > 0)
+                                    {
+                                        <li>
+                                            <!-- start notification -->
+                                            <a href="@Url.Action("Index", "Usuario")">
+                                                <i class="fa fa-user-circle text-blue"></i> Você tem @Model.Usuarios.Count.ToString() @(Model.Usuarios.Count > 1 ? "novos usuários" : "novo usuário")
+                                            </a>
+                                        </li>
+                                    }
+                                    @if (Model.Jogos.Count > 0)
+                                    {
+                                        <li>
+                                            <!-- start notification -->
+                                            <a href="@Url.Action("Index", "Jogos")">
+                                                <i class="fa fa-gamepad text-green"></i> Você tem @Model.Jogos.Count.ToString() @(Model.Jogos.Count > 1 ? "novos jogos" : "novo jogo")
+                                            </a>
+                                        </li>
+                                    }
+                                    @if (Model.Programas.Count > 0)
+                                    {
+                                        <li>
+                                            <!-- start notification -->
+                                            <a href="@Url.Action("Index", "Programas")">
+                                                <i class="fa fa-gamepad text-red"></i> Você tem @Model.Programas.Count.ToString() @(Model.Programas.Count > 1 ? "novos programas" : "novo programa")
+                                            </a>
+                                        </li>
+                                    }
+                                    <!-- end notification -->
                                 </ul>
                             </li>
                         </ul>

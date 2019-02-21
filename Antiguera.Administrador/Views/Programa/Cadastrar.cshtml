@@ -111,4 +111,10 @@
 
 @section scripts {
     @Scripts.Render("~/bundles/js/bootstrap-datepicker")
+
+    <script>
+        $(".input-group.date").datepicker({
+        format: "dd/mm/yyyy"
+    });
+    </script>
 }
