@@ -28,27 +28,28 @@ namespace Antiguera.Infra.Data.Repositorios.Base
             Context = antigueraContexto;
         }
 
-        public virtual void Adicionar(T obj)
+        public void Adicionar(T obj)
         {
             Context.Set<T>().Add(obj);
             Context.SaveChanges();
         }
 
-        public virtual void Apagar(T obj)
+        public void Apagar(T obj)
         {
+            Context.Set<T>().Attach(obj);
             Context.Set<T>().Remove(obj);
             Context.SaveChanges();
         }
 
-        public virtual void Atualizar(T obj)
+        public void Atualizar(T obj)
         {
             Context.Entry(obj).State = EntityState.Modified;
             Context.SaveChanges();
         }
 
-        public virtual T BuscarPorId(int id) => Context.Set<T>().Find(id);
+        public T BuscarPorId(int id) => Context.Set<T>().Find(id);
 
-        public virtual IEnumerable<T> BuscarTodos() => Context.Set<T>().ToList();
+        public IEnumerable<T> BuscarTodos() => Context.Set<T>().ToList();
 
         public void Dispose()
         {

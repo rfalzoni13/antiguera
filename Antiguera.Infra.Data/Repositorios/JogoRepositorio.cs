@@ -22,15 +22,5 @@ namespace Antiguera.Infra.Data.Repositorios
                 }
             }
         }
-
-        public override void Apagar(Jogo obj)
-        {
-            using (var c = new AntigueraContexto())
-            {
-                c.Jogos.Attach(obj);
-                c.Jogos.Remove(obj);
-                c.SaveChanges();
-            }
-        }
     }
 }
