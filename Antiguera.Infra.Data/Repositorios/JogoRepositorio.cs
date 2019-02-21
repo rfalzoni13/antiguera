@@ -1,5 +1,6 @@
 ﻿using Antiguera.Dominio.Entidades;
 using Antiguera.Dominio.Interfaces.Repositorio;
+using Antiguera.Infra.Data.Contexto;
 using Antiguera.Infra.Data.Repositorios.Base;
 using System;
 
@@ -19,6 +20,16 @@ namespace Antiguera.Infra.Data.Repositorios
                         Context.Set<Jogo>().Remove(jogo);
                     }
                 }
+            }
+        }
+
+        public override void Apagar(Jogo obj)
+        {
+            using (var c = new AntigueraContexto())
+            {
+                c.Jogos.Attach(obj);
+                c.Jogos.Remove(obj);
+                c.SaveChanges();
             }
         }
     }
