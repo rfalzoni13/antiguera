@@ -30,12 +30,12 @@ namespace Antiguera.Administrador.Models
         public string Login { get; set; }
 
         [StringLength(12, ErrorMessage = "A senha deve ter entre 6 a 12 caracteres", MinimumLength = 6)]
-        [Required(ErrorMessage = "O campo nome é obrigatório")]
+        [Required(ErrorMessage = "O campo senha é obrigatório")]
         public string Senha { get; set; }
 
         [DisplayName("Confirmar senha")]
         [Required(ErrorMessage = "O campo de confirmação de senha é obrigatório")]
-        [System.ComponentModel.DataAnnotations.Compare("Email", ErrorMessage = "As senhas não conferem")]
+        [System.ComponentModel.DataAnnotations.Compare("Senha", ErrorMessage = "As senhas não conferem")]
         public string ConfirmarSenha { get; set; }
 
         public string UrlFotoUpload { get; set; }
