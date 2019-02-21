@@ -30,8 +30,24 @@ namespace Antiguera.Administrador.Models
         public string UrlArquivo { get; set; }
 
         [DisplayName("Arquivo do programa")]
-        [FileExtensions(Extensions = ".zip, .rar", ErrorMessage = "Somente são aceitos os tipos .zip e .rar")]
         public HttpPostedFileBase FileEmulador { get; set; }
+
+        [FileExtensions(Extensions = ".zip, .rar", ErrorMessage = "Somente são aceitos os tipos .zip e .rar")]
+        public string NomeArquivo
+        {
+            get
+            {
+                if (FileEmulador != null && FileEmulador.ContentLength > 0)
+                {
+                    return FileEmulador.FileName;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
 
         public bool? Novo { get; set; }
 

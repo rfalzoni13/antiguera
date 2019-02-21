@@ -41,8 +41,23 @@ namespace Antiguera.Administrador.Models
         public string UrlFotoUpload { get; set; }
 
         [DisplayName("Foto de perfil")]
-        [FileExtensions(Extensions = ".jpg, .png", ErrorMessage = "Somente são aceitos os tipos .jpg e .png")]
         public HttpPostedFileBase FileFoto { get; set; }
+
+        [FileExtensions(Extensions = ".jpg, .png", ErrorMessage = "Somente são aceitos os tipos .jpg e .png")]
+        public string NomeFoto
+        {
+            get
+            {
+                if (FileFoto != null && FileFoto.ContentLength > 0)
+                {
+                    return FileFoto.FileName;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
 
         public int? NumAcessos { get; set; }
 

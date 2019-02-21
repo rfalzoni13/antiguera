@@ -34,17 +34,47 @@ namespace Antiguera.Administrador.Models
         [Required(ErrorMessage = "O gênero do jogo é obrigatório!")]
         public string Genero { get; set; }
 
-        public string UrlBoxArt { get; set; }
-
         [DisplayName("Arte da capa")]
-        [FileExtensions(Extensions = ".jpg, .png", ErrorMessage = "Somente são aceitos os tipos .jpg e .png")]
         public HttpPostedFileBase FileBoxArt { get; set; }
 
-        public string UrlArquivo { get; set; }
+        [FileExtensions(Extensions = "jpg,png", ErrorMessage = "Somente são aceitos os tipos .jpg e .png")]
+        public string NomeFoto
+        {
+            get
+            {
+                if(FileBoxArt != null && FileBoxArt.ContentLength > 0)
+                {
+                    return FileBoxArt.FileName;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        public string UrlBoxArt { get; set; }       
 
         [DisplayName("Arquivo do jogo")]
-        [FileExtensions(Extensions = ".zip, .rar", ErrorMessage = "Somente são aceitos os tipos .zip e .rar")]
         public HttpPostedFileBase FileJogo { get; set; }
+
+        [FileExtensions(Extensions = "zip", ErrorMessage = "Somente são aceitos os tipos .zip e .rar")]
+        public string NomeArquivo
+        {
+            get
+            {
+                if (FileJogo != null && FileJogo.ContentLength > 0)
+                {
+                    return FileJogo.FileName;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        public string UrlArquivo { get; set; }
 
         public bool? Novo { get; set; }
 

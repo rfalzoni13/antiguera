@@ -11,5 +11,7 @@ namespace Antiguera.Administrador.Models
         public virtual List<EmuladorModel> Emuladores { get; set; }
 
         public virtual List<JogoModel> Jogos { get; set; }
+
+        public virtual List<ProgramaModel> Programas { get; set; }
     }
 }
