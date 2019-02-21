@@ -19,15 +19,15 @@ namespace Antiguera.Administrador.Controllers
             {
                 if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
                 {
-                    if (TempData["Mensagem"] != null)
+                    if (Session["Mensagem"] != null)
                     {
-                        ViewBag.Mensagem = TempData["Mensagem"];
+                        ViewBag.Mensagem = Session["Mensagem"];
                         Session.Clear();
                     }
 
-                    if (TempData["ErroMensagem"] != null)
+                    if (Session["ErroMensagem"] != null)
                     {
-                        ViewBag.ErroMensagem = TempData["ErroMensagem"];
+                        ViewBag.ErroMensagem = Session["ErroMensagem"];
                         Session.Clear();
                     }
 
@@ -101,7 +101,7 @@ namespace Antiguera.Administrador.Controllers
                             return RedirectToAction("Login", "Home");
                         }
 
-                        return View("Index");
+                        return RedirectToAction("Index");
                     }
                     else
                     {
@@ -185,7 +185,7 @@ namespace Antiguera.Administrador.Controllers
                             return RedirectToAction("Login", "Home");
                         }
 
-                        return View("Index");
+                        return RedirectToAction("Index");
                     }
                     else
                     {

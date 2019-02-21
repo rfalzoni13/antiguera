@@ -154,7 +154,7 @@ namespace Antiguera.Administrador.Controllers.Base
                     Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                 }
 
-                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPorId + Id).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     return response.Content.ReadAsAsync<UsuarioModel>().Result;
@@ -230,7 +230,7 @@ namespace Antiguera.Administrador.Controllers.Base
                     Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                 }
 
-                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPeloLoginOuEmail + userData).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     return response.Content.ReadAsAsync<UsuarioModel>().Result;
@@ -321,7 +321,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirUsuario, usuarioDTO).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
@@ -348,18 +348,18 @@ namespace Antiguera.Administrador.Controllers.Base
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
             }
             else
             {
-                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
         }
 
@@ -434,7 +434,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarUsuario, usuarioDTO).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
@@ -461,18 +461,18 @@ namespace Antiguera.Administrador.Controllers.Base
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
             }
             else
             {
-                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
         }
 
@@ -545,7 +545,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarAdmin, model).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
@@ -572,20 +572,20 @@ namespace Antiguera.Administrador.Controllers.Base
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                     
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                     
                 }
             }
             else
             {
-                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
                 
             }
         }
@@ -635,7 +635,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarSenhaUsuario, model).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         Session["Mensagem"] = response.Content.ReadAsAsync<string>().Result;
@@ -716,7 +716,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarSenhaAdmin, model).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         Session["Mensagem"] = response.Content.ReadAsAsync<string>().Result;
@@ -812,7 +812,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.SendAsync(request).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         Session["Mensagem"] = response.Content.ReadAsAsync<string>().Result;
@@ -886,7 +886,7 @@ namespace Antiguera.Administrador.Controllers.Base
                     Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                 }
 
-                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosAcessos).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     return response.Content.ReadAsAsync<List<AcessoModel>>().Result;
@@ -959,7 +959,7 @@ namespace Antiguera.Administrador.Controllers.Base
                     Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                 }
 
-                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarAcessoPorId + Id).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     return response.Content.ReadAsAsync<AcessoModel>().Result;
@@ -1040,7 +1040,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirAcesso, acessoDTO).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         Session["Mensagem"] = response.Content.ReadAsAsync<string>().Result;
@@ -1122,7 +1122,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.SendAsync(request).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
@@ -1203,7 +1203,7 @@ namespace Antiguera.Administrador.Controllers.Base
                     Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                 }
 
-                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosEmuladores).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     return response.Content.ReadAsAsync<List<EmuladorModel>>().Result;
@@ -1277,7 +1277,7 @@ namespace Antiguera.Administrador.Controllers.Base
                     Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                 }
 
-                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarEmuladorPorId + Id).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     return response.Content.ReadAsAsync<EmuladorModel>().Result;
@@ -1397,18 +1397,18 @@ namespace Antiguera.Administrador.Controllers.Base
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
             }
             else
             {
-                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
         }
 
@@ -1483,7 +1483,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarEmulador, emuladorDTO).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         if (model.FileEmulador != null && model.FileEmulador.ContentLength > 0)
@@ -1510,18 +1510,18 @@ namespace Antiguera.Administrador.Controllers.Base
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
             }
             else
             {
-                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
         }
 
@@ -1584,7 +1584,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.SendAsync(request).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
@@ -1663,7 +1663,7 @@ namespace Antiguera.Administrador.Controllers.Base
                     Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                 }
 
-                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodasRoms).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     return response.Content.ReadAsAsync<List<RomModel>>().Result;
@@ -1737,7 +1737,7 @@ namespace Antiguera.Administrador.Controllers.Base
                     Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                 }
 
-                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarRomPorId + Id).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     return response.Content.ReadAsAsync<RomModel>().Result;
@@ -1829,7 +1829,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
 
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -1847,7 +1847,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirRom, romDTO).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         if (model.FileRom != null && model.FileRom.ContentLength > 0)
@@ -1881,13 +1881,13 @@ namespace Antiguera.Administrador.Controllers.Base
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
 
                 }
             }
             else
             {
-                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
         }
 
@@ -1987,7 +1987,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlAtualizarRom, romDTO).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         if (model.FileRom != null && model.FileRom.ContentLength > 0)
@@ -2021,18 +2021,18 @@ namespace Antiguera.Administrador.Controllers.Base
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
             }
             else
             {
-                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
         }
 
@@ -2103,7 +2103,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.SendAsync(request).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
@@ -2182,7 +2182,7 @@ namespace Antiguera.Administrador.Controllers.Base
                     Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                 }
 
-                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosJogos).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     return response.Content.ReadAsAsync<List<JogoModel>>().Result;
@@ -2255,7 +2255,7 @@ namespace Antiguera.Administrador.Controllers.Base
                     Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                 }
 
-                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarJogoPorId + Id).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     return response.Content.ReadAsAsync<JogoModel>().Result;
@@ -2358,7 +2358,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirJogo, jogoDTO).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         if (model.FileJogo != null && model.FileJogo.ContentLength > 0)
@@ -2394,18 +2394,18 @@ namespace Antiguera.Administrador.Controllers.Base
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
             }
             else
             {
-                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
         }
 
@@ -2506,7 +2506,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarJogo, jogoDTO).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         if (model.FileJogo != null && model.FileJogo.ContentLength > 0)
@@ -2541,18 +2541,18 @@ namespace Antiguera.Administrador.Controllers.Base
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
             }
             else
             {
-                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
         }
 
@@ -2624,7 +2624,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.SendAsync(request).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
@@ -2703,7 +2703,7 @@ namespace Antiguera.Administrador.Controllers.Base
                     Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                 }
 
-                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosProgramas).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     return response.Content.ReadAsAsync<List<ProgramaModel>>().Result;
@@ -2778,7 +2778,7 @@ namespace Antiguera.Administrador.Controllers.Base
                     Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                 }
 
-                response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                response = Cliente.GetAsync(url.UrlApi + url.UrlListarProgramaPorId + Id).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     return response.Content.ReadAsAsync<ProgramaModel>().Result;
@@ -2882,7 +2882,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirPrograma, programaDTO).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         if (model.FilePrograma != null && model.FilePrograma.ContentLength > 0)
@@ -2917,18 +2917,18 @@ namespace Antiguera.Administrador.Controllers.Base
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
             }
             else
             {
-                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
         }
 
@@ -3028,7 +3028,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarPrograma, programaDTO).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         if (model.FilePrograma != null && model.FilePrograma.ContentLength > 0)
@@ -3064,18 +3064,18 @@ namespace Antiguera.Administrador.Controllers.Base
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    Session["ErroMensagem"] = result.Mensagem;
                 }
             }
             else
             {
-                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
         }
 
@@ -3140,7 +3140,7 @@ namespace Antiguera.Administrador.Controllers.Base
                         Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
                     }
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.SendAsync(request).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         ViewBag.Mensagem = response.Content.ReadAsAsync<string>().Result;
@@ -3171,7 +3171,7 @@ namespace Antiguera.Administrador.Controllers.Base
             }
             else
             {
-                ViewBag.ErroMensagem = "Parâmetros incorretos!";
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
         }
         #endregion
@@ -3215,16 +3215,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected ResponseLoginModel RefreshToken()
         {
-            var token = string.Empty;
-
-            if (Session["newRefreshToken"] != null)
-            {
-                token = Session["newRefreshToken"].ToString();
-            }
-            else
-            {
-                token = GetRefreshToken();
-            }
+            var token = GetRefreshToken();
 
             var content = new List<KeyValuePair<string, string>>(new[]
             {

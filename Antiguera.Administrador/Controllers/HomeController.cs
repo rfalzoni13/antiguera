@@ -23,9 +23,11 @@ namespace Antiguera.Administrador.Controllers
             {
                 if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
                 {
-                    HomeModel model = new HomeModel();
+                    var model = new HomeModel();
                     model.Usuarios = ListarUsuarios();
                     model.Jogos = ListarJogos();
+                    model.Programas = ListarProgramas();
+
                     if (Session["Unauthorized"] != null)
                     {
                         HttpContext.GetOwinContext().Authentication.SignOut();
