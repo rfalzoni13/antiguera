@@ -51,7 +51,7 @@ namespace Antiguera.Administrador.Config
         #region Emulador
         public string UrlListarTodosEmuladores => "api/antiguera/admin/emulador/listartodososemuladores";
 
-        public string UrlListarEmuladorPorId => "api/antiguera/admin/emulador/listaremuladoresporid";
+        public string UrlListarEmuladorPorId => "api/antiguera/admin/emulador/listaremuladoresporid?id=";
 
         public string UrlInserirEmulador => "api/antiguera/admin/emulador/inseriremulador";
 
@@ -65,7 +65,7 @@ namespace Antiguera.Administrador.Config
         #region Rom
         public string UrlListarTodasRoms => "api/antiguera/admin/rom/listartodasasroms";
 
-        public string UrlListarRomPorId => "api/antiguera/admin/rom/listarromsporid";
+        public string UrlListarRomPorId => "api/antiguera/admin/rom/listarromsporid?id=";
 
         public string UrlInserirRom => "api/antiguera/admin/rom/inserirrom";
 
@@ -79,7 +79,7 @@ namespace Antiguera.Administrador.Config
         #region Jogo
         public string UrlListarTodosJogos => "api/antiguera/admin/jogo/listartodososjogos";
 
-        public string UrlListarJogoPorId => "api/antiguera/admin/jogo/listarjogosporid";
+        public string UrlListarJogoPorId => "api/antiguera/admin/jogo/listarjogosporid?id=";
 
         public string UrlInserirJogo => "api/antiguera/admin/jogo/inserirjogo";
 
@@ -93,7 +93,7 @@ namespace Antiguera.Administrador.Config
         #region Programa
         public string UrlListarTodosProgramas => "api/antiguera/admin/programa/listartodososprogramas";
 
-        public string UrlListarProgramaPorId => "api/antiguera/admin/programa/listarprogramasporid";
+        public string UrlListarProgramaPorId => "api/antiguera/admin/programa/listarprogramasporid?id=";
 
         public string UrlInserirPrograma => "api/antiguera/admin/programa/inserirprograma";
 
