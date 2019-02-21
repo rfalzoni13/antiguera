@@ -262,3 +262,4 @@ __pycache__/
 /Antiguera.WebApi/log.txt
 *.zip
 *.jpg
+*.png
