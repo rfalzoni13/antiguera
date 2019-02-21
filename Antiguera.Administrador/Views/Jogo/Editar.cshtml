@@ -5,6 +5,12 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    .col-md-4 p {
+        margin: 5px 75px -25px;
+    }
+</style>
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -43,6 +49,10 @@
                     </div>
                 }
 
+                @Html.HiddenFor(x => x.Id)
+                @Html.HiddenFor(x => x.UrlArquivo)
+                @Html.HiddenFor(x => x.UrlBoxArt)
+                @Html.HiddenFor(x => x.Created)
                 <div class="row">
                     <div class="col-md-3">
                         @Html.LabelFor(x => x.Nome)
@@ -58,7 +68,7 @@
                             <div class="input-group-addon">
                                 <i class="fa fa-calendar"></i>
                             </div>
-                            @Html.TextBoxFor(x => x.Lancamento, new { @class = "form-control pull-right" })
+                            @Html.TextBoxFor(x => x.Lancamento, Model.Lancamento.ToString("dd/MM/yyyy"), new { @class = "form-control pull-right" })
                         </div>
                     </div>
                 </div>
@@ -78,15 +88,51 @@
                 </div>
                 <br />
                 <div class="row">
-                    <div class="col-md-4">
-                        @Html.LabelFor(x => x.FileBoxArt)
-                        @Html.TextBoxFor(x => x.FileBoxArt, new { @type = "file" })
-                    </div>
-                    <div class="col-md-4">
-                        @Html.LabelFor(x => x.FileJogo)
-                        @Html.TextBoxFor(x => x.FileJogo, new { @type = "file" })
+                    @if (!string.IsNullOrEmpty(Model.UrlBoxArt))
+                    {
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.FileBoxArt)
+                            @Html.TextBoxFor(x => x.FileBoxArt, new { @type = "file", @style = "display:none" })
+                            <p id="textBoxArt">@(Model.UrlBoxArt.Split('/')[4])</p>
+                            <button type="button" id="ClickBoxArt" class="btn btn-primary">Alterar</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.FileBoxArt)
+                            @Html.TextBoxFor(x => x.FileBoxArt, new { @type = "file" })
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.UrlArquivo))
+                    {
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.FileJogo)
+                            @Html.TextBoxFor(x => x.FileJogo, new { @type = "file", @style = "display:none" })
+                            <p id="textFile">@(Model.UrlArquivo.Split('/')[3])</p>
+                            <button type="button" id="ClickFile" class="btn btn-primary">Alterar</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.FileJogo)
+                            @Html.TextBoxFor(x => x.FileJogo, new { @type = "file" })
+                        </div>
+                    }
+                </div>
+                @*<br />
+                <div class="row">
+                    <div class="col-md-3">
+                        <img src="@Model.UrlBoxArt" id="photoBoxArt" />
                     </div>
                 </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        <button type="button" id="removePhoto" class="btn btn-danger">Remover foto</button>
+                    </div>
+                </div>*@
                 <br />
                 <div class="row">
                     <div class="col-md-5">
@@ -111,5 +157,30 @@
 
 @section scripts {
     @Scripts.Render("~/bundles/js/bootstrap-datepicker")
+
+    <script>
+        $(".input-group.date").datepicker({
+        format: "dd/mm/yyyy"
+        });
+
+        $("#ClickBoxArt").on("click", function () {
+            $("#FileBoxArt").click();
+        });
+
+        $("#ClickFile").on("click", function () {
+            $("#FileJogo").click();
+        });
+
+        $("#FileBoxArt").change(function (e) {
+            var fileName = e.target.files[0].name;
+            $("#textBoxArt").html(fileName);
+        });
+
+        $("#FileJogo").change(function (e) {
+            var fileName = e.target.files[0].name;
+            $("#textFile").html(fileName);
+        });
+
+    </script>
 }
 
