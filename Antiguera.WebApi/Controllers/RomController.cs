@@ -88,7 +88,7 @@ namespace Antiguera.WebApi.Controllers
         /// <remarks>Retorna a rom através do Id da mesma</remarks>
         /// <param name="Id">Id da rom</param>
         /// <returns></returns>
-        // GET api/antiguera/admin/rom/listarromsporid
+        // GET api/antiguera/admin/rom/listarromsporid?id={Id}
         [HttpGet]
         [Route("listarromsporid")]
         public HttpResponseMessage ListarRomsPorId(int Id)
@@ -165,6 +165,8 @@ namespace Antiguera.WebApi.Controllers
                 {
                     romModel.Created = DateTime.Now;
 
+                    romModel.Novo = true;
+
                     var rom = Mapper.Map<RomModel, Rom>(romModel);
 
                     _romAppServico.Adicionar(rom);
@@ -217,6 +219,8 @@ namespace Antiguera.WebApi.Controllers
                 {
                     romModel.Modified = DateTime.Now;
 
+                    romModel.Novo = false;
+
                     var rom = Mapper.Map<RomModel, Rom>(romModel);
 
                     _romAppServico.Atualizar(rom);
@@ -244,6 +248,65 @@ namespace Antiguera.WebApi.Controllers
                 stats.Mensagem = e.Message;
 
                 logger.Info("AtualizarRom - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+            }
+        }
+
+        /// <summary>
+        /// Atualizar novo rom
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>Atualiza o campo "Novo" da rom passando o Id da mesma no body simples da requisição método PUT</remarks>
+        /// <param name="Id">Id da rom</param>
+        /// <returns></returns>
+        // PUT api/antiguera/admin/atualizarromnova?id={Id}
+        [HttpPut]
+        [Route("atualizarromnova")]
+        public HttpResponseMessage AtualizarRomNova([FromBody] int Id)
+        {
+            logger.Info("AtualizarRomNova - Iniciado");
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _romAppServico.AtualizarNovo(Id);
+
+                    logger.Info("AtualizarRomNova - Sucesso!");
+
+                    logger.Info("AtualizarRomNova - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.OK, "Dados alterados com sucesso!");
+                }
+                else
+                {
+                    logger.Warn("AtualizarRomNova - Por favor, preencha os campos corretamente!");
+                    stats.Status = HttpStatusCode.BadRequest;
+                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+
+                    logger.Info("AtualizarRomNova - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                }
+            }
+
+            catch (HttpResponseException e)
+            {
+                logger.Error("AtualizarRomNova - Error: " + e);
+                stats.Status = e.Response.StatusCode;
+                stats.Mensagem = "Nenhum registro encontrado!";
+
+                logger.Info("AtualizarRomNova - Finalizado");
+                return Request.CreateResponse(e.Response.StatusCode, stats);
+            }
+
+            catch (Exception e)
+            {
+                logger.Error("AtualizarRomNova - Error: " + e);
+                stats.Status = HttpStatusCode.InternalServerError;
+                stats.Mensagem = e.Message;
+
+                logger.Info("AtualizarRomNova - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
             }
         }

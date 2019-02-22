@@ -154,7 +154,7 @@ namespace AntigueraWebApi.Controllers
         /// <remarks>Retorna o usuário através do Id do mesmo</remarks>
         /// <param name="Id">Id do usuário</param>
         /// <returns></returns>
-        // GET api/antiguera/admin/listarusuariosporid
+        // GET api/antiguera/admin/listarusuariosporid?id={Id}
         [HttpGet]
         [Route("listarusuariosporid")]
         public HttpResponseMessage ListarUsuariosPorId(int Id)
@@ -219,7 +219,7 @@ namespace AntigueraWebApi.Controllers
         /// <remarks>Efetua a busca do usuário pelo Login ou Email</remarks>
         /// <param name="userData">String do login ou email</param>
         /// <returns></returns>
-        // GET api/antiguera/admin/listarusuariosporloginouemail
+        // GET api/antiguera/admin/listarusuariosporloginouemail?userData={userData}
         [HttpGet]
         [Route("listarusuariosporloginouemail")]
         public HttpResponseMessage ListarUsuariosPorLoginOuEmail(string userData)
@@ -341,6 +341,8 @@ namespace AntigueraWebApi.Controllers
 
                     usuarioModel.Created = DateTime.Now;
 
+                    usuarioModel.Novo = true;
+
                     var usuario = Mapper.Map<UsuarioModel, Usuario>(usuarioModel);
 
                     _usuarioAppServico.Adicionar(usuario);
@@ -441,6 +443,8 @@ namespace AntigueraWebApi.Controllers
                     }
 
                     usuarioModel.Modified = DateTime.Now;
+
+                    usuarioModel.Novo = false;
 
                     var usuario = Mapper.Map<UsuarioModel, Usuario>(usuarioModel);
 
@@ -543,6 +547,8 @@ namespace AntigueraWebApi.Controllers
 
                     usuarioModel.Modified = DateTime.Now;
 
+                    usuarioModel.Novo = false;
+
                     var usuario = Mapper.Map<UsuarioModel, Usuario>(usuarioModel);
 
                     _usuarioAppServico.Atualizar(usuario);
@@ -620,6 +626,8 @@ namespace AntigueraWebApi.Controllers
 
                     usuarioModel.Senha = senha;
 
+                    usuarioModel.Novo = false;
+
                     _usuarioAppServico.AlterarSenha(usuarioModel.Id, usuarioModel.Senha);
 
                     logger.Info("AtualizarSenhaUsuario - Sucesso!");
@@ -636,6 +644,16 @@ namespace AntigueraWebApi.Controllers
                     logger.Info("AtualizarSenhaUsuario - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
                 }
+            }
+
+            catch (HttpResponseException e)
+            {
+                logger.Error("AtualizarSenhaUsuario - Error: " + e);
+                stats.Status = e.Response.StatusCode;
+                stats.Mensagem = "Nenhum registro encontrado!";
+
+                logger.Info("AtualizarSenhaUsuario - Finalizado");
+                return Request.CreateResponse(e.Response.StatusCode, stats);
             }
 
             catch (Exception e)
@@ -694,6 +712,8 @@ namespace AntigueraWebApi.Controllers
 
                     usuarioModel.Senha = senha;
 
+                    usuarioModel.Novo = false;
+
                     _usuarioAppServico.AlterarSenha(usuarioModel.Id, usuarioModel.Senha);
 
                     logger.Info("AtualizarSenhaAdmin - Sucesso!");
@@ -712,6 +732,16 @@ namespace AntigueraWebApi.Controllers
                 }
             }
 
+            catch (HttpResponseException e)
+            {
+                logger.Error("AtualizarSenhaAdmin - Error: " + e);
+                stats.Status = e.Response.StatusCode;
+                stats.Mensagem = "Nenhum registro encontrado!";
+
+                logger.Info("AtualizarSenhaAdmin - Finalizado");
+                return Request.CreateResponse(e.Response.StatusCode, stats);
+            }
+
             catch (Exception e)
             {
                 logger.Error("AtualizarSenhaAdmin - Error: " + e);
@@ -719,6 +749,65 @@ namespace AntigueraWebApi.Controllers
                 stats.Mensagem = e.Message;
 
                 logger.Info("AtualizarSenhaAdmin - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+            }
+        }
+
+        /// <summary>
+        /// Atualizar novo usuário
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>Atualiza o campo "Novo" do usuário passando o Id do usuário na Uri do endpoint pelo método PUT</remarks>
+        /// <param name="Id">Id do usuário</param>
+        /// <returns></returns>
+        // PUT api/antiguera/admin/atualizarusuarionovo?id={Id}
+        [HttpPut]
+        [Route("atualizarusuarionovo")]
+        public HttpResponseMessage AtualizarUsuarioNovo([FromBody] int Id)
+        {
+            logger.Info("AtualizarUsuarioNovo - Iniciado");
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _usuarioAppServico.AtualizarNovo(Id);
+
+                    logger.Info("AtualizarUsuarioNovo - Sucesso!");
+
+                    logger.Info("AtualizarUsuarioNovo - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.OK, "Dados alterados com sucesso!");
+                }
+                else
+                {
+                    logger.Warn("AtualizarUsuarioNovo - Por favor, preencha os campos corretamente!");
+                    stats.Status = HttpStatusCode.BadRequest;
+                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+
+                    logger.Info("AtualizarUsuarioNovo - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                }
+            }
+
+            catch (HttpResponseException e)
+            {
+                logger.Error("AtualizarUsuarioNovo - Error: " + e);
+                stats.Status = e.Response.StatusCode;
+                stats.Mensagem = "Nenhum registro encontrado!";
+
+                logger.Info("AtualizarUsuarioNovo - Finalizado");
+                return Request.CreateResponse(e.Response.StatusCode, stats);
+            }
+
+            catch (Exception e)
+            {
+                logger.Error("AtualizarUsuarioNovo - Error: " + e);
+                stats.Status = HttpStatusCode.InternalServerError;
+                stats.Mensagem = e.Message;
+
+                logger.Info("AtualizarUsuarioNovo - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
             }
         }
@@ -902,7 +991,7 @@ namespace AntigueraWebApi.Controllers
         /// <remarks>Retorna o acesso do usuário através do Id do mesmo</remarks>
         /// <param name="Id">Id do acesso</param>
         /// <returns></returns>
-        // GET api/antiguera/admin/listaracessosporid
+        // GET api/antiguera/admin/listaracessosporid?id={Id}
         [HttpGet]
         [Route("listaracessosporid")]
         public HttpResponseMessage ListarAcessosPorId(int Id)
@@ -912,14 +1001,14 @@ namespace AntigueraWebApi.Controllers
             {
                 if (Id > 0)
                 {
-                    var usuario = _usuarioAppServico.BuscarPorId(Id);
+                    var acesso = _acessoAppServico.BuscarPorId(Id);
 
-                    if (usuario != null)
+                    if (acesso != null)
                     {
                         logger.Info("ListarAcessosPorId - Sucesso!");
 
                         logger.Info("ListarAcessosPorId - Finalizado");
-                        return Request.CreateResponse(HttpStatusCode.OK, usuario);
+                        return Request.CreateResponse(HttpStatusCode.OK, acesso);
                     }
                     else
                     {
@@ -936,13 +1025,14 @@ namespace AntigueraWebApi.Controllers
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
                 }
             }
+
             catch (HttpResponseException e)
             {
-                logger.Error("ListarAcessosPorId - Error: " + e);
+                logger.Warn("ListarTodosAcessos - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
                 stats.Mensagem = "Nenhum registro encontrado!";
 
-                logger.Info("ListarAcessosPorId - Finalizado");
+                logger.Info("ListarTodosAcessos - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
             }
 
@@ -988,6 +1078,8 @@ namespace AntigueraWebApi.Controllers
 
                     acessoModel.Created = DateTime.Now;
 
+                    acessoModel.Novo = true;
+
                     var acesso = Mapper.Map<AcessoModel, Acesso>(acessoModel);
 
                     _acessoAppServico.Adicionar(acesso);
@@ -1015,6 +1107,65 @@ namespace AntigueraWebApi.Controllers
                 stats.Mensagem = e.Message;
 
                 logger.Info("InserirAcesso - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+            }
+        }
+
+        /// <summary>
+        /// Atualizar novo acesso
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>Atualiza o campo "Novo" do acesso do usuário passando o Id do acesso na Uri do endpoint pelo método PUT</remarks>
+        /// <param name="Id">Id do acesso</param>
+        /// <returns></returns>
+        // PUT api/antiguera/admin/atualizaracessonovo?id={Id}
+        [HttpPut]
+        [Route("atualizaracessonovo")]
+        public HttpResponseMessage AtualizarAcessoNovo([FromUri] int Id)
+        {
+            logger.Info("AtualizarAcessoNovo - Iniciado");
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _acessoAppServico.AtualizarNovo(Id);
+
+                    logger.Info("AtualizarAcessoNovo - Sucesso!");
+
+                    logger.Info("AtualizarAcessoNovo - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.OK, "Dados alterados com sucesso!");
+                }
+                else
+                {
+                    logger.Warn("AtualizarAcessoNovo - Por favor, preencha os campos corretamente!");
+                    stats.Status = HttpStatusCode.BadRequest;
+                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+
+                    logger.Info("AtualizarAcessoNovo - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                }
+            }
+
+            catch (HttpResponseException e)
+            {
+                logger.Error("AtualizarAcessoNovo - Error: " + e);
+                stats.Status = e.Response.StatusCode;
+                stats.Mensagem = "Nenhum registro encontrado!";
+
+                logger.Info("AtualizarAcessoNovo - Finalizado");
+                return Request.CreateResponse(e.Response.StatusCode, stats);
+            }
+
+            catch (Exception e)
+            {
+                logger.Error("AtualizarAcessoNovo - Error: " + e);
+                stats.Status = HttpStatusCode.InternalServerError;
+                stats.Mensagem = e.Message;
+
+                logger.Info("AtualizarAcessoNovo - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
             }
         }

@@ -2,7 +2,8 @@
 using Antiguera.Dominio.Interfaces.Repositorio;
 using Antiguera.Infra.Data.Contexto;
 using Antiguera.Infra.Data.Repositorios.Base;
-using System;
+using System.Linq;
+using System.Web.Http;
 
 namespace Antiguera.Infra.Data.Repositorios
 {
@@ -19,6 +20,24 @@ namespace Antiguera.Infra.Data.Repositorios
                     {
                         Context.Set<Jogo>().Remove(jogo);
                     }
+                }
+            }
+            Context.SaveChanges();
+        }
+
+        public void AtualizarNovo(int id)
+        {
+            using (var c = new AntigueraContexto())
+            {
+                var jogo = c.Jogos.Where(u => u.Id == id).FirstOrDefault();
+                if (jogo != null)
+                {
+                    jogo.Novo = false;
+                    c.SaveChanges();
+                }
+                else
+                {
+                    throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
                 }
             }
         }

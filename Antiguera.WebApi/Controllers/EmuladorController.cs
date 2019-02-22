@@ -86,7 +86,7 @@ namespace Antiguera.WebApi.Controllers
         /// <remarks>Retorna o emulador através do Id do mesmo</remarks>
         /// <param name="Id">Id do emulador</param>
         /// <returns></returns>
-        // GET api/antiguera/admin/emulador/listaremuladoresporid
+        // GET api/antiguera/admin/emulador/listaremuladoresporid?id={Id}
         [HttpGet]
         [Route("listaremuladoresporid")]
         public HttpResponseMessage ListarEmuladoresPorId(int Id)
@@ -163,6 +163,8 @@ namespace Antiguera.WebApi.Controllers
                 {
                     emuladorModel.Created = DateTime.Now;
 
+                    emuladorModel.Novo = true;
+
                     var emulador = Mapper.Map<EmuladorModel, Emulador>(emuladorModel);
 
                     _emuladorAppServico.Adicionar(emulador);
@@ -215,6 +217,8 @@ namespace Antiguera.WebApi.Controllers
                 {
                     emuladorModel.Modified = DateTime.Now;
 
+                    emuladorModel.Novo = false;
+
                     var emulador = Mapper.Map<EmuladorModel, Emulador>(emuladorModel);
 
                     _emuladorAppServico.Atualizar(emulador);
@@ -242,6 +246,65 @@ namespace Antiguera.WebApi.Controllers
                 stats.Mensagem = e.Message;
 
                 logger.Info("AtualizarEmulador - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+            }
+        }
+
+        /// <summary>
+        /// Atualizar novo emulador
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>Atualiza o campo "Novo" do emulador passando o Id do mesmo no body simples da requisição pelo método PUT</remarks>
+        /// <param name="Id">Id do emulador</param>
+        /// <returns></returns>
+        // PUT api/antiguera/admin/atualizaremuladornovo?id={Id}
+        [HttpPut]
+        [Route("atualizaremuladornovo")]
+        public HttpResponseMessage AtualizarEmuladorNovo([FromBody] int Id)
+        {
+            logger.Info("AtualizarEmuladorNovo - Iniciado");
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _emuladorAppServico.AtualizarNovo(Id);
+
+                    logger.Info("AtualizarEmuladorNovo - Sucesso!");
+
+                    logger.Info("AtualizarEmuladorNovo - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.OK, "Dados alterados com sucesso!");
+                }
+                else
+                {
+                    logger.Warn("AtualizarEmuladorNovo - Por favor, preencha os campos corretamente!");
+                    stats.Status = HttpStatusCode.BadRequest;
+                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+
+                    logger.Info("AtualizarEmuladorNovo - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                }
+            }
+
+            catch (HttpResponseException e)
+            {
+                logger.Error("AtualizarEmuladorNovo - Error: " + e);
+                stats.Status = e.Response.StatusCode;
+                stats.Mensagem = "Nenhum registro encontrado!";
+
+                logger.Info("AtualizarEmuladorNovo - Finalizado");
+                return Request.CreateResponse(e.Response.StatusCode, stats);
+            }
+
+            catch (Exception e)
+            {
+                logger.Error("AtualizarEmuladorNovo - Error: " + e);
+                stats.Status = HttpStatusCode.InternalServerError;
+                stats.Mensagem = e.Message;
+
+                logger.Info("AtualizarEmuladorNovo - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
             }
         }

@@ -87,7 +87,7 @@ namespace AntigueraWebApi.Controllers
         /// <remarks>Retorna o jogo através do Id do mesmo</remarks>
         /// <param name="Id">Id do jogo</param>
         /// <returns></returns>
-        // GET api/antiguera/admin/jogo/listarjogosporid
+        // GET api/antiguera/admin/jogo/listarjogosporid?id={Id}
         [HttpGet]
         [Route("listarjogosporid")]
         public HttpResponseMessage ListarJogosPorId(int Id)
@@ -164,6 +164,8 @@ namespace AntigueraWebApi.Controllers
                 {
                     jogoModel.Created = DateTime.Now;
 
+                    jogoModel.Novo = true;
+
                     var jogo = Mapper.Map<JogoModel, Jogo>(jogoModel);
 
                     _jogoAppServico.Adicionar(jogo);
@@ -216,6 +218,8 @@ namespace AntigueraWebApi.Controllers
                 {
                     jogoModel.Modified = DateTime.Now;
 
+                    jogoModel.Novo = false;
+
                     var jogo = Mapper.Map<JogoModel, Jogo>(jogoModel);
 
                     _jogoAppServico.Atualizar(jogo);
@@ -243,6 +247,65 @@ namespace AntigueraWebApi.Controllers
                 stats.Mensagem = e.Message;
 
                 logger.Info("AtualizarJogo - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+            }
+        }
+
+        /// <summary>
+        /// Atualizar novo jogo
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>Atualiza o campo "Novo" do jogo passando o Id do mesmo no body simples da requisição pelo método PUT</remarks>
+        /// <param name="Id">Id do jogo</param>
+        /// <returns></returns>
+        // PUT api/antiguera/admin/atualizarjogonovo?id={Id}
+        [HttpPut]
+        [Route("atualizarjogonovo")]
+        public HttpResponseMessage AtualizarJogoNovo([FromBody] int Id)
+        {
+            logger.Info("AtualizarJogoNovo - Iniciado");
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _jogoAppServico.AtualizarNovo(Id);
+
+                    logger.Info("AtualizarJogoNovo - Sucesso!");
+
+                    logger.Info("AtualizarJogoNovo - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.OK, "Dados alterados com sucesso!");
+                }
+                else
+                {
+                    logger.Warn("AtualizarJogoNovo - Por favor, preencha os campos corretamente!");
+                    stats.Status = HttpStatusCode.BadRequest;
+                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+
+                    logger.Info("AtualizarJogoNovo - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                }
+            }
+
+            catch (HttpResponseException e)
+            {
+                logger.Error("AtualizarJogoNovo - Error: " + e);
+                stats.Status = e.Response.StatusCode;
+                stats.Mensagem = "Nenhum registro encontrado!";
+
+                logger.Info("AtualizarJogoNovo - Finalizado");
+                return Request.CreateResponse(e.Response.StatusCode, stats);
+            }
+
+            catch (Exception e)
+            {
+                logger.Error("AtualizarJogoNovo - Error: " + e);
+                stats.Status = HttpStatusCode.InternalServerError;
+                stats.Mensagem = e.Message;
+
+                logger.Info("AtualizarJogoNovo - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
             }
         }

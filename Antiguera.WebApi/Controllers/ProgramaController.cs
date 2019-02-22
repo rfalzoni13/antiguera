@@ -86,7 +86,7 @@ namespace AntigueraWebApi.Controllers
         /// <remarks>Retorna o programa através do Id do mesmo</remarks>
         /// <param name="Id">Id do programa</param>
         /// <returns></returns>
-        // GET api/antiguera/admin/programa/listarprogramasporid
+        // GET api/antiguera/admin/programa/listarprogramasporid?id={Id}
         [HttpGet]
         [Route("listarprogramasporid")]
         public HttpResponseMessage ListarProgramasPorId(int Id)
@@ -164,6 +164,8 @@ namespace AntigueraWebApi.Controllers
                 {
                     programaModel.Created = DateTime.Now;
 
+                    programaModel.Novo = true;
+
                     var programa = Mapper.Map<ProgramaModel, Programa>(programaModel);
 
                     _programaAppServico.Adicionar(programa);
@@ -216,6 +218,8 @@ namespace AntigueraWebApi.Controllers
                 {
                     programaModel.Modified = DateTime.Now;
 
+                    programaModel.Novo = false;
+
                     var programa = Mapper.Map<ProgramaModel, Programa>(programaModel);
 
                     _programaAppServico.Atualizar(programa);
@@ -243,6 +247,65 @@ namespace AntigueraWebApi.Controllers
                 stats.Mensagem = e.Message;
 
                 logger.Info("AtualizarPrograma - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+            }
+        }
+
+        /// <summary>
+        /// Atualizar novo programa
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>Atualiza o campo "Novo" do programa passando o Id do mesmo no body simples da requisição pelo método PUT</remarks>
+        /// <param name="Id">Id do programa</param>
+        /// <returns></returns>
+        // PUT api/antiguera/admin/atualizarprogramanovo?id={Id}
+        [HttpPut]
+        [Route("atualizarprogramanovo")]
+        public HttpResponseMessage AtualizarProgramaNovo([FromBody] int Id)
+        {
+            logger.Info("AtualizarProgramaNovo - Iniciado");
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _programaAppServico.AtualizarNovo(Id);
+
+                    logger.Info("AtualizarProgramaNovo - Sucesso!");
+
+                    logger.Info("AtualizarProgramaNovo - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.OK, "Dados alterados com sucesso!");
+                }
+                else
+                {
+                    logger.Warn("AtualizarProgramaNovo - Por favor, preencha os campos corretamente!");
+                    stats.Status = HttpStatusCode.BadRequest;
+                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+
+                    logger.Info("AtualizarProgramaNovo - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                }
+            }
+
+            catch (HttpResponseException e)
+            {
+                logger.Error("AtualizarProgramaNovo - Error: " + e);
+                stats.Status = e.Response.StatusCode;
+                stats.Mensagem = "Nenhum registro encontrado!";
+
+                logger.Info("AtualizarProgramaNovo - Finalizado");
+                return Request.CreateResponse(e.Response.StatusCode, stats);
+            }
+
+            catch (Exception e)
+            {
+                logger.Error("AtualizarProgramaNovo - Error: " + e);
+                stats.Status = HttpStatusCode.InternalServerError;
+                stats.Mensagem = e.Message;
+
+                logger.Info("AtualizarProgramaNovo - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
             }
         }

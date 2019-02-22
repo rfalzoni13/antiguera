@@ -2,8 +2,8 @@
 using Antiguera.Dominio.Interfaces.Repositorio;
 using Antiguera.Infra.Data.Contexto;
 using Antiguera.Infra.Data.Repositorios.Base;
-using System;
 using System.Linq;
+using System.Web.Http;
 
 namespace Antiguera.Infra.Data.Repositorios
 {
@@ -18,6 +18,11 @@ namespace Antiguera.Infra.Data.Repositorios
                 {
                     senha = BCrypt.HashPassword(senha, BCrypt.GenerateSalt());
                     usuario.Senha = senha;
+                    c.SaveChanges();
+                }
+                else
+                {
+                    throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
                 }
             }
         }
@@ -35,6 +40,24 @@ namespace Antiguera.Infra.Data.Repositorios
                     }
                 }
             }
+            Context.SaveChanges();
+        }
+
+        public void AtualizarNovo(int id)
+        {
+            using (var c = new AntigueraContexto())
+            {
+                var usuario = c.Usuarios.Where(u => u.Id == id).FirstOrDefault();
+                if (usuario != null)
+                {
+                    usuario.Novo = false;
+                    c.SaveChanges();
+                }
+                else
+                {
+                    throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+                }
+            }
         }
 
         public Usuario BuscarUsuarioPorLoginOuEmail(string data)
@@ -45,29 +68,6 @@ namespace Antiguera.Infra.Data.Repositorios
                 if(usuario != null)
                 {
                     return usuario;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
-
-        public Usuario FazerLogin(string userName, string password)
-        {
-            using (var c = new AntigueraContexto())
-            {
-                var usuario = c.Usuarios.Where(u => u.Login == userName || u.Email == userName).FirstOrDefault();
-                if(usuario != null)
-                {
-                    if(BCrypt.CheckPassword(password, usuario.Senha))
-                    {
-                        return usuario;
-                    }
-                    else
-                    {
-                        return null;
-                    }
                 }
                 else
                 {

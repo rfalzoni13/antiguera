@@ -42,7 +42,7 @@ namespace AntigueraWebApi.Controllers
         /// <remarks>Retorna o usuário através do Id do mesmo</remarks>
         /// <param name="Id">Id do usuário</param>
         /// <returns></returns>
-        // GET api/antiguera/usuario/listarusuariosporid
+        // GET api/antiguera/usuario/listarusuariosporid?id={Id}
         [HttpGet]
         [Route("listarusuariosporid")]
         public HttpResponseMessage ListarUsuariosPorId(int Id)
@@ -226,6 +226,8 @@ namespace AntigueraWebApi.Controllers
 
                     usuarioModel.Created = DateTime.Now;
 
+                    usuarioModel.Novo = true;
+
                     var senha = BCrypt.HashPassword(usuarioModel.Senha, BCrypt.GenerateSalt());
 
                     usuarioModel.Senha = senha;
@@ -331,6 +333,8 @@ namespace AntigueraWebApi.Controllers
 
                     usuarioModel.Modified = DateTime.Now;
 
+                    usuarioModel.Novo = false;
+
                     var usuario = Mapper.Map<UsuarioModel, Usuario>(usuarioModel);
 
                     _usuarioAppServico.Atualizar(usuario);
@@ -404,6 +408,8 @@ namespace AntigueraWebApi.Controllers
 
                     usuarioModel.Modified = DateTime.Now;
 
+                    usuarioModel.Novo = false;
+
                     var senha = BCrypt.HashPassword(usuarioModel.Senha, BCrypt.GenerateSalt());
 
                     usuarioModel.Senha = senha;
@@ -424,6 +430,16 @@ namespace AntigueraWebApi.Controllers
                     logger.Info("AtualizarSenhaUsuario - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.NotFound, stats);
                 }
+            }
+
+            catch (HttpResponseException e)
+            {
+                logger.Error("AtualizarSenhaUsuario - Error: " + e);
+                stats.Status = e.Response.StatusCode;
+                stats.Mensagem = e.Message;
+
+                logger.Info("AtualizarSenhaUsuario - Finalizado");
+                return Request.CreateResponse(e.Response.StatusCode, stats);
             }
 
             catch (Exception e)
