@@ -19,5 +19,10 @@ namespace Antiguera.Dominio.Servicos
         {
             _romRepositorio.ApagarRoms(Ids);
         }
+
+        public void AtualizarNovo(int id)
+        {
+            _romRepositorio.AtualizarNovo(id);
+        }
     }
 }

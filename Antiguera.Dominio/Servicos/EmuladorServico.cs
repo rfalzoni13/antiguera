@@ -18,5 +18,10 @@ namespace Antiguera.Dominio.Servicos
         {
             _emuladorRepositorio.ApagarEmuladores(Ids);
         }
+
+        public void AtualizarNovo(int id)
+        {
+            _emuladorRepositorio.AtualizarNovo(id);
+        }
     }
 }

@@ -25,9 +25,11 @@ namespace Antiguera.Dominio.Servicos
             _usuarioRepositorio.ApagarUsuarios(Ids);
         }
 
-        public Usuario BuscarUsuarioPorLoginOuEmail(string data) => _usuarioRepositorio.BuscarUsuarioPorLoginOuEmail(data);
+        public void AtualizarNovo(int id)
+        {
+            _usuarioRepositorio.AtualizarNovo(id);
+        }
 
-        public Usuario FazerLogin(string userName, string password)
-            => _usuarioRepositorio.FazerLogin(userName, password);
+        public Usuario BuscarUsuarioPorLoginOuEmail(string data) => _usuarioRepositorio.BuscarUsuarioPorLoginOuEmail(data);
     }
 }

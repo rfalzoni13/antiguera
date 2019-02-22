@@ -19,5 +19,10 @@ namespace Antiguera.Dominio.Servicos
         {
             _acessoRepositorio.ApagarAcessos(Ids);
         }
+
+        public void AtualizarNovo(int id)
+        {
+            _acessoRepositorio.AtualizarNovo(id);
+        }
     }
 }

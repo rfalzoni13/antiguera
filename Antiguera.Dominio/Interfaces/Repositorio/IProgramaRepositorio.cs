@@ -5,6 +5,8 @@ namespace Antiguera.Dominio.Interfaces.Repositorio
 {
     public interface IProgramaRepositorio : IRepositorioBase<Programa>
     {
+        void AtualizarNovo(int id);
+
         void ApagarProgramas(int[] Ids);
     }
 }

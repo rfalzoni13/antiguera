@@ -18,5 +18,10 @@ namespace Antiguera.Dominio.Servicos
         {
             _jogoRepositorio.ApagarJogos(Ids);
         }
+
+        public void AtualizarNovo(int id)
+        {
+            _jogoRepositorio.AtualizarNovo(id);
+        }
     }
 }
