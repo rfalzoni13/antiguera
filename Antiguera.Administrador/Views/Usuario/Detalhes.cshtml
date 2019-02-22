@@ -1,0 +1,65 @@
+﻿@model Antiguera.Administrador.Models.UsuarioModel
+
+@{
+    ViewBag.Title = "Detalhes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            @Model.Nome - Detalhes
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="@Url.Action("Index", "Usuario")"><i class="fa fa-dashboard"></i> @ViewContext.RouteData.GetRequiredString("controller")</a></li>
+            <li class="active"><i class="fa fa-shopping-bag"></i> @ViewContext.RouteData.GetRequiredString("action")</li>
+        </ol>
+    </section><!--section -->
+
+    <section class="content container-fluid">
+        <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        @Html.LabelFor(x => x.Nome)<br />
+                        @Html.DisplayFor(x => x.Nome)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.LabelFor(x => x.Email)<br />
+                        @Html.DisplayFor(x => x.Email)
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        @Html.LabelFor(x => x.Sexo)<br />
+                        @Html.DisplayFor(x => x.Sexo)
+                    </div>
+                    <div class="col-md-3">
+                        @Html.LabelFor(x => x.Login)<br />
+                        @Html.DisplayFor(x => x.Login)
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        @Html.LabelFor(x => x.AcessoId)<br />
+                        @Html.DisplayFor(x => x.Acesso.Nome)
+                    </div>
+                    <div class="col-md-4">
+                        @Html.LabelFor(x => x.FileFoto)<br />
+                        @Model.UrlFotoUpload.Split('/').Last()
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-2">
+                        @Html.ActionLink("Voltar", "Index", null, new { @class = "btn btn-success btn-block" })
+                    </div>
+                </div>
+        </div> <!-- /container -->
+    </section>
+</div>
+

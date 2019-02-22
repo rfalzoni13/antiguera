@@ -7,6 +7,12 @@
 
 @section styles {
     @Styles.Render("~/bundles/bootstrap-datepicker")
+
+    <style>
+        .col-md-4 p {
+            margin: 5px 75px -25px;
+        }
+    </style>
 }
 
 <!-- Content Wrapper. Contains page content -->
@@ -47,6 +53,9 @@
                     </div>
                 }
 
+                @Html.HiddenFor(x => x.Id)
+                @Html.HiddenFor(x => x.Created)
+                @Html.HiddenFor(x => x.UrlArquivo)
                 <div class="row">
                     <div class="col-md-3">
                         @Html.LabelFor(x => x.Nome)
@@ -68,14 +77,22 @@
                 </div>
                 <br />
                 <div class="row">
-                    <div class="col-md-4">
-                        @Html.LabelFor(x => x.FileBoxArt)
-                        @Html.TextBoxFor(x => x.FileBoxArt, new { @type = "file" })
-                    </div>
-                    <div class="col-md-4">
-                        @Html.LabelFor(x => x.FileEmulador)
-                        @Html.TextBoxFor(x => x.FileEmulador, new { @type = "file" })
-                    </div>
+                    @if (!string.IsNullOrEmpty(Model.UrlArquivo))
+                    {
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.FileEmulador)
+                            @Html.TextBoxFor(x => x.FileEmulador, new { @type = "file", @style = "display:none" })
+                            <p id="textEmulator">@(Model.UrlArquivo.Split('/')[3])</p>
+                            <button type="button" id="ClickEmulator" class="btn btn-primary">Alterar</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.FileEmulador)
+                            @Html.TextBoxFor(x => x.FileEmulador, new { @type = "file" })
+                        </div>
+                    }
                 </div>
                 <br />
                 <div class="row">
@@ -101,5 +118,20 @@
 
 @section scripts {
     @Scripts.Render("~/bundles/js/bootstrap-datepicker")
+
+    <script>
+        $(".input-group.date").datepicker({
+            format: "dd/mm/yyyy"
+        });
+
+        $("#ClickEmulator").on("click", function () {
+            $("#FileEmulador").click();
+        });
+
+        $("#FileEmulador").change(function (e) {
+            var fileName = e.target.files[0].name;
+            $("#textEmulator").html(fileName);
+        });
+    </script>
 }
 

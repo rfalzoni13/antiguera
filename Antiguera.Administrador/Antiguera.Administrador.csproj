@@ -456,6 +456,11 @@
     <Content Include="Views\Usuario\Index.cshtml" />
     <Content Include="Views\Usuario\Cadastrar.cshtml" />
     <Content Include="Views\Usuario\Editar.cshtml" />
+    <Content Include="Views\Emulador\Detalhes.cshtml" />
+    <Content Include="Views\Jogo\Detalhes.cshtml" />
+    <Content Include="Views\Programa\Detalhes.cshtml" />
+    <Content Include="Views\Rom\Detalhes.cshtml" />
+    <Content Include="Views\Usuario\Detalhes.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -471,7 +476,6 @@
     <Folder Include="Content\Images\BoxArt\" />
     <Folder Include="Content\Images\Profile\" />
     <Folder Include="Content\Programas\" />
-    <Folder Include="Views\Admin\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Antiguera.Infra.Cross\Antiguera.Infra.Cross.csproj">
