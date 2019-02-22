@@ -4,6 +4,8 @@ namespace Antiguera.Administrador.Models
 {
     public class HeaderModel
     {
+        public virtual UsuarioModel Usuario { get; set; }
+
         public virtual List<UsuarioModel> Usuarios { get; set; }
 
         public virtual List<RomModel> Roms { get; set; }
