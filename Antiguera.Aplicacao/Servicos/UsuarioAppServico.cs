@@ -19,12 +19,15 @@ namespace Antiguera.Aplicacao.Servicos
         {
             _usuarioServico.AlterarSenha(id, senha);
         }
-
-        public Usuario FazerLogin(string userName, string password) => _usuarioServico.FazerLogin(userName, password);
-
+                
         public void ApagarUsuarios(int[] Ids)
         {
             _usuarioServico.ApagarUsuarios(Ids);
+        }
+
+        public void AtualizarNovo(int id)
+        {
+            _usuarioServico.AtualizarNovo(id);
         }
 
         public Usuario BuscarUsuarioPorLoginOuEmail(string data) => _usuarioServico.BuscarUsuarioPorLoginOuEmail(data);

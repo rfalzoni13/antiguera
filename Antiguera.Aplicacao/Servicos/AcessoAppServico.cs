@@ -19,5 +19,10 @@ namespace Antiguera.Aplicacao.Servicos
         {
             _acessoServico.ApagarAcessos(Ids);
         }
+
+        public void AtualizarNovo(int id)
+        {
+            _acessoServico.AtualizarNovo(id);
+        }
     }
 }
