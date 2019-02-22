@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -27,15 +28,24 @@ namespace Antiguera.Administrador.Controllers.Base
         {
             HeaderModel model = new HeaderModel();
 
-            model.Usuarios = ListarUsuarios();
+            var login = HttpContext.Request.GetOwinContext().Authentication.User.Identity.Name;
 
-            model.Jogos = ListarJogos();
+            if(!string.IsNullOrEmpty(login))
+            {
+                model.Usuario = BuscarUsuarioPorLoginOuEmail(login);
 
-            model.Emuladores = ListarEmuladores();
+                model.Usuario.Acesso = BuscarAcessoPorId(model.Usuario.AcessoId);
+            }
 
-            model.Roms = ListarRoms();
+            model.Usuarios = ListarUsuarios().Where(x => x.Novo == true).ToList();
 
-            model.Programas = ListarProgramas();
+            model.Jogos = ListarJogos().Where(x => x.Novo == true).ToList();
+
+            model.Emuladores = ListarEmuladores().Where(x => x.Novo == true).ToList();
+
+            model.Roms = ListarRoms().Where(x => x.Novo == true).ToList();
+
+            model.Programas = ListarProgramas().Where(x => x.Novo == true).ToList();
                        
             return PartialView(model);
         }
@@ -45,22 +55,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected List<UsuarioModel> ListarUsuarios()
         {
-            var token = string.Empty;
-
-            if(Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-            
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             var response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
 
@@ -70,18 +65,8 @@ namespace Antiguera.Administrador.Controllers.Base
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                if (Session["newToken"] != null)
-                {
-                    var refreshToken = Session["newToken"].ToString();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                }
-                else
-                {
-                    var modelToken = RefreshToken();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                }
+                RecarregarHeaders();
+
                 response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
                 if (response.IsSuccessStatusCode)
                 {
@@ -116,22 +101,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected UsuarioModel BuscarUsuarioPorId(int Id)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             var response = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPorId + Id).Result;
 
@@ -141,18 +111,7 @@ namespace Antiguera.Administrador.Controllers.Base
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                if (Session["newToken"] != null)
-                {
-                    var refreshToken = Session["newToken"].ToString();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                }
-                else
-                {
-                    var modelToken = RefreshToken();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                }
+                RecarregarHeaders();
 
                 response = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPorId + Id).Result;
                 if (response.IsSuccessStatusCode)
@@ -191,23 +150,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected UsuarioModel BuscarUsuarioPorLoginOuEmail(string userData)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             var response = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPeloLoginOuEmail + userData).Result;
 
@@ -217,18 +160,7 @@ namespace Antiguera.Administrador.Controllers.Base
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                if (Session["newToken"] != null)
-                {
-                    var refreshToken = Session["newToken"].ToString();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                }
-                else
-                {
-                    var modelToken = RefreshToken();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                }
+                RecarregarHeaders();
 
                 response = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPeloLoginOuEmail + userData).Result;
                 if (response.IsSuccessStatusCode)
@@ -267,22 +199,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected void CadastrarUsuario(UsuarioModel model)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -308,18 +225,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirUsuario, usuarioDTO).Result;
                     if (response.IsSuccessStatusCode)
@@ -366,23 +272,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected void AtualizarUsuario(UsuarioModel model)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -421,18 +311,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarUsuario, usuarioDTO).Result;
                     if (response.IsSuccessStatusCode)
@@ -479,23 +358,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected void AtualizarAdmin(UsuarioModel model)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -532,18 +395,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarAdmin, model).Result;
                     if (response.IsSuccessStatusCode)
@@ -593,23 +445,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected void AtualizarSenhaUsuario(UsuarioModel model)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -622,18 +458,7 @@ namespace Antiguera.Administrador.Controllers.Base
 
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarSenhaUsuario, model).Result;
                     if (response.IsSuccessStatusCode)
@@ -675,23 +500,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected void AtualizarSenhaAdmin(UsuarioModel model)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -703,18 +512,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarSenhaAdmin, model).Result;
                     if (response.IsSuccessStatusCode)
@@ -753,25 +551,60 @@ namespace Antiguera.Administrador.Controllers.Base
         }
 
         [NonAction]
-        protected void ExcluirUsuario(UsuarioModel model)
+        protected void AtualizarUsuarioNovo(UsuarioModel model)
         {
-            var token = string.Empty;
+            PreencherHeaders();
 
-            if (Session["newToken"] != null)
+            if (model != null)
             {
-                token = Session["newToken"].ToString();
+                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarUsuarioNovo, model.Id).Result;
+
+                switch (response.StatusCode)
+                {
+                    case HttpStatusCode.Unauthorized:
+
+                        RecarregarHeaders();
+
+                        response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarUsuarioNovo, model.Id).Result;
+                        if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
+                            Session["Unauthorized"] = resultado.Status;
+                            Session["ErroMensagem"] = resultado.Mensagem;
+                        }
+                        else
+                        {
+                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
+                            Session["ErroMensagem"] = resultado.Mensagem;
+                        }
+                        break;
+
+                    case HttpStatusCode.InternalServerError:
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+
+                    case HttpStatusCode.NotFound:
+                        result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+
+                    case HttpStatusCode.BadRequest:
+                        result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+                }
             }
             else
             {
-                token = GetToken();
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
+        }
 
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+        [NonAction]
+        protected void ExcluirUsuario(UsuarioModel model)
+        {
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -799,18 +632,7 @@ namespace Antiguera.Administrador.Controllers.Base
 
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.SendAsync(request).Result;
                     if (response.IsSuccessStatusCode)
@@ -848,22 +670,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected List<AcessoModel> ListarAcessos()
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             var response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosAcessos).Result;
 
@@ -873,18 +680,7 @@ namespace Antiguera.Administrador.Controllers.Base
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                if (Session["newToken"] != null)
-                {
-                    var refreshToken = Session["newToken"].ToString();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                }
-                else
-                {
-                    var modelToken = RefreshToken();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                }
+                RecarregarHeaders();
 
                 response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosAcessos).Result;
                 if (response.IsSuccessStatusCode)
@@ -920,23 +716,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected AcessoModel BuscarAcessoPorId(int Id)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             var response = Cliente.GetAsync(url.UrlApi + url.UrlListarAcessoPorId + Id).Result;
 
@@ -946,18 +726,7 @@ namespace Antiguera.Administrador.Controllers.Base
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                if (Session["newToken"] != null)
-                {
-                    var refreshToken = Session["newToken"].ToString();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                }
-                else
-                {
-                    var modelToken = RefreshToken();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                }
+                RecarregarHeaders();
 
                 response = Cliente.GetAsync(url.UrlApi + url.UrlListarAcessoPorId + Id).Result;
                 if (response.IsSuccessStatusCode)
@@ -992,27 +761,62 @@ namespace Antiguera.Administrador.Controllers.Base
                 return null;
             }
         }
-        
-        [NonAction]
-        protected void CadastrarAcesso(AcessoModel model)
-        {
-            var token = string.Empty;
 
-            if (Session["newToken"] != null)
+        [NonAction]
+        protected void AtualizarAcessoNovo(AcessoModel model)
+        {
+            PreencherHeaders();
+
+            if (model != null)
             {
-                token = Session["newToken"].ToString();
+                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarAcessoNovo, model.Id).Result;
+
+                switch (response.StatusCode)
+                {
+                    case HttpStatusCode.Unauthorized:
+
+                        RecarregarHeaders();
+
+                        response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarAcessoNovo, model.Id).Result;
+                        if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
+                            Session["Unauthorized"] = resultado.Status;
+                            Session["ErroMensagem"] = resultado.Mensagem;
+                        }
+                        else
+                        {
+                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
+                            Session["ErroMensagem"] = resultado.Mensagem;
+                        }
+                        break;
+
+                    case HttpStatusCode.InternalServerError:
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+
+                    case HttpStatusCode.NotFound:
+                        result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+
+                    case HttpStatusCode.BadRequest:
+                        result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+                }
             }
             else
             {
-                token = GetToken();
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
+        }
 
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+        [NonAction]
+        protected void CadastrarAcesso(AcessoModel model)
+        {
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -1027,18 +831,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirAcesso, acessoDTO).Result;
                     if (response.IsSuccessStatusCode)
@@ -1074,23 +867,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected void ExcluirAcesso(AcessoModel model)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -1109,18 +886,7 @@ namespace Antiguera.Administrador.Controllers.Base
 
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.SendAsync(request).Result;
                     if (response.IsSuccessStatusCode)
@@ -1164,23 +930,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected List<EmuladorModel> ListarEmuladores()
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             var response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosEmuladores).Result;
 
@@ -1190,18 +940,7 @@ namespace Antiguera.Administrador.Controllers.Base
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                if (Session["newToken"] != null)
-                {
-                    var refreshToken = Session["newToken"].ToString();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                }
-                else
-                {
-                    var modelToken = RefreshToken();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                }
+                RecarregarHeaders();
 
                 response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosEmuladores).Result;
                 if (response.IsSuccessStatusCode)
@@ -1237,23 +976,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected EmuladorModel BuscarEmuladorPorId(int Id)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             var response = Cliente.GetAsync(url.UrlApi + url.UrlListarEmuladorPorId + Id).Result;
 
@@ -1264,18 +987,7 @@ namespace Antiguera.Administrador.Controllers.Base
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                if (Session["newToken"] != null)
-                {
-                    var refreshToken = Session["newToken"].ToString();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                }
-                else
-                {
-                    var modelToken = RefreshToken();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                }
+                RecarregarHeaders();
 
                 response = Cliente.GetAsync(url.UrlApi + url.UrlListarEmuladorPorId + Id).Result;
                 if (response.IsSuccessStatusCode)
@@ -1315,23 +1027,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected void CadastrarEmulador(EmuladorModel model)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -1357,18 +1053,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
                     if (response.IsSuccessStatusCode)
@@ -1415,23 +1100,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected void AtualizarEmulador(EmuladorModel model)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -1470,18 +1139,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarEmulador, emuladorDTO).Result;
                     if (response.IsSuccessStatusCode)
@@ -1525,26 +1183,61 @@ namespace Antiguera.Administrador.Controllers.Base
             }
         }
 
-        [NonAction]
-        protected void ExcluirEmulador(EmuladorModel model)
+        protected void AtualizarEmuladorNovo(EmuladorModel model)
         {
-            var token = string.Empty;
+            PreencherHeaders();
 
-            if (Session["newToken"] != null)
+            if (model != null)
             {
-                token = Session["newToken"].ToString();
+                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarEmuladorNovo, model.Id).Result;
+
+                switch (response.StatusCode)
+                {
+                    case HttpStatusCode.Unauthorized:
+
+                        RecarregarHeaders();
+
+                        response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarEmuladorNovo, model.Id).Result;
+                        if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
+                            Session["Unauthorized"] = resultado.Status;
+                            Session["ErroMensagem"] = resultado.Mensagem;
+                        }
+                        else
+                        {
+                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
+                            Session["ErroMensagem"] = resultado.Mensagem;
+                        }
+                        break;
+
+                    case HttpStatusCode.InternalServerError:
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+
+                    case HttpStatusCode.NotFound:
+                        result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+
+                    case HttpStatusCode.BadRequest:
+                        result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+                }
             }
             else
             {
-                token = GetToken();
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
+        }
 
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
 
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+        [NonAction]
+        protected void ExcluirEmulador(EmuladorModel model)
+        {
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -1571,18 +1264,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.SendAsync(request).Result;
                     if (response.IsSuccessStatusCode)
@@ -1624,23 +1306,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected List<RomModel> ListarRoms()
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             var response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodasRoms).Result;
 
@@ -1650,18 +1316,7 @@ namespace Antiguera.Administrador.Controllers.Base
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                if (Session["newToken"] != null)
-                {
-                    var refreshToken = Session["newToken"].ToString();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                }
-                else
-                {
-                    var modelToken = RefreshToken();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                }
+                RecarregarHeaders();
 
                 response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodasRoms).Result;
                 if (response.IsSuccessStatusCode)
@@ -1697,23 +1352,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected RomModel BuscarRomPorId(int Id)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             var response = Cliente.GetAsync(url.UrlApi + url.UrlListarRomPorId + Id).Result;
 
@@ -1724,18 +1363,7 @@ namespace Antiguera.Administrador.Controllers.Base
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                if (Session["newToken"] != null)
-                {
-                    var refreshToken = Session["newToken"].ToString();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                }
-                else
-                {
-                    var modelToken = RefreshToken();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                }
+                RecarregarHeaders();
 
                 response = Cliente.GetAsync(url.UrlApi + url.UrlListarRomPorId + Id).Result;
                 if (response.IsSuccessStatusCode)
@@ -1774,23 +1402,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected void CadastrarRom(RomModel model)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -1834,18 +1446,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirRom, romDTO).Result;
                     if (response.IsSuccessStatusCode)
@@ -1894,23 +1495,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected void AtualizarRom(RomModel model)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -1974,18 +1559,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlAtualizarRom, romDTO).Result;
                     if (response.IsSuccessStatusCode)
@@ -2037,24 +1611,60 @@ namespace Antiguera.Administrador.Controllers.Base
         }
 
         [NonAction]
-        protected void ExcluirRom(RomModel model)
+        protected void AtualizarRomNova(RomModel model)
         {
-            var token = string.Empty;
+            PreencherHeaders();
 
-            if (Session["newToken"] != null)
+            if (model != null)
             {
-                token = Session["newToken"].ToString();
+                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarRomNova, model.Id).Result;
+
+                switch (response.StatusCode)
+                {
+                    case HttpStatusCode.Unauthorized:
+
+                        RecarregarHeaders();
+
+                        response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarRomNova, model.Id).Result;
+                        if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
+                            Session["Unauthorized"] = resultado.Status;
+                            Session["ErroMensagem"] = resultado.Mensagem;
+                        }
+                        else
+                        {
+                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
+                            Session["ErroMensagem"] = resultado.Mensagem;
+                        }
+                        break;
+
+                    case HttpStatusCode.InternalServerError:
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+
+                    case HttpStatusCode.NotFound:
+                        result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+
+                    case HttpStatusCode.BadRequest:
+                        result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+                }
             }
             else
             {
-                token = GetToken();
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
+        }
 
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+        [NonAction]
+        protected void ExcluirRom(RomModel model)
+        {
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -2090,18 +1700,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.SendAsync(request).Result;
                     if (response.IsSuccessStatusCode)
@@ -2143,23 +1742,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected List<JogoModel> ListarJogos()
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             var response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosJogos).Result;
 
@@ -2169,18 +1752,7 @@ namespace Antiguera.Administrador.Controllers.Base
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                if (Session["newToken"] != null)
-                {
-                    var refreshToken = Session["newToken"].ToString();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                }
-                else
-                {
-                    var modelToken = RefreshToken();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                }
+                RecarregarHeaders();
 
                 response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosJogos).Result;
                 if (response.IsSuccessStatusCode)
@@ -2216,23 +1788,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected JogoModel BuscarJogoPorId(int Id)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             var response = Cliente.GetAsync(url.UrlApi + url.UrlListarJogoPorId + Id).Result;
 
@@ -2242,18 +1798,7 @@ namespace Antiguera.Administrador.Controllers.Base
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                if (Session["newToken"] != null)
-                {
-                    var refreshToken = Session["newToken"].ToString();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                }
-                else
-                {
-                    var modelToken = RefreshToken();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                }
+                RecarregarHeaders();
 
                 response = Cliente.GetAsync(url.UrlApi + url.UrlListarJogoPorId + Id).Result;
                 if (response.IsSuccessStatusCode)
@@ -2292,23 +1837,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected void CadastrarJogo(JogoModel model)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -2345,18 +1874,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirJogo, jogoDTO).Result;
                     if (response.IsSuccessStatusCode)
@@ -2412,23 +1930,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected void AtualizarJogo(JogoModel model)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -2493,18 +1995,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarJogo, jogoDTO).Result;
                     if (response.IsSuccessStatusCode)
@@ -2557,25 +2048,60 @@ namespace Antiguera.Administrador.Controllers.Base
         }
 
         [NonAction]
-        protected void ExcluirJogo(JogoModel model)
+        protected void AtualizarJogoNovo(JogoModel model)
         {
-            var token = string.Empty;
+            PreencherHeaders();
 
-            if (Session["newToken"] != null)
+            if (model != null)
             {
-                token = Session["newToken"].ToString();
+                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarJogoNovo, model.Id).Result;
+
+                switch (response.StatusCode)
+                {
+                    case HttpStatusCode.Unauthorized:
+
+                        RecarregarHeaders();
+
+                        response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarJogoNovo, model.Id).Result;
+                        if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
+                            Session["Unauthorized"] = resultado.Status;
+                            Session["ErroMensagem"] = resultado.Mensagem;
+                        }
+                        else
+                        {
+                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
+                            Session["ErroMensagem"] = resultado.Mensagem;
+                        }
+                        break;
+
+                    case HttpStatusCode.InternalServerError:
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+
+                    case HttpStatusCode.NotFound:
+                        result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+
+                    case HttpStatusCode.BadRequest:
+                        result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+                }
             }
             else
             {
-                token = GetToken();
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
+        }
 
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+        [NonAction]
+        protected void ExcluirJogo(JogoModel model)
+        {
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -2611,18 +2137,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.SendAsync(request).Result;
                     if (response.IsSuccessStatusCode)
@@ -2664,23 +2179,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected List<ProgramaModel> ListarProgramas()
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             var response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosProgramas).Result;
 
@@ -2690,18 +2189,7 @@ namespace Antiguera.Administrador.Controllers.Base
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                if (Session["newToken"] != null)
-                {
-                    var refreshToken = Session["newToken"].ToString();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                }
-                else
-                {
-                    var modelToken = RefreshToken();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                }
+                RecarregarHeaders();
 
                 response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosProgramas).Result;
                 if (response.IsSuccessStatusCode)
@@ -2738,23 +2226,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected ProgramaModel BuscarProgramaPorId(int Id)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             var response = Cliente.GetAsync(url.UrlApi + url.UrlListarProgramaPorId + Id).Result;
 
@@ -2765,18 +2237,7 @@ namespace Antiguera.Administrador.Controllers.Base
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                if (Session["newToken"] != null)
-                {
-                    var refreshToken = Session["newToken"].ToString();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                }
-                else
-                {
-                    var modelToken = RefreshToken();
-                    Cliente.DefaultRequestHeaders.Remove("Authorization");
-                    Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                }
+                RecarregarHeaders();
 
                 response = Cliente.GetAsync(url.UrlApi + url.UrlListarProgramaPorId + Id).Result;
                 if (response.IsSuccessStatusCode)
@@ -2815,23 +2276,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected void CadastrarPrograma(ProgramaModel model)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -2869,18 +2314,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirPrograma, programaDTO).Result;
                     if (response.IsSuccessStatusCode)
@@ -2935,23 +2369,7 @@ namespace Antiguera.Administrador.Controllers.Base
         [NonAction]
         protected void AtualizarPrograma(ProgramaModel model)
         {
-            var token = string.Empty;
-
-            if (Session["newToken"] != null)
-            {
-                token = Session["newToken"].ToString();
-            }
-            else
-            {
-                token = GetToken();
-            }
-
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -3015,18 +2433,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarPrograma, programaDTO).Result;
                     if (response.IsSuccessStatusCode)
@@ -3080,25 +2487,60 @@ namespace Antiguera.Administrador.Controllers.Base
         }
 
         [NonAction]
-        protected void ExcluirPrograma(ProgramaModel model)
+        protected void AtualizarProgramaNovo(ProgramaModel model)
         {
-            var token = string.Empty;
+            PreencherHeaders();
 
-            if (Session["newToken"] != null)
+            if (model != null)
             {
-                token = Session["newToken"].ToString();
+                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarProgramaNovo, model.Id).Result;
+
+                switch (response.StatusCode)
+                {
+                    case HttpStatusCode.Unauthorized:
+
+                        RecarregarHeaders();
+
+                        response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarProgramaNovo, model.Id).Result;
+                        if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
+                            Session["Unauthorized"] = resultado.Status;
+                            Session["ErroMensagem"] = resultado.Mensagem;
+                        }
+                        else
+                        {
+                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
+                            Session["ErroMensagem"] = resultado.Mensagem;
+                        }
+                        break;
+
+                    case HttpStatusCode.InternalServerError:
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+
+                    case HttpStatusCode.NotFound:
+                        result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+
+                    case HttpStatusCode.BadRequest:
+                        result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                        break;
+                }
             }
             else
             {
-                token = GetToken();
+                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
+        }
 
-            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                Cliente.DefaultRequestHeaders.Remove("Authorization");
-            }
-
-            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+        [NonAction]
+        protected void ExcluirPrograma(ProgramaModel model)
+        {
+            PreencherHeaders();
 
             if (model != null)
             {
@@ -3127,18 +2569,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    if (Session["newToken"] != null)
-                    {
-                        var refreshToken = Session["newToken"].ToString();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
-                    }
-                    else
-                    {
-                        var modelToken = RefreshToken();
-                        Cliente.DefaultRequestHeaders.Remove("Authorization");
-                        Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
-                    }
+                    RecarregarHeaders();
 
                     response = Cliente.SendAsync(request).Result;
                     if (response.IsSuccessStatusCode)
@@ -3249,6 +2680,45 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
             }
             return null;
+        }
+
+        [NonAction]
+        private void PreencherHeaders()
+        {
+            var token = string.Empty;
+
+            if(Session["newToken"] != null)
+            {
+                token = Session["newToken"].ToString();
+            }
+            else
+            {
+                token = GetToken();
+            }
+            
+
+            if (Cliente.DefaultRequestHeaders.Contains("Authorization"))
+            {
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+            }
+            Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+        }
+
+        [NonAction]
+        private void RecarregarHeaders()
+        {
+            if (Session["newToken"] != null)
+            {
+                var refreshToken = Session["newToken"].ToString();
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+                Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + refreshToken);
+            }
+            else
+            {
+                var modelToken = RefreshToken();
+                Cliente.DefaultRequestHeaders.Remove("Authorization");
+                Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + modelToken.access_token);
+            }
         }
 
         [NonAction]

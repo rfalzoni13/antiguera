@@ -146,6 +146,54 @@ namespace Antiguera.Administrador.Controllers
             }
         }
 
+        // GET: Detalhes
+        public ActionResult Detalhes(int id)
+        {
+            try
+            {
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    var model = BuscarUsuarioPorId(id);
+
+                    model.Acesso = BuscarAcessoPorId(model.AcessoId);
+
+                    if (TempData["Unauthorized"] != null)
+                    {
+                        HttpContext.GetOwinContext().Authentication.SignOut();
+                        return RedirectToAction("Login", "Home");
+                    }
+
+                    if (model != null)
+                    {
+                        if (model.Novo == true)
+                        {
+                            AtualizarUsuarioNovo(model);
+                        }
+
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index");
+                    }
+                }
+                else
+                {
+                    Session["ErroMensagem"] = "Acesso restrito!";
+                    return RedirectToAction("Login", "Home");
+                }
+            }
+            catch (Exception ex)
+            {
+                Session["ErroMensagem"] = "Erro: " + ex.Message;
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    HttpContext.GetOwinContext().Authentication.SignOut();
+                }
+                return RedirectToAction("Login", "Home");
+            }
+        }
+
         // GET: Editar
         public ActionResult Editar(int id)
         {
@@ -165,15 +213,27 @@ namespace Antiguera.Administrador.Controllers
                         return RedirectToAction("Login", "Home");
                     }
 
-                    foreach (var acesso in acessos)
+                    if (model != null)
                     {
-                        if (acesso != null)
+                        if (model.Novo == true)
                         {
-                            model.ListaAcessos.Add(new SelectListItem() { Text = acesso.Nome, Value = acesso.Id.ToString() });
+                            AtualizarUsuarioNovo(model);
                         }
-                    }
 
-                    return View(model);
+                        foreach (var acesso in acessos)
+                        {
+                            if (acesso != null)
+                            {
+                                model.ListaAcessos.Add(new SelectListItem() { Text = acesso.Nome, Value = acesso.Id.ToString() });
+                            }
+                        }
+
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index");
+                    }
                 }
                 else
                 {

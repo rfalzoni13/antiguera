@@ -127,6 +127,52 @@ namespace Antiguera.Administrador.Controllers
             }
         }
 
+        // GET: Detalhes
+        public ActionResult Detalhes(int id)
+        {
+            try
+            {
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    var model = BuscarJogoPorId(id);
+                    if (Session["Unauthorized"] != null)
+                    {
+                        HttpContext.GetOwinContext().Authentication.SignOut();
+                        return RedirectToAction("Login", "Home");
+                    }
+
+                    if (model != null)
+                    {
+                        if (model.Novo == true)
+                        {
+                            AtualizarJogoNovo(model);
+                        }
+
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index");
+                    }
+                }
+                else
+                {
+                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
+                    HttpContext.GetOwinContext().Authentication.SignOut();
+                    return RedirectToAction("Login", "Home");
+                }
+            }
+            catch (Exception ex)
+            {
+                Session["ErroMensagem"] = "Erro: " + ex.Message;
+                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                {
+                    HttpContext.GetOwinContext().Authentication.SignOut();
+                }
+                return RedirectToAction("Login", "Home");
+            }
+        }
+
         // GET: Editar
         public ActionResult Editar(int id)
         {
@@ -142,7 +188,12 @@ namespace Antiguera.Administrador.Controllers
                     }
 
                     if (model != null)
-                    {                        
+                    {
+                        if (model.Novo == true)
+                        {
+                            AtualizarJogoNovo(model);
+                            Session.Clear();
+                        }
                         return View(model);
                     }
                     else
