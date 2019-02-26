@@ -260,7 +260,7 @@ namespace Antiguera.WebApi.Controllers
         /// <remarks>Atualiza o campo "Novo" do emulador passando o Id do mesmo no body simples da requisição pelo método PUT</remarks>
         /// <param name="Id">Id do emulador</param>
         /// <returns></returns>
-        // PUT api/antiguera/admin/atualizaremuladornovo?id={Id}
+        // PUT api/antiguera/admin/atualizaremuladornovo
         [HttpPut]
         [Route("atualizaremuladornovo")]
         public HttpResponseMessage AtualizarEmuladorNovo([FromBody] int Id)

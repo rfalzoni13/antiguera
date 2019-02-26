@@ -262,7 +262,7 @@ namespace Antiguera.WebApi.Controllers
         /// <remarks>Atualiza o campo "Novo" da rom passando o Id da mesma no body simples da requisição método PUT</remarks>
         /// <param name="Id">Id da rom</param>
         /// <returns></returns>
-        // PUT api/antiguera/admin/atualizarromnova?id={Id}
+        // PUT api/antiguera/admin/atualizarromnova
         [HttpPut]
         [Route("atualizarromnova")]
         public HttpResponseMessage AtualizarRomNova([FromBody] int Id)

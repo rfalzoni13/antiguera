@@ -261,7 +261,7 @@ namespace AntigueraWebApi.Controllers
         /// <remarks>Atualiza o campo "Novo" do jogo passando o Id do mesmo no body simples da requisição pelo método PUT</remarks>
         /// <param name="Id">Id do jogo</param>
         /// <returns></returns>
-        // PUT api/antiguera/admin/atualizarjogonovo?id={Id}
+        // PUT api/antiguera/admin/atualizarjogonovo
         [HttpPut]
         [Route("atualizarjogonovo")]
         public HttpResponseMessage AtualizarJogoNovo([FromBody] int Id)

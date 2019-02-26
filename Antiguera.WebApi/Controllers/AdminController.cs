@@ -763,7 +763,7 @@ namespace AntigueraWebApi.Controllers
         /// <remarks>Atualiza o campo "Novo" do usuário passando o Id do usuário na Uri do endpoint pelo método PUT</remarks>
         /// <param name="Id">Id do usuário</param>
         /// <returns></returns>
-        // PUT api/antiguera/admin/atualizarusuarionovo?id={Id}
+        // PUT api/antiguera/admin/atualizarusuarionovo
         [HttpPut]
         [Route("atualizarusuarionovo")]
         public HttpResponseMessage AtualizarUsuarioNovo([FromBody] int Id)
