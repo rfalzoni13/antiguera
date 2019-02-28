@@ -22,12 +22,7 @@ namespace Antiguera.WebApi
         {
             HttpConfiguration config = GlobalConfiguration.Configuration;
 
-            ConfigureOAuthTokenGeneration(app);
-
-            app.CreatePerOwinContext(ApplicationDbContext.Create);
-            app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
-            app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create);
-            app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
+            ConfigureOAuthTokenGeneration(app);            
 
             app.UseCors(CorsOptions.AllowAll);
 
@@ -56,6 +51,8 @@ namespace Antiguera.WebApi
         {
             app.CreatePerOwinContext(ApplicationDbContext.Create);
             app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
+            app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create);
+            app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
         }
 
         //private void ConfigureCors(IAppBuilder app)

@@ -5,7 +5,6 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Web;
@@ -152,22 +151,13 @@ namespace Antiguera.Administrador.Controllers
                                     HttpContext.Request.GetOwinContext().Authentication.SignIn(identity);
                                     applicationSign.SignIn(user, false, false);
                                 }
-
-                                Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token.access_token);
-
-                                using (var responseUsuario = Cliente.GetAsync(url.UrlApi + url.UrlListarUsuariosPeloLoginOuEmail + model.UserName).Result)
-                                {
-                                    if (responseUsuario.IsSuccessStatusCode)
-                                    {
-                                        var resultUsuario = responseUsuario.Content.ReadAsAsync<UsuarioModel>().Result;
-                                    }
-                                }
                             }
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            ViewBag.ErroMensagem = responseFirstLogin.Content.ReadAsAsync<string>().Result;
+                            var result = responseFirstLogin.Content.ReadAsAsync<StatusCode>().Result;
+                            ViewBag.ErroMensagem = result.Mensagem;
                             return View(model);
                         }
                     }
