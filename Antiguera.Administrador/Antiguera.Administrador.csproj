@@ -253,6 +253,8 @@
     <Content Include="Content\Images\antiguera-mini-logo.fw.png" />
     <Content Include="Content\Images\LogoAntiguera.png" />
     <Content Include="Content\Images\LogoAntiguera2.png" />
+    <Content Include="Content\Images\Profile\user-fm.png" />
+    <Content Include="Content\Images\Profile\user.png" />
     <Content Include="Content\Login.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\tether\tether-theme-arrows-dark.css" />
@@ -474,7 +476,6 @@
     <Folder Include="Content\Consoles\Roms\" />
     <Folder Include="Content\Games\" />
     <Folder Include="Content\Images\BoxArt\" />
-    <Folder Include="Content\Images\Profile\" />
     <Folder Include="Content\Programas\" />
   </ItemGroup>
   <ItemGroup>
