@@ -95,6 +95,10 @@
       <Project>{BE4E7D41-7F3C-42E8-9AAF-792BFA2F82B2}</Project>
       <Name>Antiguera.Infra.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Antiguera.Servicos\Antiguera.Servicos.csproj">
+      <Project>{82286BF0-9CF7-4655-A49C-DB0A3A08FE56}</Project>
+      <Name>Antiguera.Servicos</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

@@ -6,10 +6,10 @@ using Antiguera.Dominio.Interfaces.Repositorio;
 using Antiguera.Dominio.Interfaces.Repositorio.Base;
 using Antiguera.Dominio.Interfaces.Servicos;
 using Antiguera.Dominio.Interfaces.Servicos.Base;
-using Antiguera.Dominio.Servicos;
-using Antiguera.Dominio.Servicos.Base;
 using Antiguera.Infra.Data.Repositorios;
 using Antiguera.Infra.Data.Repositorios.Base;
+using Antiguera.Servicos;
+using Antiguera.Servicos.Base;
 using Ninject.Modules;
 
 namespace Antiguera.Infra.IoC

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Antiguera.Dominio.Interfaces.Repositorio.Base;
+﻿using Antiguera.Dominio.Interfaces.Repositorio.Base;
 using Antiguera.Dominio.Interfaces.Servicos.Base;
+using System;
+using System.Collections.Generic;
 
-namespace Antiguera.Dominio.Servicos.Base
+namespace Antiguera.Servicos.Base
 {
     public class ServicoBase<T> : IServicoBase<T> where T : class
     {
@@ -41,5 +41,6 @@ namespace Antiguera.Dominio.Servicos.Base
         {
             GC.SuppressFinalize(this);
         }
+
     }
 }

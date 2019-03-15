@@ -1,16 +1,16 @@
 ﻿using Antiguera.Dominio.Entidades;
 using Antiguera.Dominio.Interfaces.Repositorio;
 using Antiguera.Dominio.Interfaces.Servicos;
-using Antiguera.Dominio.Servicos.Base;
+using Antiguera.Servicos.Base;
 
-namespace Antiguera.Dominio.Servicos
+namespace Antiguera.Servicos
 {
     public class UsuarioServico : ServicoBase<Usuario>, IUsuarioServico
     {
         private readonly IUsuarioRepositorio _usuarioRepositorio;
 
         public UsuarioServico(IUsuarioRepositorio usuarioRepositorio)
-            :base(usuarioRepositorio)
+            : base(usuarioRepositorio)
         {
             _usuarioRepositorio = usuarioRepositorio;
         }

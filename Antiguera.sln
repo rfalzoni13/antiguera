@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{D26A96EB-D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Antiguera.Infra.Data", "Antiguera.Infra.Data\Antiguera.Infra.Data.csproj", "{BE4E7D41-7F3C-42E8-9AAF-792BFA2F82B2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Servico", "Servico", "{A4711321-A7FF-486E-8DF0-5ADBE1F8B809}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{A4711321-A7FF-486E-8DF0-5ADBE1F8B809}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Antiguera.WebApi", "Antiguera.WebApi\Antiguera.WebApi.csproj", "{38CC0B7B-FF1F-41AA-8C56-E28BC3CA8F5C}"
 EndProject
@@ -32,6 +32,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cross", "Cross", "{0C358729-595E-4CE9-8314-B7A80D90E129}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Antiguera.Infra.Cross", "Antiguera.Infra.Cross\Antiguera.Infra.Cross.csproj", "{6C28487D-2C07-487C-B351-35D8499B4426}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Servico", "Servico", "{27A8586B-375B-449C-AE1A-085C38F29B21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Antiguera.Servicos", "Antiguera.Servicos\Antiguera.Servicos.csproj", "{82286BF0-9CF7-4655-A49C-DB0A3A08FE56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +71,10 @@ Global
 		{6C28487D-2C07-487C-B351-35D8499B4426}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C28487D-2C07-487C-B351-35D8499B4426}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C28487D-2C07-487C-B351-35D8499B4426}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82286BF0-9CF7-4655-A49C-DB0A3A08FE56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82286BF0-9CF7-4655-A49C-DB0A3A08FE56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82286BF0-9CF7-4655-A49C-DB0A3A08FE56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82286BF0-9CF7-4655-A49C-DB0A3A08FE56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +90,7 @@ Global
 		{2E5971B7-1087-4BA2-8363-DB145436AF9B} = {16F30539-C0A0-4BA0-9B46-E0318C7073CB}
 		{0C358729-595E-4CE9-8314-B7A80D90E129} = {043E2564-B987-4DA3-80C9-AA4E505D314F}
 		{6C28487D-2C07-487C-B351-35D8499B4426} = {0C358729-595E-4CE9-8314-B7A80D90E129}
+		{82286BF0-9CF7-4655-A49C-DB0A3A08FE56} = {27A8586B-375B-449C-AE1A-085C38F29B21}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {917DAA24-7FAB-435A-BF1D-0248803A1BC2}
