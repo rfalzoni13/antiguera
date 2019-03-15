@@ -399,6 +399,11 @@
     <Compile Include="AutoMapper\AutoMapperConfig.cs" />
     <Compile Include="AutoMapper\DTOToModelMappingProfile.cs" />
     <Compile Include="AutoMapper\ModelToDTOMappingProfile.cs" />
+    <Compile Include="Config\ApplicationDbContext.cs" />
+    <Compile Include="Config\ApplicationRoleManager.cs" />
+    <Compile Include="Config\ApplicationSignInManager.cs" />
+    <Compile Include="Config\ApplicationUser.cs" />
+    <Compile Include="Config\ApplicationUserManager.cs" />
     <Compile Include="Config\UrlConfiguration.cs" />
     <Compile Include="Controllers\Base\BaseController.cs" />
     <Compile Include="Controllers\ConfiguracaoController.cs" />
@@ -477,12 +482,6 @@
     <Folder Include="Content\Games\" />
     <Folder Include="Content\Images\BoxArt\" />
     <Folder Include="Content\Programas\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Antiguera.Infra.Cross\Antiguera.Infra.Cross.csproj">
-      <Project>{6C28487D-2C07-487C-B351-35D8499B4426}</Project>
-      <Name>Antiguera.Infra.Cross</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

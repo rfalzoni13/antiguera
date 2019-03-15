@@ -1,6 +1,6 @@
-﻿using Antiguera.Administrador.Controllers.Base;
+﻿using Antiguera.Administrador.Config;
+using Antiguera.Administrador.Controllers.Base;
 using Antiguera.Administrador.Models;
-using Antiguera.Infra.Cross.Infrastructure;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
