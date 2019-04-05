@@ -8,8 +8,8 @@ using Antiguera.Dominio.Interfaces.Servicos;
 using Antiguera.Dominio.Interfaces.Servicos.Base;
 using Antiguera.Infra.Data.Repositorios;
 using Antiguera.Infra.Data.Repositorios.Base;
-using Antiguera.Servicos;
 using Antiguera.Servicos.Base;
+using Antiguera.Servicos.Classes;
 using Ninject.Modules;
 
 namespace Antiguera.Infra.IoC
