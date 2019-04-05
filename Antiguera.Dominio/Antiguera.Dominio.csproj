@@ -49,6 +49,7 @@
     <Compile Include="Entidades\Rom.cs" />
     <Compile Include="Entidades\Usuario.cs" />
     <Compile Include="Interfaces\IAntigueraContexto.cs" />
+    <Compile Include="Interfaces\IUnitOfWork.cs" />
     <Compile Include="Interfaces\Repositorio\Base\IRepositorioBase.cs" />
     <Compile Include="Interfaces\Repositorio\IAcessoRepositorio.cs" />
     <Compile Include="Interfaces\Repositorio\IEmuladorRepositorio.cs" />

@@ -5,8 +5,6 @@ namespace Antiguera.Dominio.Interfaces.Servicos
 {
     public interface IRomServico : IServicoBase<Rom>
     {
-        void AtualizarNovo(int id);
-
         void ApagarRoms(int[] Ids);
     }
 }

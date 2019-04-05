@@ -5,8 +5,6 @@ namespace Antiguera.Dominio.Interfaces.Servicos
 {
     public interface IJogoServico : IServicoBase<Jogo>
     {
-        void AtualizarNovo(int id);
-
         void ApagarJogos(int[] Ids);
     }
 }

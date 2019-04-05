@@ -5,8 +5,6 @@ namespace Antiguera.Dominio.Interfaces.Servicos
 {
     public interface IProgramaServico : IServicoBase<Programa>
     {
-        void AtualizarNovo(int id);
-
         void ApagarProgramas(int[] Ids);
     }
 }

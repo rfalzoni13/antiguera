@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Antiguera.Dominio.Interfaces.Repositorio.Base
 {
@@ -8,10 +9,12 @@ namespace Antiguera.Dominio.Interfaces.Repositorio.Base
 
         void Atualizar(T obj);
 
+        void Apagar(T obj);
+
         T BuscarPorId(int id);
 
         IEnumerable<T> BuscarTodos();
 
-        void Apagar(T obj);
+        IEnumerable<T> BuscaQuery(Func<T, bool> predicate);
     }
 }
