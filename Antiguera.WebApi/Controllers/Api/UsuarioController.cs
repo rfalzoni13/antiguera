@@ -2,6 +2,7 @@
 using Antiguera.Dominio.Entidades;
 using Antiguera.Infra.Cross.Infrastructure;
 using Antiguera.WebApi.Authorization;
+using Antiguera.WebApi.Controllers.Api.Base;
 using Antiguera.WebApi.Models;
 using AutoMapper;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -15,11 +16,11 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 
-namespace AntigueraWebApi.Controllers
+namespace Antiguera.WebApi.Controllers.Api
 {
     [CustomAuthorize(Roles = "Usuário")]
     [RoutePrefix("api/antiguera/usuario")]
-    public class UsuarioController : ApiController
+    public class UsuarioController : BaseController
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private static StatusCode stats = new StatusCode();
@@ -183,20 +184,17 @@ namespace AntigueraWebApi.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var manager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
-                    var appRole = HttpContext.Current.GetOwinContext().Get<ApplicationRoleManager>();
-
                     var acesso = _acessoAppServico.BuscarPorId(usuarioModel.AcessoId);
                     if (acesso != null)
                     {
-                        var role = await appRole.FindByNameAsync(acesso.Nome);
+                        var role = await RoleManager.FindByNameAsync(acesso.Nome);
                         if (role == null)
                         {
                             role = new IdentityRole(acesso.Nome);
-                            await appRole.CreateAsync(role);
+                            await RoleManager.CreateAsync(role);
                         }
 
-                        var user = await manager.FindByNameAsync(usuarioModel.Login);
+                        var user = await UserManager.FindByNameAsync(usuarioModel.Login);
 
                         if (user == null)
                         {
@@ -209,9 +207,9 @@ namespace AntigueraWebApi.Controllers
                                 JoinDate = DateTime.Now
                             };
 
-                            await manager.CreateAsync(user, usuarioModel.Senha);
+                            await UserManager.CreateAsync(user, usuarioModel.Senha);
 
-                            await manager.AddToRoleAsync(user.Id, role.Name);
+                            await UserManager.AddToRoleAsync(user.Id, role.Name);
                         }
                     }
                     else
@@ -239,7 +237,7 @@ namespace AntigueraWebApi.Controllers
                     logger.Info("InserirUsuario - Sucesso!");
 
                     logger.Info("InserirUsuario - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.OK, "Usuário incluído com sucesso!");
+                    return Request.CreateResponse(HttpStatusCode.Created, "Usuário incluído com sucesso!");
                 }
                 else
                 {
@@ -283,20 +281,17 @@ namespace AntigueraWebApi.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var appRole = HttpContext.Current.GetOwinContext().Get<ApplicationRoleManager>();
-                    var manager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
-
                     var acesso = _acessoAppServico.BuscarPorId(usuarioModel.AcessoId);
                     if (acesso != null)
                     {
-                        var role = await appRole.FindByNameAsync(acesso.Nome);
+                        var role = await RoleManager.FindByNameAsync(acesso.Nome);
                         if (role == null)
                         {
                             role = new IdentityRole(acesso.Nome);
-                            await appRole.CreateAsync(role);
+                            await RoleManager.CreateAsync(role);
                         }
 
-                        var user = await manager.FindByNameAsync(usuarioModel.Login);
+                        var user = await UserManager.FindByNameAsync(usuarioModel.Login);
 
                         if (user != null)
                         {
@@ -305,30 +300,20 @@ namespace AntigueraWebApi.Controllers
                             user.Email = usuarioModel.Email;
                             user.UserName = usuarioModel.Login;
 
-                            var roles = await manager.GetRolesAsync(user.Id);
-                            await manager.RemoveFromRolesAsync(user.Id, roles.ToArray());
-                            await manager.AddToRoleAsync(user.Id, role.Name);
+                            var roles = await UserManager.GetRolesAsync(user.Id);
+                            await UserManager.RemoveFromRolesAsync(user.Id, roles.ToArray());
+                            await UserManager.AddToRoleAsync(user.Id, role.Name);
 
-                            await manager.UpdateAsync(user);
+                            await UserManager.UpdateAsync(user);
                         }
                         else
                         {
-                            logger.Error("AtualizarUsuario - Usuário não localizado");
-                            stats.Status = HttpStatusCode.NotFound;
-                            stats.Mensagem = "Usuário não localizado!";
-
-                            logger.Info("AtualizarUsuario - Finalizado");
-                            return Request.CreateResponse(HttpStatusCode.NotFound, stats);
+                            throw new HttpResponseException(HttpStatusCode.NotFound);
                         }
                     }
                     else
                     {
-                        logger.Error("AtualizarUsuario - Id de acesso não localizado");
-                        stats.Status = HttpStatusCode.NotFound;
-                        stats.Mensagem = "Id de acesso não localizado!";
-
-                        logger.Info("AtualizarUsuario - Finalizado");
-                        return Request.CreateResponse(HttpStatusCode.NotFound, stats);
+                        throw new HttpResponseException(HttpStatusCode.NotFound);
                     }
 
                     usuarioModel.Modified = DateTime.Now;
@@ -353,6 +338,16 @@ namespace AntigueraWebApi.Controllers
                     logger.Info("AtualizarUsuario - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
                 }
+            }
+
+            catch (HttpResponseException e)
+            {
+                logger.Error("ListarUsuariosPorId - Error: " + e);
+                stats.Status = HttpStatusCode.NotFound;
+                stats.Mensagem = "Nenhum registro encontrado!";
+
+                logger.Info("ListarUsuariosPorId - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.NotFound, stats);
             }
 
             catch (Exception e)
@@ -386,24 +381,17 @@ namespace AntigueraWebApi.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var manager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
-
-                    var user = await manager.FindByNameAsync(usuarioModel.Login);
+                    var user = await UserManager.FindByNameAsync(usuarioModel.Login);
 
                     if (user != null)
                     {
-                        await manager.RemovePasswordAsync(user.Id);
+                        await UserManager.RemovePasswordAsync(user.Id);
 
-                        await manager.AddPasswordAsync(user.Id, usuarioModel.Senha);
+                        await UserManager.AddPasswordAsync(user.Id, usuarioModel.Senha);
                     }
                     else
                     {
-                        logger.Error("AtualizarSenhaUsuario - Usuário não localizado");
-                        stats.Status = HttpStatusCode.NotFound;
-                        stats.Mensagem = "Usuário não localizado!";
-
-                        logger.Info("AtualizarSenhaUsuario - Finalizado");
-                        return Request.CreateResponse(HttpStatusCode.NotFound, stats);
+                        throw new HttpResponseException(HttpStatusCode.NotFound);
                     }
 
                     usuarioModel.Modified = DateTime.Now;
@@ -428,7 +416,7 @@ namespace AntigueraWebApi.Controllers
                     stats.Mensagem = "Por favor, preencha os campos corretamente!";
 
                     logger.Info("AtualizarSenhaUsuario - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.NotFound, stats);
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
                 }
             }
 
@@ -436,7 +424,7 @@ namespace AntigueraWebApi.Controllers
             {
                 logger.Error("AtualizarSenhaUsuario - Error: " + e);
                 stats.Status = e.Response.StatusCode;
-                stats.Mensagem = e.Message;
+                stats.Mensagem = "Nenhum registro encontrado!";
 
                 logger.Info("AtualizarSenhaUsuario - Finalizado");
                 return Request.CreateResponse(e.Response.StatusCode, stats);

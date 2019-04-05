@@ -1,0 +1,31 @@
+﻿body {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+#ImgLogo {
+    width: 270px;
+}
+
+.title-api {
+    float: right;
+    margin-top: 23px;
+    color: #1529a0;
+}
+
+li {
+    list-style: none;
+}
+
+.btn-group a {
+    border-style: none;
+    font-size: 25px;
+}
+
+

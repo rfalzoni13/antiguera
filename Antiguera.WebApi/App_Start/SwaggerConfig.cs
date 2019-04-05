@@ -37,7 +37,7 @@ namespace Antiguera.WebApi
                         // hold additional metadata for an API. Version and title are required but you can also provide
                         // additional fields by chaining methods off SingleApiVersion.
                         //
-                        c.SingleApiVersion("v1", "Antiguera");
+                        c.SingleApiVersion("v1", "Antiguera").Description("Documentação Swagger da Api Antiguera");
 
                         // If you want the output Swagger docs to be indented properly, enable the "PrettyPrint" option.
                         //
@@ -316,6 +316,19 @@ namespace Antiguera.WebApi
                             required = false,
                             @in = "formData"
                         },
+                    },
+                    responses = new Dictionary<string, Response>
+                    {
+                        { "500", new Response
+                            {
+                                description = "Internal Server Error"
+                            }
+                        },
+                        { "400", new Response
+                            {
+                                description = "Bad Request"
+                            }
+                        }
                     }
                 }
             });

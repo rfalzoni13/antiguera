@@ -4,6 +4,8 @@ namespace Antiguera.WebApi.AutoMapper
 {
     public class AutoMapperConfig
     {
+        public static bool Iniciado = false;
+
         public static void RegisterMappings()
         {
             Mapper.Initialize(x =>
@@ -11,6 +13,8 @@ namespace Antiguera.WebApi.AutoMapper
                 x.AddProfile<DomainToModelMappingProfile>();
                 x.AddProfile<ModelToDomainMappingProfile>();
             });
+
+            Iniciado = true;
         }
     }
 }

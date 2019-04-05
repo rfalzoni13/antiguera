@@ -1,20 +1,22 @@
 ﻿using Antiguera.Aplicacao.Interfaces;
 using Antiguera.Dominio.Entidades;
 using Antiguera.WebApi.Authorization;
+using Antiguera.WebApi.Controllers.Api.Base;
 using Antiguera.WebApi.Models;
 using AutoMapper;
 using NLog;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-namespace AntigueraWebApi.Controllers
+namespace Antiguera.WebApi.Controllers.Api
 {
     [CustomAuthorize(Roles = "Administrador")]
     [RoutePrefix("api/antiguera/admin/jogo")]
-    public class JogoController : ApiController
+    public class JogoController : BaseController
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private static StatusCode stats = new StatusCode();
@@ -144,6 +146,91 @@ namespace AntigueraWebApi.Controllers
         }
 
         /// <summary>
+        /// Pesquisar jogo
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>
+        /// Efetua a pesquisa do jogo por qualquer dado inserido
+        /// </remarks>
+        /// <param name="busca">String de busca</param>
+        /// <returns></returns>
+        //GET api/antiguera/admin/jogo/pesquisajogo?busca={busca}
+        [HttpGet]
+        [Route("pesquisajogo")]
+        public HttpResponseMessage PesquisaJogo([FromUri] string busca)
+        {
+            logger.Info("PesquisaJogo - Iniciar");
+            try
+            {
+                if (!string.IsNullOrEmpty(busca))
+                {
+                    var isNumeric = int.TryParse(busca, out int n);
+
+                    List<Jogo> retorno = null;
+
+                    if (isNumeric)
+                    {
+                        retorno = _jogoAppServico.BuscaQuery(x => x.Id == n).ToList();
+                    }
+
+                    else
+                    {
+                        retorno = _jogoAppServico.BuscaQuery(x => x.Nome.Contains(busca) ||
+                                    x.Nome == busca || RemoveDiacritics(x.Nome).ToLower().Contains(busca.ToLower()) ||
+                                    RemoveDiacritics(x.Developer).ToLower().Contains(busca.ToLower())
+                                    || RemoveDiacritics(x.Descricao).ToLower().Contains(busca.ToLower()) ||
+                                    RemoveDiacritics(x.Genero).ToLower().Contains(busca.ToLower()) ||
+                                    RemoveDiacritics(x.Publisher).ToLower().Contains(busca.ToLower()) ||
+                                    RemoveDiacritics(x.Plataforma).ToLower().Contains(busca.ToLower())).ToList();
+                    }
+
+                    if (retorno != null && retorno.Count > 0)
+                    {
+                        logger.Info("PesquisaJogo - Sucesso!");
+
+                        logger.Info("PesquisaJogo - Finalizado");
+                        return Request.CreateResponse(HttpStatusCode.OK, retorno);
+                    }
+
+                    else
+                    {
+                        throw new HttpResponseException(HttpStatusCode.NotFound);
+                    }
+                }
+                else
+                {
+                    logger.Warn("PesquisaJogo - Por favor, preencha os campos corretamente!");
+                    stats.Status = HttpStatusCode.BadRequest;
+                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+
+                    logger.Info("PesquisaJogo - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                }
+            }
+            catch (HttpResponseException e)
+            {
+                logger.Warn("PesquisaJogo - Error: " + e);
+                stats.Status = HttpStatusCode.NotFound;
+                stats.Mensagem = "Nenhum registro encontrado!";
+
+                logger.Info("PesquisaJogo - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.NotFound, stats);
+            }
+            catch (Exception e)
+            {
+                logger.Error("PesquisaJogo - Error: " + e);
+                stats.Status = HttpStatusCode.InternalServerError;
+                stats.Mensagem = e.Message;
+
+                logger.Info("PesquisaJogo - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+            }
+        }
+
+        /// <summary>
         /// Inserir jogo
         /// </summary>
         /// <response code="400">Bad Request</response>
@@ -173,7 +260,7 @@ namespace AntigueraWebApi.Controllers
                     logger.Info("InserirJogo - Sucesso!");
 
                     logger.Info("InserirJogo - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.OK, "Jogo inserido com sucesso!");
+                    return Request.CreateResponse(HttpStatusCode.Created, "Jogo inserido com sucesso!");
                 }
                 else
                 {
@@ -247,65 +334,6 @@ namespace AntigueraWebApi.Controllers
                 stats.Mensagem = e.Message;
 
                 logger.Info("AtualizarJogo - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
-            }
-        }
-
-        /// <summary>
-        /// Atualizar novo jogo
-        /// </summary>
-        /// <response code="400">Bad Request</response>
-        /// <response code="401">Unauthorized</response>
-        /// <response code="404">Not Found</response>
-        /// <response code="500">Internal Server Error</response>
-        /// <remarks>Atualiza o campo "Novo" do jogo passando o Id do mesmo no body simples da requisição pelo método PUT</remarks>
-        /// <param name="Id">Id do jogo</param>
-        /// <returns></returns>
-        // PUT api/antiguera/admin/atualizarjogonovo
-        [HttpPut]
-        [Route("atualizarjogonovo")]
-        public HttpResponseMessage AtualizarJogoNovo([FromBody] int Id)
-        {
-            logger.Info("AtualizarJogoNovo - Iniciado");
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    _jogoAppServico.AtualizarNovo(Id);
-
-                    logger.Info("AtualizarJogoNovo - Sucesso!");
-
-                    logger.Info("AtualizarJogoNovo - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.OK, "Dados alterados com sucesso!");
-                }
-                else
-                {
-                    logger.Warn("AtualizarJogoNovo - Por favor, preencha os campos corretamente!");
-                    stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
-
-                    logger.Info("AtualizarJogoNovo - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
-                }
-            }
-
-            catch (HttpResponseException e)
-            {
-                logger.Error("AtualizarJogoNovo - Error: " + e);
-                stats.Status = e.Response.StatusCode;
-                stats.Mensagem = "Nenhum registro encontrado!";
-
-                logger.Info("AtualizarJogoNovo - Finalizado");
-                return Request.CreateResponse(e.Response.StatusCode, stats);
-            }
-
-            catch (Exception e)
-            {
-                logger.Error("AtualizarJogoNovo - Error: " + e);
-                stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
-
-                logger.Info("AtualizarJogoNovo - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
             }
         }

@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antiguera Api - @ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3">
+        <nav class="my-0 mr-md-5 font-weight-normal">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <img id="ImgLogo" src="/Content/Images/LogoAntiguera2.png" />
+                </a>
+                <h1 class="title-api">Api</h1>
+            </div>
+        </nav>
+    </div>
+    <div class="container">
+        <div class="btn-group" role="group">
+            <a href="/swagger/ui/index" target="_blank" class="btn btn-outline-secondary">Swagger <img src="/swagger/ui/images/logo_small-png" /></a>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer class="container">
+            <p class="float-right">
+                <b>Versão:</b>
+                @(typeof(Antiguera.WebApi.WebApiApplication).Assembly.GetName().Version.Major +
+                                            "." + typeof(Antiguera.WebApi.WebApiApplication).Assembly.GetName().Version.Minor +
+                                            "." + typeof(Antiguera.WebApi.WebApiApplication).Assembly.GetName().Version.Build)
+            </p>
+            <p>&copy; 2018 - Renato Falzoni</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

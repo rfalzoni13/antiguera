@@ -1,6 +1,7 @@
 ﻿using Antiguera.Aplicacao.Interfaces;
 using Antiguera.Dominio.Entidades;
 using Antiguera.WebApi.Authorization;
+using Antiguera.WebApi.Controllers.Api.Base;
 using Antiguera.WebApi.Models;
 using AutoMapper;
 using NLog;
@@ -11,11 +12,11 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-namespace Antiguera.WebApi.Controllers
+namespace Antiguera.WebApi.Controllers.Api
 {
     [CustomAuthorize(Roles = "Administrador")]
     [RoutePrefix("api/antiguera/admin/rom")]
-    public class RomController : ApiController
+    public class RomController : BaseController
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private static StatusCode stats = new StatusCode();
@@ -145,6 +146,89 @@ namespace Antiguera.WebApi.Controllers
         }
 
         /// <summary>
+        /// Pesquisar rom
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>
+        /// Efetua a pesquisa da rom por qualquer dado inserido
+        /// </remarks>
+        /// <param name="busca">String de busca</param>
+        /// <returns></returns>
+        //GET api/antiguera/admin/rom/pesquisarom?busca={busca}
+        [HttpGet]
+        [Route("pesquisarom")]
+        public HttpResponseMessage PesquisaRom([FromUri] string busca)
+        {
+            logger.Info("PesquisaRom - Iniciar");
+            try
+            {
+                if (!string.IsNullOrEmpty(busca))
+                {
+                    var isNumeric = int.TryParse(busca, out int n);
+
+                    List<Rom> retorno = null;
+
+                    if (isNumeric)
+                    {
+                        retorno = _romAppServico.BuscaQuery(x => x.Id == n && x.EmuladorId == n).ToList();
+                    }
+
+                    else
+                    {
+                        retorno = _romAppServico.BuscaQuery(x => x.Nome.Contains(busca) ||
+                                    x.Nome == busca || RemoveDiacritics(x.Nome).ToLower().Contains(busca.ToLower())
+                                    || RemoveDiacritics(x.Descricao).ToLower().Contains(busca.ToLower()) ||
+                                    RemoveDiacritics(x.Genero).ToLower().Contains(busca.ToLower()) ||
+                                    RemoveDiacritics(x.Emulador.Nome).ToLower().Contains(busca.ToLower())).ToList();
+                    }
+
+                    if (retorno != null && retorno.Count > 0)
+                    {
+                        logger.Info("PesquisaRom - Sucesso!");
+
+                        logger.Info("PesquisaRom - Finalizado");
+                        return Request.CreateResponse(HttpStatusCode.OK, retorno);
+                    }
+
+                    else
+                    {
+                        throw new HttpResponseException(HttpStatusCode.NotFound);
+                    }
+                }
+                else
+                {
+                    logger.Warn("PesquisaRom - Por favor, preencha os campos corretamente!");
+                    stats.Status = HttpStatusCode.BadRequest;
+                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+
+                    logger.Info("PesquisaRom - Finalizado");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                }
+            }
+            catch (HttpResponseException e)
+            {
+                logger.Warn("PesquisaRom - Error: " + e);
+                stats.Status = HttpStatusCode.NotFound;
+                stats.Mensagem = "Nenhum registro encontrado!";
+
+                logger.Info("PesquisaRom - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.NotFound, stats);
+            }
+            catch (Exception e)
+            {
+                logger.Error("PesquisaRom - Error: " + e);
+                stats.Status = HttpStatusCode.InternalServerError;
+                stats.Mensagem = e.Message;
+
+                logger.Info("PesquisaRom - Finalizado");
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+            }
+        }
+
+        /// <summary>
         /// Inserir rom
         /// </summary>
         /// <response code="400">Bad Request</response>
@@ -174,7 +258,7 @@ namespace Antiguera.WebApi.Controllers
                     logger.Info("InserirRom - Sucesso!");
 
                     logger.Info("InserirRom - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.OK, "Rom inserida com sucesso!");
+                    return Request.CreateResponse(HttpStatusCode.Created, "Rom inserida com sucesso!");
                 }
                 else
                 {
@@ -248,65 +332,6 @@ namespace Antiguera.WebApi.Controllers
                 stats.Mensagem = e.Message;
 
                 logger.Info("AtualizarRom - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
-            }
-        }
-
-        /// <summary>
-        /// Atualizar novo rom
-        /// </summary>
-        /// <response code="400">Bad Request</response>
-        /// <response code="401">Unauthorized</response>
-        /// <response code="404">Not Found</response>
-        /// <response code="500">Internal Server Error</response>
-        /// <remarks>Atualiza o campo "Novo" da rom passando o Id da mesma no body simples da requisição método PUT</remarks>
-        /// <param name="Id">Id da rom</param>
-        /// <returns></returns>
-        // PUT api/antiguera/admin/atualizarromnova
-        [HttpPut]
-        [Route("atualizarromnova")]
-        public HttpResponseMessage AtualizarRomNova([FromBody] int Id)
-        {
-            logger.Info("AtualizarRomNova - Iniciado");
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    _romAppServico.AtualizarNovo(Id);
-
-                    logger.Info("AtualizarRomNova - Sucesso!");
-
-                    logger.Info("AtualizarRomNova - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.OK, "Dados alterados com sucesso!");
-                }
-                else
-                {
-                    logger.Warn("AtualizarRomNova - Por favor, preencha os campos corretamente!");
-                    stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
-
-                    logger.Info("AtualizarRomNova - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
-                }
-            }
-
-            catch (HttpResponseException e)
-            {
-                logger.Error("AtualizarRomNova - Error: " + e);
-                stats.Status = e.Response.StatusCode;
-                stats.Mensagem = "Nenhum registro encontrado!";
-
-                logger.Info("AtualizarRomNova - Finalizado");
-                return Request.CreateResponse(e.Response.StatusCode, stats);
-            }
-
-            catch (Exception e)
-            {
-                logger.Error("AtualizarRomNova - Error: " + e);
-                stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
-
-                logger.Info("AtualizarRomNova - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
             }
         }
