@@ -2,63 +2,17 @@
 using Antiguera.Dominio.Interfaces.Repositorio;
 using Antiguera.Infra.Data.Contexto;
 using Antiguera.Infra.Data.Repositorios.Base;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
-using System.Web.Http;
 
 namespace Antiguera.Infra.Data.Repositorios
 {
     public class UsuarioRepositorio : RepositorioBase<Usuario>, IUsuarioRepositorio
     {
-        public void AlterarSenha(int id, string senha)
-        {
-            using (var c = new AntigueraContexto())
-            {
-                var usuario = c.Usuarios.Where(u => u.Id == id).FirstOrDefault();
-                if(usuario != null)
-                {
-                    senha = BCrypt.HashPassword(senha, BCrypt.GenerateSalt());
-                    usuario.Senha = senha;
-                    c.SaveChanges();
-                }
-                else
-                {
-                    throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
-                }
-            }
-        }
-
-        public void ApagarUsuarios(int[] Ids)
-        {
-            foreach (var id in Ids)
-            {
-                if (id > 0)
-                {
-                    var usuario = Context.Set<Usuario>().Find(id);
-                    if (usuario != null)
-                    {
-                        Context.Set<Usuario>().Remove(usuario);
-                    }
-                }
-            }
-            Context.SaveChanges();
-        }
-
-        public void AtualizarNovo(int id)
-        {
-            using (var c = new AntigueraContexto())
-            {
-                var usuario = c.Usuarios.Where(u => u.Id == id).FirstOrDefault();
-                if (usuario != null)
-                {
-                    usuario.Novo = false;
-                    c.SaveChanges();
-                }
-                else
-                {
-                    throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
-                }
-            }
-        }
+        public override IEnumerable<Usuario> BuscaQuery(Func<Usuario, bool> predicate)
+            => Context.Set<Usuario>().Include(x => x.Acesso).Where(predicate);
 
         public Usuario BuscarUsuarioPorLoginOuEmail(string data)
         {
