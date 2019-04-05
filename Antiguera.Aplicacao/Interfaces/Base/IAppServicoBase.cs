@@ -14,5 +14,7 @@ namespace Antiguera.Aplicacao.Interfaces.Base
         T BuscarPorId(int id);
 
         IEnumerable<T> BuscarTodos();
+
+        IEnumerable<T> BuscaQuery(Func<T, bool> predicate);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Antiguera.Aplicacao.Interfaces.Base;
 using Antiguera.Dominio.Interfaces.Servicos.Base;
+using System;
 using System.Collections.Generic;
 
 namespace Antiguera.Aplicacao.Servicos.Base
@@ -31,6 +32,8 @@ namespace Antiguera.Aplicacao.Servicos.Base
         public T BuscarPorId(int id) => _servicoBase.BuscarPorId(id);
 
         public IEnumerable<T> BuscarTodos() => _servicoBase.BuscarTodos();
+
+        public IEnumerable<T> BuscaQuery(Func<T, bool> predicate) => _servicoBase.BuscaQuery(predicate);
 
         public void Dispose()
         {

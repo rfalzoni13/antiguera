@@ -19,10 +19,5 @@ namespace Antiguera.Aplicacao.Servicos
         {
             _emuladorServico.ApagarEmuladores(Ids);
         }
-
-        public void AtualizarNovo(int id)
-        {
-            _emuladorServico.AtualizarNovo(id);
-        }
     }
 }

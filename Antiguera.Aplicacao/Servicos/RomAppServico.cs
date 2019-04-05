@@ -19,10 +19,5 @@ namespace Antiguera.Aplicacao.Servicos
         {
             _romServico.ApagarRoms(Ids);
         }
-
-        public void AtualizarNovo(int id)
-        {
-            _romServico.AtualizarNovo(id);
-        }
     }
 }

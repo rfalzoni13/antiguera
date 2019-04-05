@@ -25,11 +25,6 @@ namespace Antiguera.Aplicacao.Servicos
             _usuarioServico.ApagarUsuarios(Ids);
         }
 
-        public void AtualizarNovo(int id)
-        {
-            _usuarioServico.AtualizarNovo(id);
-        }
-
         public Usuario BuscarUsuarioPorLoginOuEmail(string data) => _usuarioServico.BuscarUsuarioPorLoginOuEmail(data);
     }
 }

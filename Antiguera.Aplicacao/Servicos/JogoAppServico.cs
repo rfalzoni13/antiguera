@@ -19,10 +19,5 @@ namespace Antiguera.Aplicacao.Servicos
         {
             _jogoServico.ApagarJogos(Ids);
         }
-
-        public void AtualizarNovo(int id)
-        {
-            _jogoServico.AtualizarNovo(id);
-        }
     }
 }

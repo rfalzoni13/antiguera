@@ -20,10 +20,5 @@ namespace Antiguera.Aplicacao.Servicos
         {
             _programaServico.ApagarProgramas(Ids);
         }
-
-        public void AtualizarNovo(int id)
-        {
-            _programaServico.AtualizarNovo(id);
-        }
     }
 }

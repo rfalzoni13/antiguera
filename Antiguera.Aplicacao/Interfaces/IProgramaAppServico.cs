@@ -6,8 +6,6 @@ namespace Antiguera.Aplicacao.Interfaces
 {
     public interface IProgramaAppServico : IAppServicoBase<Programa>
     {
-        void AtualizarNovo(int id);
-
         void ApagarProgramas(int[] Ids);
     }
 }

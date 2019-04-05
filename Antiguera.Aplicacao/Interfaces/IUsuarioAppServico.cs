@@ -9,8 +9,6 @@ namespace Antiguera.Aplicacao.Interfaces
 
         void AlterarSenha(int id, string senha);
 
-        void AtualizarNovo(int id);
-
         Usuario BuscarUsuarioPorLoginOuEmail(string data);
     }
 }
