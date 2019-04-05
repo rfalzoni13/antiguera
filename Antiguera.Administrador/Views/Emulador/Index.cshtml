@@ -93,19 +93,55 @@
                                     {
                                     <tr @(item.Novo == true ? "class=novo" : string.Empty)>
                                         <td>
-                                            @item.Nome
+                                            @if (item.Novo == true)
+                                            {
+                                                <strong>@item.Nome</strong>
+                                                <span class="label label-success">Novo</span>
+                                            }
+                                            else
+                                            {
+                                                @item.Nome
+                                            }
                                         </td>
                                         <td>
-                                            @item.Console
+                                            @if (item.Novo == true)
+                                            {
+                                                <strong>@item.Console</strong>
+                                            }
+                                            else
+                                            {
+                                                @item.Console
+                                            }
                                         </td>
                                         <td>
-                                            @item.DataLancamento.Year
+                                            @if (item.Novo == true)
+                                            {
+                                                <strong>@item.DataLancamento.Year</strong>
+                                            }
+                                            else
+                                            {
+                                                @item.DataLancamento.Year
+                                            }
                                         </td>
                                         <td>
-                                            @item.Created.ToString("dd/MM/yyyy")
+                                            @if (item.Novo == true)
+                                            {
+                                                <strong>@item.Created.ToString("dd/MM/yyyy")</strong>
+                                            }
+                                            else
+                                            {
+                                                @item.Created.ToString("dd/MM/yyyy")
+                                            }
                                         </td>
                                         <td>
-                                            @(item.Modified != null ? item.Modified.Value.ToString("dd/MM/yyyy") : item.Created.ToString("dd/MM/yyyy"))
+                                            @if (item.Novo == true)
+                                            {
+                                                <strong>@(item.Modified != null ? item.Modified.Value.ToString("dd/MM/yyyy") : item.Created.ToString("dd/MM/yyyy"))</strong>
+                                            }
+                                            else
+                                            {
+                                                @(item.Modified != null ? item.Modified.Value.ToString("dd/MM/yyyy") : item.Created.ToString("dd/MM/yyyy"))
+                                            }
                                         </td>
                                         <td>
                                             @Html.ActionLink("Detalhes", "Detalhes", new { id = item.Id }, new { @class = "btn btn-warning" })

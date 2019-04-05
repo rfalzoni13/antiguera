@@ -356,100 +356,13 @@ namespace Antiguera.Administrador.Controllers.Base
         }
 
         [NonAction]
-        protected void AtualizarAdmin(UsuarioModel model)
+        protected void AtualizarSenha(UsuarioModel model)
         {
             PreencherHeaders();
 
             if (model != null)
             {
-                if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
-                {
-                    if (!string.IsNullOrEmpty(model.UrlFotoUpload))
-                    {
-                        var fileName = model.UrlFotoUpload.Split('/')[4];
-                        var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fileName);
-                        if (System.IO.File.Exists(photoPath))
-                        {
-                            System.IO.File.Delete(photoPath);
-                            model.UrlFotoUpload = "/Content/Images/Profile/" + model.NomeFoto;
-                        }
-                        else
-                        {
-                            model.UrlFotoUpload = null;
-                        }
-                    }
-                }
-
-                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarAdmin, model).Result;
-
-                if (response.IsSuccessStatusCode)
-                {
-                    if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
-                    {
-                        var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
-                        var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
-                        model.FileFoto.SaveAs(photoPath);
-                    }
-
-                    Session["Mensagem"] = response.Content.ReadAsAsync<string>().Result;
-                }
-                else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    RecarregarHeaders();
-
-                    response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarAdmin, model).Result;
-                    if (response.IsSuccessStatusCode)
-                    {
-                        if (model.FileFoto != null && model.FileFoto.ContentLength > 0)
-                        {
-                            var fotoFileName = Path.GetFileName(model.FileFoto.FileName);
-                            var photoPath = Path.Combine(Server.MapPath("~/Content/Images/Profile/"), fotoFileName);
-                            model.FileFoto.SaveAs(photoPath);
-                        }
-
-                        Session["Mensagem"] = response.Content.ReadAsAsync<string>().Result;
-                    }
-                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
-                    }
-                    else
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                    }
-                }
-                else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
-                    
-                }
-
-                else
-                {
-                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
-                    
-                }
-            }
-            else
-            {
-                Session["ErroMensagem"] = "Parâmetros incorretos!";
-                
-            }
-        }
-
-        [NonAction]
-        protected void AtualizarSenhaUsuario(UsuarioModel model)
-        {
-            PreencherHeaders();
-
-            if (model != null)
-            {
-                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarSenhaUsuario, model).Result;
+                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarSenha, model).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -460,7 +373,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     RecarregarHeaders();
 
-                    response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarSenhaUsuario, model).Result;
+                    response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarSenha, model).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         Session["Mensagem"] = response.Content.ReadAsAsync<string>().Result;
@@ -494,110 +407,6 @@ namespace Antiguera.Administrador.Controllers.Base
             {
                 ViewBag.ErroMensagem = "Parâmetros incorretos!";
                 
-            }
-        }
-
-        [NonAction]
-        protected void AtualizarSenhaAdmin(UsuarioModel model)
-        {
-            PreencherHeaders();
-
-            if (model != null)
-            {
-                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarSenhaAdmin, model).Result;
-
-                if (response.IsSuccessStatusCode)
-                {
-                    Session["Mensagem"] = response.Content.ReadAsAsync<string>().Result;
-                }
-                else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    RecarregarHeaders();
-
-                    response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarSenhaAdmin, model).Result;
-                    if (response.IsSuccessStatusCode)
-                    {
-                        Session["Mensagem"] = response.Content.ReadAsAsync<string>().Result;
-                    }
-                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
-                    }
-                    else
-                    {
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                    }
-                }
-
-                else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
-                }
-
-                else
-                {
-                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;   
-                }
-            }
-            else
-            {
-                ViewBag.ErroMensagem = "Parâmetros incorretos!";
-            }
-        }
-
-        [NonAction]
-        protected void AtualizarUsuarioNovo(UsuarioModel model)
-        {
-            PreencherHeaders();
-
-            if (model != null)
-            {
-                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarUsuarioNovo, model.Id).Result;
-
-                switch (response.StatusCode)
-                {
-                    case HttpStatusCode.Unauthorized:
-
-                        RecarregarHeaders();
-
-                        response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarUsuarioNovo, model.Id).Result;
-                        if (response.StatusCode == HttpStatusCode.Unauthorized)
-                        {
-                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
-                            Session["Unauthorized"] = resultado.Status;
-                            Session["ErroMensagem"] = resultado.Mensagem;
-                        }
-                        else
-                        {
-                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
-                            Session["ErroMensagem"] = resultado.Mensagem;
-                        }
-                        break;
-
-                    case HttpStatusCode.InternalServerError:
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
-
-                    case HttpStatusCode.NotFound:
-                        result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
-
-                    case HttpStatusCode.BadRequest:
-                        result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
-                }
-            }
-            else
-            {
-                Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
         }
 
@@ -763,57 +572,6 @@ namespace Antiguera.Administrador.Controllers.Base
         }
 
         [NonAction]
-        protected void AtualizarAcessoNovo(AcessoModel model)
-        {
-            PreencherHeaders();
-
-            if (model != null)
-            {
-                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarAcessoNovo, model.Id).Result;
-
-                switch (response.StatusCode)
-                {
-                    case HttpStatusCode.Unauthorized:
-
-                        RecarregarHeaders();
-
-                        response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarAcessoNovo, model.Id).Result;
-                        if (response.StatusCode == HttpStatusCode.Unauthorized)
-                        {
-                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
-                            Session["Unauthorized"] = resultado.Status;
-                            Session["ErroMensagem"] = resultado.Mensagem;
-                        }
-                        else
-                        {
-                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
-                            Session["ErroMensagem"] = resultado.Mensagem;
-                        }
-                        break;
-
-                    case HttpStatusCode.InternalServerError:
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
-
-                    case HttpStatusCode.NotFound:
-                        result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
-
-                    case HttpStatusCode.BadRequest:
-                        result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
-                }
-            }
-            else
-            {
-                Session["ErroMensagem"] = "Parâmetros incorretos!";
-            }
-        }
-
-        [NonAction]
         protected void CadastrarAcesso(AcessoModel model)
         {
             PreencherHeaders();
@@ -834,6 +592,57 @@ namespace Antiguera.Administrador.Controllers.Base
                     RecarregarHeaders();
 
                     response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirAcesso, acessoDTO).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        Session["Mensagem"] = response.Content.ReadAsAsync<string>().Result;
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["Unauthorized"] = result.Status;
+                        Session["ErroMensagem"] = result.Mensagem;
+                    }
+                    else
+                    {
+                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                        Session["ErroMensagem"] = result.Mensagem;
+                    }
+                }
+                else if (response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+
+                else
+                {
+                    var result = response.Content.ReadAsAsync<StatusCode>().Result;
+                    ViewBag.ErroMensagem = result.Mensagem;
+                }
+            }
+        }
+
+        [NonAction]
+        protected void AtualizarAcesso(AcessoModel model)
+        {
+            PreencherHeaders();
+
+            if (model != null)
+            {
+                var acessoDTO = Mapper.Map<AcessoModel, AcessoDTO>(model);
+
+                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarAcesso, acessoDTO).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Session["Mensagem"] = response.Content.ReadAsAsync<string>().Result;
+
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    RecarregarHeaders();
+
+                    response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlInserirAcesso, acessoDTO).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         Session["Mensagem"] = response.Content.ReadAsAsync<string>().Result;
@@ -1055,7 +864,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     RecarregarHeaders();
 
-                    response = Cliente.GetAsync(url.UrlApi + url.UrlListarTodosUsuarios).Result;
+                    response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlInserirEmulador, emuladorDTO).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         if (model.FileEmulador != null && model.FileEmulador.ContentLength > 0)
@@ -1182,57 +991,6 @@ namespace Antiguera.Administrador.Controllers.Base
                 Session["ErroMensagem"] = "Parâmetros incorretos!";
             }
         }
-
-        protected void AtualizarEmuladorNovo(EmuladorModel model)
-        {
-            PreencherHeaders();
-
-            if (model != null)
-            {
-                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarEmuladorNovo, model.Id).Result;
-
-                switch (response.StatusCode)
-                {
-                    case HttpStatusCode.Unauthorized:
-
-                        RecarregarHeaders();
-
-                        response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarEmuladorNovo, model.Id).Result;
-                        if (response.StatusCode == HttpStatusCode.Unauthorized)
-                        {
-                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
-                            Session["Unauthorized"] = resultado.Status;
-                            Session["ErroMensagem"] = resultado.Mensagem;
-                        }
-                        else
-                        {
-                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
-                            Session["ErroMensagem"] = resultado.Mensagem;
-                        }
-                        break;
-
-                    case HttpStatusCode.InternalServerError:
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
-
-                    case HttpStatusCode.NotFound:
-                        result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
-
-                    case HttpStatusCode.BadRequest:
-                        result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
-                }
-            }
-            else
-            {
-                Session["ErroMensagem"] = "Parâmetros incorretos!";
-            }
-        }
-
 
         [NonAction]
         protected void ExcluirEmulador(EmuladorModel model)
@@ -1561,7 +1319,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     RecarregarHeaders();
 
-                    response = Cliente.PostAsJsonAsync(url.UrlApi + url.UrlAtualizarRom, romDTO).Result;
+                    response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarRom, romDTO).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         if (model.FileRom != null && model.FileRom.ContentLength > 0)
@@ -1602,57 +1360,6 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     Session["ErroMensagem"] = result.Mensagem;
-                }
-            }
-            else
-            {
-                Session["ErroMensagem"] = "Parâmetros incorretos!";
-            }
-        }
-
-        [NonAction]
-        protected void AtualizarRomNova(RomModel model)
-        {
-            PreencherHeaders();
-
-            if (model != null)
-            {
-                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarRomNova, model.Id).Result;
-
-                switch (response.StatusCode)
-                {
-                    case HttpStatusCode.Unauthorized:
-
-                        RecarregarHeaders();
-
-                        response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarRomNova, model.Id).Result;
-                        if (response.StatusCode == HttpStatusCode.Unauthorized)
-                        {
-                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
-                            Session["Unauthorized"] = resultado.Status;
-                            Session["ErroMensagem"] = resultado.Mensagem;
-                        }
-                        else
-                        {
-                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
-                            Session["ErroMensagem"] = resultado.Mensagem;
-                        }
-                        break;
-
-                    case HttpStatusCode.InternalServerError:
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
-
-                    case HttpStatusCode.NotFound:
-                        result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
-
-                    case HttpStatusCode.BadRequest:
-                        result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
                 }
             }
             else
@@ -2048,57 +1755,6 @@ namespace Antiguera.Administrador.Controllers.Base
         }
 
         [NonAction]
-        protected void AtualizarJogoNovo(JogoModel model)
-        {
-            PreencherHeaders();
-
-            if (model != null)
-            {
-                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarJogoNovo, model.Id).Result;
-
-                switch (response.StatusCode)
-                {
-                    case HttpStatusCode.Unauthorized:
-
-                        RecarregarHeaders();
-
-                        response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarJogoNovo, model.Id).Result;
-                        if (response.StatusCode == HttpStatusCode.Unauthorized)
-                        {
-                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
-                            Session["Unauthorized"] = resultado.Status;
-                            Session["ErroMensagem"] = resultado.Mensagem;
-                        }
-                        else
-                        {
-                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
-                            Session["ErroMensagem"] = resultado.Mensagem;
-                        }
-                        break;
-
-                    case HttpStatusCode.InternalServerError:
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
-
-                    case HttpStatusCode.NotFound:
-                        result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
-
-                    case HttpStatusCode.BadRequest:
-                        result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
-                }
-            }
-            else
-            {
-                Session["ErroMensagem"] = "Parâmetros incorretos!";
-            }
-        }
-
-        [NonAction]
         protected void ExcluirJogo(JogoModel model)
         {
             PreencherHeaders();
@@ -2478,57 +2134,6 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     Session["ErroMensagem"] = result.Mensagem;
-                }
-            }
-            else
-            {
-                Session["ErroMensagem"] = "Parâmetros incorretos!";
-            }
-        }
-
-        [NonAction]
-        protected void AtualizarProgramaNovo(ProgramaModel model)
-        {
-            PreencherHeaders();
-
-            if (model != null)
-            {
-                var response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarProgramaNovo, model.Id).Result;
-
-                switch (response.StatusCode)
-                {
-                    case HttpStatusCode.Unauthorized:
-
-                        RecarregarHeaders();
-
-                        response = Cliente.PutAsJsonAsync(url.UrlApi + url.UrlAtualizarProgramaNovo, model.Id).Result;
-                        if (response.StatusCode == HttpStatusCode.Unauthorized)
-                        {
-                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
-                            Session["Unauthorized"] = resultado.Status;
-                            Session["ErroMensagem"] = resultado.Mensagem;
-                        }
-                        else
-                        {
-                            var resultado = response.Content.ReadAsAsync<StatusCode>().Result;
-                            Session["ErroMensagem"] = resultado.Mensagem;
-                        }
-                        break;
-
-                    case HttpStatusCode.InternalServerError:
-                        var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
-
-                    case HttpStatusCode.NotFound:
-                        result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
-
-                    case HttpStatusCode.BadRequest:
-                        result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
-                        break;
                 }
             }
             else

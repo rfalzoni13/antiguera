@@ -8,10 +8,9 @@ using X.PagedList;
 
 namespace Antiguera.Administrador.Controllers
 {
-    [Authorize]
-    public class JogoController : BaseController
+    public class AcessoController : BaseController
     {
-        // GET: Jogo
+        // GET: Acesso
         public ActionResult Index(int pagina = 1)
         {
             try
@@ -30,7 +29,7 @@ namespace Antiguera.Administrador.Controllers
                         Session.Clear();
                     }
 
-                    var lista = ListarJogos();
+                    var lista = ListarAcessos();
                     if (Session["Unauthorized"] != null)
                     {
                         HttpContext.GetOwinContext().Authentication.SignOut();
@@ -55,20 +54,49 @@ namespace Antiguera.Administrador.Controllers
             }
         }
 
-        // GET: Cadastrar
-        public ActionResult Cadastrar()
+        //GET: Pesquisa
+        //public ActionResult Pesquisa(string busca, int pagina = 1)
+        //{
+        //    var retorno = PesquisarAcessos(busca);
+        //    if (retorno != null && retorno.Count > 0)
+        //    {
+        //        return View(retorno.OrderBy(x => x.AcessoId).ToPagedList(pagina, 4));
+
+        //    }
+        //    else
+        //    {
+        //        Session["ErroMensagem"] = "Não foi encontrado nenhum registro de acordo com sua pesquisa!";
+        //        return RedirectToAction("Index");
+        //    }
+        //}
+
+        // POST: Editar Acesso
+        [HttpPost]
+        public ActionResult Editar(AcessoModel model)
         {
             try
             {
                 if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
                 {
-                    return View();
+                    if (!string.IsNullOrEmpty(model.Nome))
+                    {
+                        var nome = model.Nome;
+
+                        model = BuscarAcessoPorId(model.Id);
+                        model.Nome = nome;
+                        AtualizarAcesso(model);
+                        if (Session["Unauthorized"] != null)
+                        {
+                            HttpContext.GetOwinContext().Authentication.SignOut();
+                            return RedirectToAction("Login", "Home");
+                        }
+                    }
+                    else
+                    {
+                        Session["ErroMensagem"] = "Verifique todos os campos!";
+                    }
                 }
-                else
-                {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
-                }
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
@@ -79,12 +107,11 @@ namespace Antiguera.Administrador.Controllers
                 }
                 return RedirectToAction("Login", "Home");
             }
-            
         }
 
-        // POST: Cadastrar
+        // POST: Salvar Cadastrar
         [HttpPost]
-        public ActionResult Cadastrar(JogoModel model)
+        public ActionResult Cadastrar(AcessoModel model)
         {
             try
             {
@@ -92,21 +119,19 @@ namespace Antiguera.Administrador.Controllers
                 {
                     if (model != null && ModelState.IsValid)
                     {
-
-                        CadastrarJogo(model);
+                        CadastrarAcesso(model);
 
                         if (Session["Unauthorized"] != null)
                         {
                             HttpContext.GetOwinContext().Authentication.SignOut();
                             return RedirectToAction("Login", "Home");
                         }
-
-                        return RedirectToAction("Index");
                     }
                     else
                     {
-                        return View(model);
+                        Session["ErroMensagem"] = "Po favor, verifique todos os campos";
                     }
+                    return RedirectToAction("Index");
                 }
                 else
                 {
@@ -125,142 +150,7 @@ namespace Antiguera.Administrador.Controllers
             }
         }
 
-        // GET: Detalhes
-        public ActionResult Detalhes(int id)
-        {
-            try
-            {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    var model = BuscarJogoPorId(id);
-                    if (Session["Unauthorized"] != null)
-                    {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
-                    }
-
-                    if (model != null)
-                    {
-                        if (model.Novo == true)
-                        {
-                            AtualizarJogo(model);
-                        }
-
-                        return View(model);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index");
-                    }
-                }
-                else
-                {
-                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                    return RedirectToAction("Login", "Home");
-                }
-            }
-            catch (Exception ex)
-            {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
-            }
-        }
-
-        // GET: Editar
-        public ActionResult Editar(int id)
-        {
-            try
-            {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    var model = BuscarJogoPorId(id);
-                    if (Session["Unauthorized"] != null)
-                    {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
-                    }
-
-                    if (model != null)
-                    {
-                        if (model.Novo == true)
-                        {
-                            AtualizarJogo(model);
-                            Session.Clear();
-                        }
-                        return View(model);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index");
-                    }
-                }
-                else
-                {
-                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                    return RedirectToAction("Login", "Home");
-                }
-            }
-            catch (Exception ex)
-            {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
-            }
-        }
-
-        // POST: Editar
-        [HttpPost]
-        public ActionResult Editar(JogoModel model)
-        {
-            try
-            {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    if (model != null && ModelState.IsValid)
-                    {
-
-                        AtualizarJogo(model);
-
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        return View(model);
-                    }
-                }
-                else
-                {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
-                }
-            }
-            catch (Exception ex)
-            {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
-            }
-        }
-
-        // GET: Excluir
+        //GET Excluir
         public ActionResult Excluir(int id)
         {
             try
@@ -273,7 +163,7 @@ namespace Antiguera.Administrador.Controllers
                     }
                     else
                     {
-                        var model = BuscarJogoPorId(id);
+                        var model = BuscarAcessoPorId(id);
 
                         if (Session["Unauthorized"] != null)
                         {
@@ -281,9 +171,9 @@ namespace Antiguera.Administrador.Controllers
                             return RedirectToAction("Login", "Home");
                         }
 
-                        if(model != null)
+                        if (model != null)
                         {
-                            ExcluirJogo(model);
+                            ExcluirAcesso(model);
                         }
 
                         if (Session["Unauthorized"] != null)

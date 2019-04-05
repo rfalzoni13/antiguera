@@ -23,6 +23,7 @@ namespace Antiguera.Administrador.Models
         public string Sexo { get; set; }
 
         [DisplayName("E-mail")]
+        [EmailAddress(ErrorMessage = "Formato de e-mail inválido!")]
         [Required(ErrorMessage = "O campo e-mail é obrigatório")]
         public string Email { get; set; }
 

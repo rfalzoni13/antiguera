@@ -95,24 +95,67 @@
 
                                     @foreach (var item in Model)
                                     {
-                                    <tr @(item.Novo == true ? "class=novo" : string.Empty)>
+                                    <tr>
                                         <td>
-                                            @item.Nome
+                                            @if (item.Novo == true)
+                                            {
+                                                <strong>@item.Nome</strong>
+                                                <span class="label label-success">Novo</span>
+                                            }
+                                            else
+                                            {
+                                                @item.Nome
+                                            }
                                         </td>
                                         <td>
-                                            @item.Email
+                                            @if (item.Novo == true)
+                                            {
+                                                <strong>@item.Email</strong>
+                                            }
+                                            else
+                                            {
+                                                @item.Email
+                                            }
                                         </td>
                                         <td>
-                                            @item.Login
+                                            @if (item.Novo == true)
+                                            {
+                                                <strong>@item.Login</strong>
+                                            }
+                                            else
+                                            {
+                                                @item.Login
+                                            }
                                         </td>
                                         <td>
-                                            @item.Sexo
+                                            @if (item.Novo == true)
+                                            {
+                                                <strong>@item.Sexo</strong>
+                                            }
+                                            else
+                                            {
+                                                @item.Sexo
+                                            }
                                         </td>
                                         <td>
-                                            @item.Created.ToString("dd/MM/yyyy")
+                                            @if (item.Novo == true)
+                                            {
+                                                <strong>@item.Created.ToString("dd/MM/yyyy")</strong>
+                                            }
+                                            else
+                                            {
+                                                @item.Created.ToString("dd/MM/yyyy")
+                                            }
                                         </td>
                                         <td>
-                                            @(item.Modified != null ? item.Modified.Value.ToString("dd/MM/yyyy") : item.Created.ToString("dd/MM/yyyy"))
+                                            @if (item.Novo == true)
+                                            {
+                                                <strong>@(item.Modified != null ? item.Modified.Value.ToString("dd/MM/yyyy") : item.Created.ToString("dd/MM/yyyy"))</strong>
+                                            }
+                                            else
+                                            {
+                                                @(item.Modified != null ? item.Modified.Value.ToString("dd/MM/yyyy") : item.Created.ToString("dd/MM/yyyy"))
+                                            }
                                         </td>
                                         <td>
                                             @Html.ActionLink("Detalhes", "Detalhes", new { id = item.Id }, new { @class = "btn btn-warning" })

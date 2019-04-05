@@ -142,7 +142,7 @@ namespace Antiguera.Administrador.Controllers
                     {
                         if(model.Novo == true)
                         {
-                            AtualizarEmuladorNovo(model);
+                            AtualizarEmulador(model);
                         }
 
                         return View(model);
@@ -188,7 +188,7 @@ namespace Antiguera.Administrador.Controllers
                     {
                         if (model.Novo == true)
                         {
-                            AtualizarEmuladorNovo(model);
+                            AtualizarEmulador(model);
                             Session.Clear();
                         }
                         return View(model);

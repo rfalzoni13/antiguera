@@ -166,7 +166,7 @@ namespace Antiguera.Administrador.Controllers
                     {
                         if (model.Novo == true)
                         {
-                            AtualizarUsuarioNovo(model);
+                            AtualizarUsuario(model);
                         }
 
                         return View(model);
@@ -216,7 +216,7 @@ namespace Antiguera.Administrador.Controllers
                     {
                         if (model.Novo == true)
                         {
-                            AtualizarUsuarioNovo(model);
+                            AtualizarUsuario(model);
                         }
 
                         foreach (var acesso in acessos)

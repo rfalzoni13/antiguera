@@ -27,17 +27,15 @@ namespace Antiguera.Administrador.Config
 
         public string UrlAtualizarUsuario => "api/antiguera/admin/atualizarusuario";
 
-        public string UrlAtualizarAdmin => "api/antiguera/admin/atualizaradmin";
-
-        public string UrlAtualizarSenhaUsuario => "api/antiguera/admin/atualizarsenhausuario";
-
-        public string UrlAtualizarSenhaAdmin => "api/antiguera/admin/atualizarsenhaadmin";
-
-        public string UrlAtualizarUsuarioNovo => "api/antiguera/admin/atualizarusuarionovo";
+        public string UrlAtualizarSenha => "api/antiguera/admin/atualizarsenha";
 
         public string UrlExcluirUsuario => "api/antiguera/admin/excluirusuario";
 
         public string UrlApagarUsuarios => "api/antiguera/admin/apagarusuarios";
+
+        public string UrlPesquisaUsuario => "api/antiguera/admin/pesquisausuario?busca=";
+
+        public string UrlPesquisaAcesso => "api/antiguera/admin/acesso/pesquisaacesso?busca=";
 
         public string UrlListarTodosAcessos = "api/antiguera/admin/listartodososacessos";
 
@@ -45,7 +43,7 @@ namespace Antiguera.Administrador.Config
 
         public string UrlInserirAcesso = "api/antiguera/admin/inseriracesso";
 
-        public string UrlAtualizarAcessoNovo => "api/antiguera/admin/atualizaracessonovo";
+        public string UrlAtualizarAcesso => "api/antiguera/admin/atualizaracesso";
 
         public string UrlExcluirAcesso = "api/antiguera/admin/excluiracesso";
 
@@ -57,11 +55,11 @@ namespace Antiguera.Administrador.Config
 
         public string UrlListarEmuladorPorId => "api/antiguera/admin/emulador/listaremuladoresporid?id=";
 
+        public string UrlPesquisaEmulador => "api/antiguera/admin/emulador/pesquisaemulador?busca=";
+
         public string UrlInserirEmulador => "api/antiguera/admin/emulador/inseriremulador";
 
         public string UrlAtualizarEmulador => "api/antiguera/admin/emulador/atualizaremulador";
-
-        public string UrlAtualizarEmuladorNovo => "api/antiguera/admin/emulador/atualizaremuladornovo";
 
         public string UrlExcluirEmulador => "api/antiguera/admin/emulador/excluiremulador";
 
@@ -73,11 +71,11 @@ namespace Antiguera.Administrador.Config
 
         public string UrlListarRomPorId => "api/antiguera/admin/rom/listarromsporid?id=";
 
+        public string UrlPesquisaRom => "api/antiguera/admin/rom/pesquisarom?busca=";
+
         public string UrlInserirRom => "api/antiguera/admin/rom/inserirrom";
 
         public string UrlAtualizarRom => "api/antiguera/admin/rom/atualizarrom";
-
-        public string UrlAtualizarRomNova => "api/antiguera/admin/rom/atualizarromnova";
 
         public string UrlExcluirRom => "api/antiguera/admin/rom/excluirrom";
 
@@ -89,11 +87,11 @@ namespace Antiguera.Administrador.Config
 
         public string UrlListarJogoPorId => "api/antiguera/admin/jogo/listarjogosporid?id=";
 
+        public string UrlPesquisaJogo => "api/antiguera/admin/jogo/pesquisajogo?busca=";
+
         public string UrlInserirJogo => "api/antiguera/admin/jogo/inserirjogo";
 
         public string UrlAtualizarJogo => "api/antiguera/admin/jogo/atualizarjogo";
-
-        public string UrlAtualizarJogoNovo => "api/antiguera/admin/jogo/atualizarjogonovo";
 
         public string UrlExcluirJogo => "api/antiguera/admin/jogo/excluirjogo";
 
@@ -107,9 +105,9 @@ namespace Antiguera.Administrador.Config
 
         public string UrlInserirPrograma => "api/antiguera/admin/programa/inserirprograma";
 
-        public string UrlAtualizarPrograma => "api/antiguera/admin/programa/atualizarprograma";
+        public string UrlPesquisaPrograma => "api/antiguera/admin/programa/pesquisaprograma?busca=";
 
-        public string UrlAtualizarProgramaNovo => "api/antiguera/admin/programa/atualizarprogramanovo";
+        public string UrlAtualizarPrograma => "api/antiguera/admin/programa/atualizarprograma";
 
         public string UrlExcluirPrograma => "api/antiguera/admin/programa/excluirprograma";
 

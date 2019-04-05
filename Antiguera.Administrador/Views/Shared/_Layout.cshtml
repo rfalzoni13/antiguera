@@ -78,7 +78,7 @@
                         </a>
                         <ul class="treeview-menu">
                             <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Usuario" ? "active" : "")"><a href="@Url.Action("Index", "Usuario")"><i class="fa fa-users"></i> Usuários</a></li>
-                            <li><a href="#"><i class="fa fa-user-secret"></i> Permissões</a></li>
+                            <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Acesso" ? "active" : "")"><a href="@Url.Action("Index", "Acesso")"><i class="fa fa-user-secret"></i> Permissões</a></li>
                             <li><a href="#"><i class="fa fa-gear"></i> Preferências do site</a></li>
                         </ul>
                     </li>
