@@ -27,6 +27,8 @@ namespace Antiguera.Administrador.Controllers
                     model.Jogos = ListarJogos();
                     model.Programas = ListarProgramas();
 
+                    model.InfMaquina = GetInformacoes();
+
                     if (Session["Unauthorized"] != null)
                     {
                         HttpContext.GetOwinContext().Authentication.SignOut();
@@ -157,7 +159,7 @@ namespace Antiguera.Administrador.Controllers
                         else
                         {
                             var result = responseFirstLogin.Content.ReadAsAsync<StatusCode>().Result;
-                            ViewBag.ErroMensagem = result.Mensagem;
+                            ViewBag.ErroMensagem = result.Message;
                             return View(model);
                         }
                     }

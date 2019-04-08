@@ -72,28 +72,29 @@
             <!-- /.col -->
         </div>
         <!-- /.row -->
+
         <div class="row">
             <div class="col-md-6">
                 <div class="box">
                     <div class="box-header with-border">
                         <div class="col-md-12">
                             <p class="text-center">
-                                <strong>Progresso de desenvolvimento</strong>
+                                <strong>Índice de desempenho</strong>
                             </p>
 
                             <div class="progress-group">
-                                <span class="progress-text">Módulo loja</span>
-                                <span class="progress-number"><b>10</b>/100</span>
+                                <span class="progress-text">Uso de CPU</span>
+                                <span class="progress-number"><b>@(Model.InfMaquina.UsoCPU + "%")</b></span>
 
                                 <div class="progress sm">
-                                    <div class="progress-bar progress-bar-aqua" style="width: 10%"></div>
+                                    <div class="progress-bar progress-bar-aqua" style="width: @(Model.InfMaquina.UsoCPU + "%")"></div>
                                 </div>
                             </div>
                             <!-- /.progress-group -->
-                        </div><!-- /.col-md-4 -->
+                        </div><!-- /.col-md-12 -->
                     </div>
                 </div><!-- /.box -->
-            </div><!-- /.col-md-12 -->
+            </div><!-- /.col-md-6 -->
         </div><!-- /.row -->
     </section>
     <!-- /.section -->

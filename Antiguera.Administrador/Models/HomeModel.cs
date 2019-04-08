@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Antiguera.Administrador.Models
 {
@@ -13,5 +14,7 @@ namespace Antiguera.Administrador.Models
         public virtual List<JogoModel> Jogos { get; set; }
 
         public virtual List<ProgramaModel> Programas { get; set; }
+
+        public virtual InformacoesMaquinaModel InfMaquina { get; set; }
     }
 }

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 
@@ -76,24 +77,24 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     Session["Unauthorized"] = result.Status;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
             }
 
             else
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroListaMensagem = result.Mensagem;
+                ViewBag.ErroListaMensagem = result.Message;
             }
             return new List<UsuarioModel>();
         }
@@ -122,27 +123,27 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     Session["Unauthorized"] = result.Status;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                     return null;
                 }
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                     return null;
                 }
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
                 return null;
             }
 
             else
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
                 return null;
             }
         }
@@ -171,27 +172,27 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     Session["Unauthorized"] = result.Status;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                     return null;
                 }
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                     return null;
                 }
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
                 return null;
             }
 
             else
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
                 return null;
             }
         }
@@ -243,24 +244,24 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else
@@ -329,24 +330,24 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else
@@ -382,25 +383,25 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
 
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    ViewBag.ErroMensagem = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    ViewBag.ErroMensagem = result.Message;
                 }
             }
             else
@@ -452,24 +453,24 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
         }
@@ -500,24 +501,24 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     Session["Unauthorized"] = result.Status;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
             }
 
             else
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroListaMensagem = result.Mensagem;
+                ViewBag.ErroListaMensagem = result.Message;
             }
             return new List<AcessoModel>();
         }
@@ -546,27 +547,27 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     Session["Unauthorized"] = result.Status;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                     return null;
                 }
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                     return null;
                 }
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
                 return null;
             }
 
             else
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
                 return null;
             }
         }
@@ -600,24 +601,24 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    ViewBag.ErroMensagem = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    ViewBag.ErroMensagem = result.Message;
                 }
             }
         }
@@ -651,24 +652,24 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    ViewBag.ErroMensagem = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    ViewBag.ErroMensagem = result.Message;
                 }
             }
         }
@@ -706,30 +707,30 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     Session["Unauthorized"] = result.Status;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
         }
@@ -760,24 +761,24 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     Session["Unauthorized"] = result.Status;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
             }
 
             else
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroListaMensagem = result.Mensagem;
+                ViewBag.ErroListaMensagem = result.Message;
             }
             return new List<EmuladorModel>();
         }
@@ -807,13 +808,13 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     Session["Unauthorized"] = result.Status;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                     return null;
                 }
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                     return null;
                 }
             }
@@ -821,14 +822,14 @@ namespace Antiguera.Administrador.Controllers.Base
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
                 return null;
             }
 
             else
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
                 return null;
             }
         }
@@ -880,24 +881,24 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else
@@ -966,24 +967,24 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else
@@ -1033,24 +1034,24 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else
@@ -1085,24 +1086,24 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     Session["Unauthorized"] = result.Status;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
             }
 
             else
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroListaMensagem = result.Mensagem;
+                ViewBag.ErroListaMensagem = result.Message;
             }
             return new List<RomModel>();
         }
@@ -1132,27 +1133,27 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     Session["Unauthorized"] = result.Status;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                     return null;
                 }
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                     return null;
                 }
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
                 return null;
             }
 
             else
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
                 return null;
             }
         }
@@ -1199,7 +1200,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
 
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -1229,18 +1230,18 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
 
                 }
             }
@@ -1342,24 +1343,24 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else
@@ -1418,24 +1419,24 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else
@@ -1470,24 +1471,24 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     Session["Unauthorized"] = result.Status;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
             }
 
             else
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroListaMensagem = result.Mensagem;
+                ViewBag.ErroListaMensagem = result.Message;
             }
             return new List<JogoModel>();
         }
@@ -1516,27 +1517,27 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     Session["Unauthorized"] = result.Status;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                     return null;
                 }
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                     return null;
                 }
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
                 return null;
             }
 
             else
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
                 return null;
             }
         }
@@ -1607,25 +1608,25 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
 
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else
@@ -1728,24 +1729,24 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else
@@ -1804,24 +1805,24 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else
@@ -1856,25 +1857,25 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     Session["Unauthorized"] = result.Status;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
 
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
             }
 
             else
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroListaMensagem = result.Mensagem;
+                ViewBag.ErroListaMensagem = result.Message;
             }
             return new List<ProgramaModel>();
         }
@@ -1904,27 +1905,27 @@ namespace Antiguera.Administrador.Controllers.Base
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
                     Session["Unauthorized"] = result.Status;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                     return null;
                 }
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                     return null;
                 }
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
                 return null;
             }
 
             else
             {
                 var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                ViewBag.ErroMensagem = result.Mensagem;
+                ViewBag.ErroMensagem = result.Message;
                 return null;
             }
         }
@@ -1995,25 +1996,25 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
 
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else
@@ -2116,24 +2117,24 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else
@@ -2185,24 +2186,24 @@ namespace Antiguera.Administrador.Controllers.Base
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
                         Session["Unauthorized"] = result.Status;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                     else
                     {
                         var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                        Session["ErroMensagem"] = result.Mensagem;
+                        Session["ErroMensagem"] = result.Message;
                     }
                 }
                 else if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
 
                 else
                 {
                     var result = response.Content.ReadAsAsync<StatusCode>().Result;
-                    Session["ErroMensagem"] = result.Mensagem;
+                    Session["ErroMensagem"] = result.Message;
                 }
             }
             else
@@ -2236,7 +2237,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 else if (responseSecondLogin.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = responseSecondLogin.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    ViewBag.ErroMensagem = result.Message;
                 }
 
                 else
@@ -2275,7 +2276,7 @@ namespace Antiguera.Administrador.Controllers.Base
                 else if (responseSecondLogin.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var result = responseSecondLogin.Content.ReadAsAsync<StatusCode>().Result;
-                    ViewBag.ErroMensagem = result.Mensagem;
+                    ViewBag.ErroMensagem = result.Message;
                 }
 
                 else
@@ -2285,6 +2286,45 @@ namespace Antiguera.Administrador.Controllers.Base
                 }
             }
             return null;
+        }
+
+        [NonAction]
+        public InformacoesMaquinaModel GetInformacoes()
+        {
+            var inf = new InformacoesMaquinaModel();
+
+            var cpuUsage = new System.Diagnostics.PerformanceCounter("Processor", "% Processor Time", "_Total");
+
+            var cpu = cpuUsage.NextValue();
+            Thread.Sleep(1000);
+            cpu = cpuUsage.NextValue();
+
+            var diskUsage = new System.Diagnostics.PerformanceCounter("PhysicalDisk", "% Disk Time", "_Total");
+
+            var disk = diskUsage.NextValue();
+            Thread.Sleep(1000);
+            disk = diskUsage.NextValue();
+
+            var memoryAvailable = new System.Diagnostics.PerformanceCounter("Memory", "Available MBytes");
+
+            inf.TotalMemoriaDisponível = (memoryAvailable.NextValue()).ToString();
+
+            inf.UsoDisco = disk.ToString("0.00");
+
+            inf.UsoCPU = Convert.ToInt32(cpu).ToString();
+
+            var memory = (GC.GetTotalMemory(false) / 1024 / 1024);
+
+            inf.UsoMemoria = memory.ToString();
+
+            var totalMemoriaInstalada = GetTotalMemoria();
+
+            inf.TotalMemoriaInstalada = totalMemoriaInstalada.ToString();
+
+            inf.Processador = GetProcessorName();
+
+            return inf;
+
         }
 
         [NonAction]
@@ -2307,6 +2347,38 @@ namespace Antiguera.Administrador.Controllers.Base
                 Cliente.DefaultRequestHeaders.Remove("Authorization");
             }
             Cliente.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+        }
+
+        [NonAction]
+        private string GetProcessorName()
+        {
+            var processor = string.Empty;
+
+            System.Management.ManagementObjectSearcher searcher = new System.Management.ManagementObjectSearcher(
+                "SELECT * FROM Win32_Processor");
+
+            foreach(System.Management.ManagementObject share in searcher.Get())
+            {
+                processor = Convert.ToString(share["Name"]);
+            }
+
+            return processor;
+        }
+
+        [NonAction]
+        private long GetTotalMemoria()
+        {
+            ulong memoria = 0;
+
+            System.Management.ManagementObjectSearcher searcher = new System.Management.ManagementObjectSearcher(
+                "SELECT * FROM Win32_PhysicalMemory");
+
+            foreach (System.Management.ManagementObject share in searcher.Get())
+            {
+                memoria += Convert.ToUInt64(share["Capacity"]);
+            }
+
+            return Convert.ToInt64(memoria/(1024 * 1024 * 1024));
         }
 
         [NonAction]
