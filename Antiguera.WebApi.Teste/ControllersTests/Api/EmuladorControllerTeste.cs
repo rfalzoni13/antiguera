@@ -72,7 +72,7 @@ namespace Antiguera.WebApi.Teste.ControllersTests.Api
             var status = result.Content.ReadAsAsync<StatusCode>().Result;
 
             Assert.IsFalse(result.TryGetContentValue(out emuladoresResult));
-            Assert.AreEqual("Nenhum registro encontrado!", status.Mensagem);
+            Assert.AreEqual("Nenhum registro encontrado!", status.Message);
             Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
             Assert.AreEqual(HttpStatusCode.NotFound, status.Status);
         }
@@ -121,7 +121,7 @@ namespace Antiguera.WebApi.Teste.ControllersTests.Api
             var status = result.Content.ReadAsAsync<StatusCode>().Result;
 
             Assert.IsFalse(result.TryGetContentValue(out emuladorResult));
-            Assert.AreEqual("Parâmetro incorreto!", status.Mensagem);
+            Assert.AreEqual("Parâmetro incorreto!", status.Message);
             Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
             Assert.AreEqual(HttpStatusCode.BadRequest, status.Status);
         }
@@ -138,7 +138,7 @@ namespace Antiguera.WebApi.Teste.ControllersTests.Api
             var status = result.Content.ReadAsAsync<StatusCode>().Result;
 
             Assert.IsFalse(result.TryGetContentValue(out emuladorResult));
-            Assert.AreEqual("Nenhum registro encontrado!", status.Mensagem);
+            Assert.AreEqual("Nenhum registro encontrado!", status.Message);
             Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
             Assert.AreEqual(HttpStatusCode.NotFound, status.Status);
         }
@@ -237,7 +237,7 @@ namespace Antiguera.WebApi.Teste.ControllersTests.Api
             var status = result.Content.ReadAsAsync<StatusCode>().Result;
 
             Assert.IsFalse(result.TryGetContentValue(out emuladorResult));
-            Assert.AreEqual("Por favor, preencha os campos corretamente!", status.Mensagem);
+            Assert.AreEqual("Por favor, preencha os campos corretamente!", status.Message);
             Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
             Assert.AreEqual(HttpStatusCode.BadRequest, status.Status);
         }
@@ -256,7 +256,7 @@ namespace Antiguera.WebApi.Teste.ControllersTests.Api
             var status = result.Content.ReadAsAsync<StatusCode>().Result;
 
             Assert.IsFalse(result.TryGetContentValue(out emuladorResult));
-            Assert.AreEqual("Nenhum registro encontrado!", status.Mensagem);
+            Assert.AreEqual("Nenhum registro encontrado!", status.Message);
             Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
             Assert.AreEqual(HttpStatusCode.NotFound, status.Status);
         }
@@ -315,7 +315,7 @@ namespace Antiguera.WebApi.Teste.ControllersTests.Api
 
             Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
             Assert.AreEqual(HttpStatusCode.BadRequest, status.Status);
-            Assert.AreEqual("Por favor, preencha os campos corretamente!", status.Mensagem);
+            Assert.AreEqual("Por favor, preencha os campos corretamente!", status.Message);
         }
 
         [TestMethod]
@@ -367,7 +367,7 @@ namespace Antiguera.WebApi.Teste.ControllersTests.Api
 
             Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
             Assert.AreEqual(HttpStatusCode.BadRequest, status.Status);
-            Assert.AreEqual("Por favor, preencha os campos corretamente!", status.Mensagem);
+            Assert.AreEqual("Por favor, preencha os campos corretamente!", status.Message);
         }
 
         [TestMethod]
@@ -419,7 +419,7 @@ namespace Antiguera.WebApi.Teste.ControllersTests.Api
 
             Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
             Assert.AreEqual(HttpStatusCode.BadRequest, status.Status);
-            Assert.AreEqual("Por favor, preencha os campos corretamente!", status.Mensagem);
+            Assert.AreEqual("Por favor, preencha os campos corretamente!", status.Message);
         }
 
         [TestMethod]
@@ -463,7 +463,7 @@ namespace Antiguera.WebApi.Teste.ControllersTests.Api
 
             Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
             Assert.AreEqual(HttpStatusCode.BadRequest, status.Status);
-            Assert.AreEqual("Array preenchido incorretamente!", status.Mensagem);
+            Assert.AreEqual("Array preenchido incorretamente!", status.Message);
         }
 
         [TestMethod]
