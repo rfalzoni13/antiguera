@@ -11,54 +11,25 @@ namespace Antiguera.Servicos.Classes
     public class UsuarioServico : ServicoBase<Usuario>, IUsuarioServico
     {
         private readonly IUsuarioRepositorio _usuarioRepositorio;
-        private readonly IUnitOfWork _unitOfWork;
 
-        public UsuarioServico(IUsuarioRepositorio usuarioRepositorio, IUnitOfWork unitOfWork)
-            : base(usuarioRepositorio, unitOfWork)
+        public UsuarioServico(IUsuarioRepositorio usuarioRepositorio)
+            : base(usuarioRepositorio)
         {
             _usuarioRepositorio = usuarioRepositorio;
-            _unitOfWork = unitOfWork;
-        }
-
-        public void AlterarSenha(int id, string senha)
-        {
-            if(id > 0 && !string.IsNullOrEmpty(senha))
-            {
-                using (_unitOfWork)
-                {
-                    var usuario = _usuarioRepositorio.BuscarPorId(id);
-                    if(usuario != null)
-                    {
-                        usuario.Senha = BCrypt.HashPassword(senha, BCrypt.GenerateSalt());
-                        _usuarioRepositorio.Atualizar(usuario);
-                        _unitOfWork.Commit();
-                    }
-                }
-            }
-            else
-            {
-                throw new ArgumentException("Parâmetros inválidos!");
-            }
-            
         }
 
         public void ApagarUsuarios(int[] Ids)
         {
             if (Ids != null && Ids.Count() > 0)
             {
-                using (_unitOfWork)
+                foreach (var id in Ids)
                 {
-                    foreach (var id in Ids)
+                    var usuario = _usuarioRepositorio.BuscarPorId(id);
+
+                    if (usuario != null)
                     {
-                        var usuario = _usuarioRepositorio.BuscarPorId(id);
-
-                        if (usuario != null)
-                        {
-                            _usuarioRepositorio.Apagar(usuario);
-                        }
+                        _usuarioRepositorio.Apagar(usuario);
                     }
-
-                    _unitOfWork.Commit();
                 }
             }
             else

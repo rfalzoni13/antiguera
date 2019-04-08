@@ -14,10 +14,6 @@ namespace Antiguera.Infra.Data.Migrations
 
         protected override void Seed(Antiguera.Infra.Data.Contexto.AntigueraContexto context)
         {
-            //  This method will be called after migrating to the latest version.
-
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data.
         }
     }
 }

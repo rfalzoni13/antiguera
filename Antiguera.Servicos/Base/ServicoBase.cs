@@ -1,5 +1,4 @@
-﻿using Antiguera.Dominio.Interfaces;
-using Antiguera.Dominio.Interfaces.Repositorio.Base;
+﻿using Antiguera.Dominio.Interfaces.Repositorio.Base;
 using Antiguera.Dominio.Interfaces.Servicos.Base;
 using System;
 using System.Collections.Generic;
@@ -10,14 +9,12 @@ namespace Antiguera.Servicos.Base
     {
         #region Atributos
         private readonly IRepositorioBase<T> _repositorioBase;
-        private readonly IUnitOfWork _unitOfWork;
         #endregion
 
         #region Construtor
-        public ServicoBase(IRepositorioBase<T> repositorioBase, IUnitOfWork unitOfWork)
+        public ServicoBase(IRepositorioBase<T> repositorioBase)
         {
             _repositorioBase = repositorioBase;
-            _unitOfWork = unitOfWork;
         }
         #endregion
 
@@ -25,12 +22,7 @@ namespace Antiguera.Servicos.Base
         {
             if (obj != null)
             {
-                using (_unitOfWork)
-                {
-                    _repositorioBase.Adicionar(obj);
-
-                    _unitOfWork.Commit();
-                }
+                _repositorioBase.Adicionar(obj);
             }
             else
             {
@@ -42,12 +34,7 @@ namespace Antiguera.Servicos.Base
         {
             if (obj != null)
             {
-                using (_unitOfWork)
-                {
-                    _repositorioBase.Apagar(obj);
-
-                    _unitOfWork.Commit();
-                }
+                _repositorioBase.Apagar(obj);
             }
             else
             {
@@ -59,12 +46,7 @@ namespace Antiguera.Servicos.Base
         {
             if (obj != null)
             {
-                using (_unitOfWork)
-                {
-                    _repositorioBase.Atualizar(obj);
-
-                    _unitOfWork.Commit();
-                }
+                _repositorioBase.Atualizar(obj);
             }
             else
             {

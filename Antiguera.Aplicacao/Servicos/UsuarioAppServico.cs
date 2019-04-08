@@ -14,11 +14,6 @@ namespace Antiguera.Aplicacao.Servicos
         {
             _usuarioServico = usuarioServico;
         }
-
-        public void AlterarSenha(int id, string senha)
-        {
-            _usuarioServico.AlterarSenha(id, senha);
-        }
                 
         public void ApagarUsuarios(int[] Ids)
         {

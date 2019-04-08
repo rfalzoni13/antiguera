@@ -3,7 +3,7 @@ namespace Antiguera.Infra.Data.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class CreateDatabase : DbMigration
+    public partial class Create_Database : DbMigration
     {
         public override void Up()
         {
@@ -104,7 +104,6 @@ namespace Antiguera.Infra.Data.Migrations
                         Email = c.String(nullable: false, maxLength: 220),
                         Sexo = c.String(nullable: false, maxLength: 10),
                         Login = c.String(nullable: false, maxLength: 30),
-                        Senha = c.String(nullable: false, maxLength: 220),
                         NumAcessos = c.Int(),
                         NumDownloadsJogos = c.Int(),
                         NumDownloadsProg = c.Int(),
