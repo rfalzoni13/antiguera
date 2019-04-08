@@ -7,13 +7,13 @@ namespace Antiguera.Infra.Data.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class CreateDatabase : IMigrationMetadata
+    public sealed partial class Create_Database : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(CreateDatabase));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Create_Database));
         
         string IMigrationMetadata.Id
         {
-            get { return "201902102022564_Create-Database"; }
+            get { return "201904080343482_Create_Database"; }
         }
         
         string IMigrationMetadata.Source

@@ -16,8 +16,6 @@ namespace Antiguera.Dominio.Entidades
 
         public string Login { get; set; }
 
-        public string Senha { get; set; }
-
         public string UrlFotoUpload { get; set; }
 
         public int? NumAcessos { get; set; }
