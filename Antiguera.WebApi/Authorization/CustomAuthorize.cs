@@ -13,7 +13,7 @@ namespace Antiguera.WebApi.Authorization
         {
             StatusCode stats = new StatusCode();
             stats.Status = HttpStatusCode.Unauthorized;
-            stats.Mensagem = "Você não esta autorizado a acessar este conteúdo!";
+            stats.Message = "Você não esta autorizado a acessar este conteúdo!";
 
             actionContext.Response = new HttpResponseMessage
             {

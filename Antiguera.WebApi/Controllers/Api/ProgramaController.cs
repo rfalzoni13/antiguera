@@ -62,7 +62,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Warn("ListarTodosProgramas - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
-                stats.Mensagem = "Nenhum registro encontrado!";
+                stats.Message = "Nenhum registro encontrado!";
 
                 logger.Info("ListarTodosProgramas - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -72,7 +72,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ListarTodosProgramas - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
                 logger.Info("ListarTodosProgramas - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
             }
@@ -116,7 +116,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("ListarProgramasPorId - Parâmetro incorreto!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Parâmetro incorreto!";
+                    stats.Message = "Parâmetro incorreto!";
 
                     logger.Info("ListarProgramasPorId - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -128,7 +128,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ListarProgramasPorId - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
-                stats.Mensagem = "Nenhum registro encontrado!";
+                stats.Message = "Nenhum registro encontrado!";
 
                 logger.Info("ListarProgramasPorId - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -138,7 +138,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ListarProgramasPorId - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("ListarProgramasPorId - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -203,7 +203,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("PesquisaPrograma - Por favor, preencha os campos corretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+                    stats.Message = "Por favor, preencha os campos corretamente!";
 
                     logger.Info("PesquisaPrograma - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -213,7 +213,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Warn("PesquisaPrograma - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
-                stats.Mensagem = "Nenhum registro encontrado!";
+                stats.Message = "Nenhum registro encontrado!";
 
                 logger.Info("PesquisaPrograma - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -222,7 +222,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("PesquisaPrograma - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("PesquisaPrograma - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -265,7 +265,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("InserirPrograma - Por favor, preencha os campos corretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+                    stats.Message = "Por favor, preencha os campos corretamente!";
 
                     logger.Info("InserirPrograma - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -276,7 +276,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("InserirPrograma - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("InserirPrograma - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -319,7 +319,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("AtualizarPrograma - Por favor, preencha os campos corretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+                    stats.Message = "Por favor, preencha os campos corretamente!";
 
                     logger.Info("AtualizarPrograma - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -330,7 +330,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("AtualizarPrograma - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("AtualizarPrograma - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -369,7 +369,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("ExcluirPrograma - Por favor, preencha os campos corretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+                    stats.Message = "Por favor, preencha os campos corretamente!";
 
                     logger.Info("ExcluirPrograma - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -380,7 +380,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ExcluirPrograma - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("ExcluirPrograma - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -417,7 +417,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("ApagarProgramas - Array preenchido incorretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Array preenchido incorretamente!";
+                    stats.Message = "Array preenchido incorretamente!";
 
                     logger.Info("ApagarProgramas - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -428,7 +428,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ApagarProgramas - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("ApagarProgramas - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);

@@ -1,4 +1,7 @@
-﻿using Antiguera.WebApi.Models;
+﻿using Antiguera.Infra.Cross.Infrastructure;
+using Antiguera.WebApi.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
 using System;
@@ -8,6 +11,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Antiguera.WebApi.Authorization
 {
@@ -19,29 +23,29 @@ namespace Antiguera.WebApi.Authorization
             return Task.FromResult<object>(null);
         }
 
-        public override Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
-        {            
+        public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
+        {
             try
             {
-                DbContext db = new DbContext("Antiguera");
+                var userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
 
-                var usuario = db.Database.SqlQuery<UsuarioModel>("exec Antiguera_Login @Login ", new SqlParameter("@Login", context.UserName)).FirstOrDefault();
+                var user = await userManager.FindAsync(context.UserName, context.Password);
 
-                if(usuario != null)
+                if (user != null)
                 {
-                    if (BCrypt.CheckPassword(context.Password, usuario.Senha))
-                    {
-                        usuario.Acesso = db.Database.SqlQuery<AcessoModel>("SELECT Nome FROM Acesso WHERE Id=@Id ", new SqlParameter("@Id", usuario.AcessoId)).FirstOrDefault();
+                    var identity = new ClaimsIdentity(context.Options.AuthenticationType);
+                    identity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
 
-                        var identity = new ClaimsIdentity(context.Options.AuthenticationType);
-                        identity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
-                        identity.AddClaim(new Claim(ClaimTypes.Role, usuario.Acesso.Nome));
-                        context.Validated(identity);
-                    }
-                    else
+                    var roles = userManager.GetRoles(user.Id).ToList();
+                    if (roles != null && roles.Count > 0)
                     {
-                        context.SetError("Password error: ", "Senha inválida!");
+                        foreach (var role in roles)
+                        {
+                            identity.AddClaim(new Claim(ClaimTypes.Role, role));
+                        }
                     }
+
+                    context.Validated(identity);
                 }
                 else
                 {
@@ -49,7 +53,7 @@ namespace Antiguera.WebApi.Authorization
                 }
             }
 
-            catch(SqlException e)
+            catch (SqlException e)
             {
                 context.SetError("Conection error: ", e.Message);
             }
@@ -58,7 +62,6 @@ namespace Antiguera.WebApi.Authorization
             {
                 context.SetError("Authentication error: " + e.Message);
             }
-            return Task.FromResult<object>(0);
         }
 
         public override Task GrantRefreshToken(OAuthGrantRefreshTokenContext context)

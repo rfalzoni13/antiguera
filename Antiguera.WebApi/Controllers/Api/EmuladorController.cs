@@ -62,7 +62,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Warn("ListarTodosEmuladores - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
-                stats.Mensagem = "Nenhum registro encontrado!";
+                stats.Message = "Nenhum registro encontrado!";
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
             }
 
@@ -70,7 +70,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ListarTodosEmuladores - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("ListarTodosEmuladores - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -115,7 +115,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("ListarEmuladoresPorId - Parâmetro incorreto!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Parâmetro incorreto!";
+                    stats.Message = "Parâmetro incorreto!";
 
                     logger.Info("ListarEmuladoresPorId - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -126,7 +126,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ListarEmuladoresPorId - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
-                stats.Mensagem = "Nenhum registro encontrado!";
+                stats.Message = "Nenhum registro encontrado!";
 
                 logger.Info("ListarEmuladoresPorId - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -136,7 +136,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ListarEmuladoresPorId - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("ListarEmuladoresPorId - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -199,7 +199,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("PesquisaEmulador - Por favor, preencha os campos corretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+                    stats.Message = "Por favor, preencha os campos corretamente!";
 
                     logger.Info("PesquisaEmulador - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -209,7 +209,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Warn("PesquisaEmulador - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
-                stats.Mensagem = "Nenhum registro encontrado!";
+                stats.Message = "Nenhum registro encontrado!";
 
                 logger.Info("PesquisaEmulador - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -218,7 +218,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("PesquisaEmulador - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("PesquisaEmulador - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -261,7 +261,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("InserirEmulador - Por favor, preencha os campos corretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+                    stats.Message = "Por favor, preencha os campos corretamente!";
 
                     logger.Info("InserirEmulador - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -272,7 +272,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("InserirEmulador - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("InserirEmulador - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -315,7 +315,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("AtualizarEmulador - Por favor, preencha os campos corretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+                    stats.Message = "Por favor, preencha os campos corretamente!";
 
                     logger.Info("AtualizarEmulador - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -326,7 +326,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("AtualizarEmulador - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("AtualizarEmulador - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -365,7 +365,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("ExcluirEmulador - Por favor, preencha os campos corretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+                    stats.Message = "Por favor, preencha os campos corretamente!";
 
                     logger.Info("ExcluirEmulador - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -376,7 +376,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ExcluirEmulador - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("ExcluirEmulador - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -413,7 +413,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("ApagarEmuladores - Array preenchido incorretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Array preenchido incorretamente!";
+                    stats.Message = "Array preenchido incorretamente!";
 
                     logger.Info("ApagarEmuladores - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -424,7 +424,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ApagarEmuladores - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("ApagarEmuladores - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);

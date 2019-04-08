@@ -62,7 +62,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Warn("ListarTodasAsRoms - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
-                stats.Mensagem = "Nenhum registro encontrado!";
+                stats.Message = "Nenhum registro encontrado!";
 
                 logger.Info("ListarTodasAsRoms - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -72,7 +72,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ListarTodasAsRoms - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("ListarTodasAsRoms - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -117,7 +117,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("ListarRomsPorId - Parâmetro incorreto!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Parâmetro incorreto!";
+                    stats.Message = "Parâmetro incorreto!";
 
                     logger.Info("ListarRomsPorId - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -128,7 +128,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ListarRomsPorId - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
-                stats.Mensagem = "Nenhum registro encontrado!";
+                stats.Message = "Nenhum registro encontrado!";
 
                 logger.Info("ListarRomsPorId - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -138,7 +138,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ListarRomsPorId - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("ListarRomsPorId - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -202,7 +202,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("PesquisaRom - Por favor, preencha os campos corretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+                    stats.Message = "Por favor, preencha os campos corretamente!";
 
                     logger.Info("PesquisaRom - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -212,7 +212,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Warn("PesquisaRom - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
-                stats.Mensagem = "Nenhum registro encontrado!";
+                stats.Message = "Nenhum registro encontrado!";
 
                 logger.Info("PesquisaRom - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -221,7 +221,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("PesquisaRom - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("PesquisaRom - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -264,7 +264,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("InserirRom - Por favor, preencha os campos corretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+                    stats.Message = "Por favor, preencha os campos corretamente!";
 
                     logger.Info("InserirRom - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -275,7 +275,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ListarRomsPorId - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("InserirRom - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -318,7 +318,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("AtualizarRom - Por favor, preencha os campos corretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+                    stats.Message = "Por favor, preencha os campos corretamente!";
 
                     logger.Info("AtualizarRom - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -329,7 +329,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("AtualizarRom - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("AtualizarRom - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -368,7 +368,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("ExcluirRom - Por favor, preencha os campos corretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+                    stats.Message = "Por favor, preencha os campos corretamente!";
 
                     logger.Info("ExcluirRom - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -379,7 +379,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ExcluirRom - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("ExcluirRom - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -416,7 +416,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("ApagarRoms - Array preenchido incorretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Array preenchido incorretamente!";
+                    stats.Message = "Array preenchido incorretamente!";
 
                     logger.Info("ApagarRoms - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -427,7 +427,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ApagarRoms - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("ApagarRoms - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);

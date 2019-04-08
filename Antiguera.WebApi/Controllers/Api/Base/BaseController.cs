@@ -17,7 +17,7 @@ namespace Antiguera.WebApi.Controllers.Api.Base
         {
             get
             {
-                return _userManager ?? ControllerContext.Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                return ControllerContext.Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
             }
 
             set
@@ -30,7 +30,7 @@ namespace Antiguera.WebApi.Controllers.Api.Base
         {
             get
             {
-                return _roleManager ?? ControllerContext.Request.GetOwinContext().Get<ApplicationRoleManager>();
+                return ControllerContext.Request.GetOwinContext().Get<ApplicationRoleManager>();
             }
 
             set

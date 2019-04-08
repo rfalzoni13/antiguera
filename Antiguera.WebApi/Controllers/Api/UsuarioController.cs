@@ -71,7 +71,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("ListarUsuariosPorId - Parâmetro incorreto!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Parâmetro incorreto!";
+                    stats.Message = "Parâmetro incorreto!";
 
                     logger.Info("ListarUsuariosPorId - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -81,7 +81,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ListarUsuariosPorId - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
-                stats.Mensagem = "Nenhum registro encontrado!";
+                stats.Message = "Nenhum registro encontrado!";
 
                 logger.Info("ListarUsuariosPorId - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -91,7 +91,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ListarUsuariosPorId - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("ListarUsuariosPorId - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -136,7 +136,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("ListarUsuariosPorLoginOuEmail - Parâmetro incorreto!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Parâmetro incorreto!";
+                    stats.Message = "Parâmetro incorreto!";
 
                     logger.Info("ListarUsuariosPorLoginOuEmail - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -146,7 +146,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ListarUsuariosPorLoginOuEmail - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
-                stats.Mensagem = "Nenhum registro encontrado!";
+                stats.Message = "Nenhum registro encontrado!";
 
                 logger.Info("ListarUsuariosPorLoginOuEmail - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -156,7 +156,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ListarUsuariosPorId - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("ListarUsuariosPorId - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -216,7 +216,7 @@ namespace Antiguera.WebApi.Controllers.Api
                     {
                         logger.Error("InserirUsuario - Id de acesso não localizado");
                         stats.Status = HttpStatusCode.NotFound;
-                        stats.Mensagem = "Id de acesso não localizado!";
+                        stats.Message = "Id de acesso não localizado!";
 
                         logger.Info("InserirUsuario - Finalizado");
                         return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -225,10 +225,6 @@ namespace Antiguera.WebApi.Controllers.Api
                     usuarioModel.Created = DateTime.Now;
 
                     usuarioModel.Novo = true;
-
-                    var senha = BCrypt.HashPassword(usuarioModel.Senha, BCrypt.GenerateSalt());
-
-                    usuarioModel.Senha = senha;
 
                     var usuario = Mapper.Map<UsuarioModel, Usuario>(usuarioModel);
 
@@ -243,7 +239,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("InserirUsuario - Por favor, preencha os campos corretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+                    stats.Message = "Por favor, preencha os campos corretamente!";
 
                     logger.Info("InserirUsuario - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -254,7 +250,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("InserirUsuario - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("InserirUsuario - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -333,7 +329,7 @@ namespace Antiguera.WebApi.Controllers.Api
                 {
                     logger.Warn("AtualizarUsuario - Por favor, preencha os campos corretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+                    stats.Message = "Por favor, preencha os campos corretamente!";
 
                     logger.Info("AtualizarUsuario - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -344,7 +340,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("ListarUsuariosPorId - Error: " + e);
                 stats.Status = HttpStatusCode.NotFound;
-                stats.Mensagem = "Nenhum registro encontrado!";
+                stats.Message = "Nenhum registro encontrado!";
 
                 logger.Info("ListarUsuariosPorId - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.NotFound, stats);
@@ -354,7 +350,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("AtualizarUsuario - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("AtualizarUsuario - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
@@ -388,32 +384,22 @@ namespace Antiguera.WebApi.Controllers.Api
                         await UserManager.RemovePasswordAsync(user.Id);
 
                         await UserManager.AddPasswordAsync(user.Id, usuarioModel.Senha);
+
+                        logger.Info("AtualizarSenhaUsuario - Sucesso!");
+
+                        logger.Info("AtualizarSenhaUsuario - Finalizado");
+                        return Request.CreateResponse(HttpStatusCode.OK, "Senha alterada com sucesso!");
                     }
                     else
                     {
                         throw new HttpResponseException(HttpStatusCode.NotFound);
                     }
-
-                    usuarioModel.Modified = DateTime.Now;
-
-                    usuarioModel.Novo = false;
-
-                    var senha = BCrypt.HashPassword(usuarioModel.Senha, BCrypt.GenerateSalt());
-
-                    usuarioModel.Senha = senha;
-
-                    _usuarioAppServico.AlterarSenha(usuarioModel.Id, usuarioModel.Senha);
-
-                    logger.Info("AtualizarSenhaUsuario - Sucesso!");
-
-                    logger.Info("AtualizarSenhaUsuario - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.OK, "Senha alterada com sucesso!");
                 }
                 else
                 {
                     logger.Warn("AtualizarSenhaUsuario - Por favor, preencha os campos corretamente!");
                     stats.Status = HttpStatusCode.BadRequest;
-                    stats.Mensagem = "Por favor, preencha os campos corretamente!";
+                    stats.Message = "Por favor, preencha os campos corretamente!";
 
                     logger.Info("AtualizarSenhaUsuario - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
@@ -424,7 +410,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("AtualizarSenhaUsuario - Error: " + e);
                 stats.Status = e.Response.StatusCode;
-                stats.Mensagem = "Nenhum registro encontrado!";
+                stats.Message = "Nenhum registro encontrado!";
 
                 logger.Info("AtualizarSenhaUsuario - Finalizado");
                 return Request.CreateResponse(e.Response.StatusCode, stats);
@@ -434,7 +420,7 @@ namespace Antiguera.WebApi.Controllers.Api
             {
                 logger.Error("AtualizarSenhaUsuario - Error: " + e);
                 stats.Status = HttpStatusCode.InternalServerError;
-                stats.Mensagem = e.Message;
+                stats.Message = e.Message;
 
                 logger.Info("AtualizarSenhaUsuario - Finalizado");
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
