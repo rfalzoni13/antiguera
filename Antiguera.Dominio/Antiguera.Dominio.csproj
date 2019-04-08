@@ -42,12 +42,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entidades\Emulador.cs" />
+    <Compile Include="Entidades\Encript\BCrypt.cs" />
     <Compile Include="Entidades\Acesso.cs" />
     <Compile Include="Entidades\Jogo.cs" />
     <Compile Include="Entidades\Programa.cs" />
     <Compile Include="Entidades\Rom.cs" />
     <Compile Include="Entidades\Usuario.cs" />
     <Compile Include="Interfaces\IAntigueraContexto.cs" />
+    <Compile Include="Interfaces\IUnitOfWork.cs" />
     <Compile Include="Interfaces\Repositorio\Base\IRepositorioBase.cs" />
     <Compile Include="Interfaces\Repositorio\IAcessoRepositorio.cs" />
     <Compile Include="Interfaces\Repositorio\IEmuladorRepositorio.cs" />

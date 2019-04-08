@@ -11,25 +11,32 @@ namespace Antiguera.Servicos.Classes
     public class ProgramaServico : ServicoBase<Programa>, IProgramaServico
     {
         private readonly IProgramaRepositorio _programaRepositorio;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ProgramaServico(IProgramaRepositorio programaRepositorio)
-            : base(programaRepositorio)
+        public ProgramaServico(IProgramaRepositorio programaRepositorio, IUnitOfWork unitOfWork)
+            : base(programaRepositorio, unitOfWork)
         {
             _programaRepositorio = programaRepositorio;
+            _unitOfWork = unitOfWork;
         }
 
         public void ApagarProgramas(int[] Ids)
         {
             if (Ids != null && Ids.Count() > 0)
             {
-                foreach (var id in Ids)
+                using (_unitOfWork)
                 {
-                    var programa = _programaRepositorio.BuscarPorId(id);
-
-                    if (programa != null)
+                    foreach (var id in Ids)
                     {
-                        _programaRepositorio.Apagar(programa);
+                        var programa = _programaRepositorio.BuscarPorId(id);
+
+                        if (programa != null)
+                        {
+                            _programaRepositorio.Apagar(programa);
+                        }
                     }
+
+                    _unitOfWork.Commit();
                 }
             }
             else

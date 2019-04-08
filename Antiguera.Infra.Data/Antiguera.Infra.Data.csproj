@@ -61,9 +61,9 @@
     <Compile Include="Configuracao\RomConfiguracao.cs" />
     <Compile Include="Configuracao\UsuarioConfiguracao.cs" />
     <Compile Include="Contexto\AntigueraContexto.cs" />
-    <Compile Include="Migrations\201904080203116_Create_Database.cs" />
-    <Compile Include="Migrations\201904080203116_Create_Database.Designer.cs">
-      <DependentUpon>201904080203116_Create_Database.cs</DependentUpon>
+    <Compile Include="Migrations\201902102022564_Create-Database.cs" />
+    <Compile Include="Migrations\201902102022564_Create-Database.Designer.cs">
+      <DependentUpon>201902102022564_Create-Database.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -78,6 +78,7 @@
     <Compile Include="Repositorios\JogoRepositorio.cs" />
     <Compile Include="Repositorios\ProgramaRepositorio.cs" />
     <Compile Include="Repositorios\RomRepositorio.cs" />
+    <Compile Include="Repositorios\UnitOfWork.cs" />
     <Compile Include="Repositorios\UsuarioRepositorio.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -100,8 +101,8 @@
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201904080203116_Create_Database.resx">
-      <DependentUpon>201904080203116_Create_Database.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201902102022564_Create-Database.resx">
+      <DependentUpon>201902102022564_Create-Database.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

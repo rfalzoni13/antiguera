@@ -11,25 +11,32 @@ namespace Antiguera.Servicos.Classes
     public class JogoServico : ServicoBase<Jogo>, IJogoServico
     {
         private readonly IJogoRepositorio _jogoRepositorio;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public JogoServico(IJogoRepositorio jogoRepositorio)
-            : base(jogoRepositorio)
+        public JogoServico(IJogoRepositorio jogoRepositorio, IUnitOfWork unitOfWork)
+            : base(jogoRepositorio, unitOfWork)
         {
             _jogoRepositorio = jogoRepositorio;
+            _unitOfWork = unitOfWork;
         }
 
         public void ApagarJogos(int[] Ids)
         {
             if (Ids != null && Ids.Count() > 0)
             {
-                foreach (var id in Ids)
+                using (_unitOfWork)
                 {
-                    var jogo = _jogoRepositorio.BuscarPorId(id);
-
-                    if (jogo != null)
+                    foreach (var id in Ids)
                     {
-                        _jogoRepositorio.Apagar(jogo);
+                        var jogo = _jogoRepositorio.BuscarPorId(id);
+
+                        if (jogo != null)
+                        {
+                            _jogoRepositorio.Apagar(jogo);
+                        }
                     }
+
+                    _unitOfWork.Commit();
                 }
             }
             else

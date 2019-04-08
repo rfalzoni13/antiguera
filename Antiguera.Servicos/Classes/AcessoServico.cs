@@ -11,25 +11,32 @@ namespace Antiguera.Servicos.Classes
     public class AcessoServico : ServicoBase<Acesso>, IAcessoServico
     {
         private readonly IAcessoRepositorio _acessoRepositorio;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AcessoServico(IAcessoRepositorio acessoRepositorio)
-            : base(acessoRepositorio)
+        public AcessoServico(IAcessoRepositorio acessoRepositorio, IUnitOfWork unitOfWork)
+            : base(acessoRepositorio, unitOfWork)
         {
             _acessoRepositorio = acessoRepositorio;
+            _unitOfWork = unitOfWork;
         }
 
         public void ApagarAcessos(int[] Ids)
         {
             if(Ids != null && Ids.Count() > 0)
             {
-                foreach (var id in Ids)
+                using (_unitOfWork)
                 {
-                    var acesso = _acessoRepositorio.BuscarPorId(id);
-
-                    if (acesso != null)
+                    foreach(var id in Ids)
                     {
-                        _acessoRepositorio.Apagar(acesso);
+                        var acesso = _acessoRepositorio.BuscarPorId(id);
+
+                        if(acesso != null)
+                        {
+                            _acessoRepositorio.Apagar(acesso);
+                        }
                     }
+
+                    _unitOfWork.Commit();
                 }
             }
             else

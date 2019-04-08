@@ -31,19 +31,16 @@ namespace Antiguera.Infra.Data.Repositorios.Base
         public virtual void Adicionar(T obj)
         {
             Context.Set<T>().Add(obj);
-            Context.SaveChanges();
         }
 
         public virtual void Apagar(T obj)
         {
             Context.Set<T>().Remove(obj);
-            Context.SaveChanges();
         }
 
         public virtual void Atualizar(T obj)
         {
             Context.Entry(obj).State = EntityState.Modified;
-            Context.SaveChanges();
         }
 
         public virtual T BuscarPorId(int id) => Context.Set<T>().Find(id);

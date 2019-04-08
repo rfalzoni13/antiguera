@@ -7,6 +7,8 @@ namespace Antiguera.Aplicacao.Interfaces
     {
         void ApagarUsuarios(int[] Ids);
 
+        void AlterarSenha(int id, string senha);
+
         Usuario BuscarUsuarioPorLoginOuEmail(string data);
     }
 }

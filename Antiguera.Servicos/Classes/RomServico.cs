@@ -11,25 +11,32 @@ namespace Antiguera.Servicos.Classes
     public class RomServico : ServicoBase<Rom>, IRomServico
     {
         private readonly IRomRepositorio _romRepositorio;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RomServico(IRomRepositorio romRepositorio)
-            : base(romRepositorio)
+        public RomServico(IRomRepositorio romRepositorio, IUnitOfWork unitOfWork)
+            : base(romRepositorio, unitOfWork)
         {
             _romRepositorio = romRepositorio;
+            _unitOfWork = unitOfWork;
         }
 
         public void ApagarRoms(int[] Ids)
         {
             if (Ids != null && Ids.Count() > 0)
             {
-                foreach (var id in Ids)
+                using (_unitOfWork)
                 {
-                    var rom = _romRepositorio.BuscarPorId(id);
-
-                    if (rom != null)
+                    foreach (var id in Ids)
                     {
-                        _romRepositorio.Apagar(rom);
+                        var rom = _romRepositorio.BuscarPorId(id);
+
+                        if (rom != null)
+                        {
+                            _romRepositorio.Apagar(rom);
+                        }
                     }
+
+                    _unitOfWork.Commit();
                 }
             }
             else

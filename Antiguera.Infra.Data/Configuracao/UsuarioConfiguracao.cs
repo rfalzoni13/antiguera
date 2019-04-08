@@ -19,19 +19,21 @@ namespace Antiguera.Infra.Data.Configuracao
 
             Property(u => u.Login).HasColumnOrder(6).IsRequired().HasMaxLength(30);
 
-            Property(u => u.NumAcessos).HasColumnOrder(7).IsOptional();
+            Property(u => u.Senha).HasColumnOrder(7).IsRequired().HasMaxLength(220);
 
-            Property(u => u.NumDownloadsJogos).HasColumnOrder(8).IsOptional();
+            Property(u => u.NumAcessos).HasColumnOrder(8).IsOptional();
 
-            Property(u => u.NumDownloadsProg).HasColumnOrder(9).IsOptional();
+            Property(u => u.NumDownloadsJogos).HasColumnOrder(9).IsOptional();
+
+            Property(u => u.NumDownloadsProg).HasColumnOrder(10).IsOptional();
             
-            Property(u => u.UltimaVisita).HasColumnOrder(10).IsOptional();
+            Property(u => u.UltimaVisita).HasColumnOrder(11).IsOptional();
 
-            Property(u => u.UrlFotoUpload).HasColumnOrder(11).IsOptional().HasMaxLength(200);
+            Property(u => u.UrlFotoUpload).HasColumnOrder(12).IsOptional().HasMaxLength(200);
 
-            Property(u => u.Created).HasColumnOrder(12).IsOptional();
+            Property(u => u.Created).HasColumnOrder(13).IsOptional();
 
-            Property(u => u.Modified).HasColumnOrder(13).IsOptional();
+            Property(u => u.Modified).HasColumnOrder(14).IsOptional();
 
             HasRequired(u => u.Acesso).WithMany().HasForeignKey(u => u.AcessoId).WillCascadeOnDelete();
         }

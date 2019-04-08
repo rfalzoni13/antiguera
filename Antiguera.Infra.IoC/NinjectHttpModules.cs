@@ -2,12 +2,10 @@
 using Antiguera.Aplicacao.Interfaces.Base;
 using Antiguera.Aplicacao.Servicos;
 using Antiguera.Aplicacao.Servicos.Base;
-using Antiguera.Dominio.Interfaces;
 using Antiguera.Dominio.Interfaces.Repositorio;
 using Antiguera.Dominio.Interfaces.Repositorio.Base;
 using Antiguera.Dominio.Interfaces.Servicos;
 using Antiguera.Dominio.Interfaces.Servicos.Base;
-using Antiguera.Infra.Data.Contexto;
 using Antiguera.Infra.Data.Repositorios;
 using Antiguera.Infra.Data.Repositorios.Base;
 using Antiguera.Servicos.Base;
@@ -55,8 +53,6 @@ namespace Antiguera.Infra.IoC
                 Kernel.Bind<IProgramaAppServico>().To<ProgramaAppServico>();
                 Kernel.Bind<IEmuladorAppServico>().To<EmuladorAppServico>();
                 Kernel.Bind<IRomAppServico>().To<RomAppServico>();
-
-                Kernel.Bind<IAntigueraContexto>().To<AntigueraContexto>();
             }
         }
     }
