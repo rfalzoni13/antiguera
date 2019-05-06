@@ -12,6 +12,7 @@ namespace Antiguera.Infra.Data.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
+                        IdentityRoleId = c.String(nullable: false),
                         Nome = c.String(nullable: false, maxLength: 100),
                         Novo = c.Boolean(),
                         Created = c.DateTime(nullable: false),
@@ -100,6 +101,7 @@ namespace Antiguera.Infra.Data.Migrations
                     {
                         Id = c.Int(nullable: false, identity: true),
                         AcessoId = c.Int(nullable: false),
+                        IdentityUserId = c.String(nullable: false, maxLength: 200),
                         Nome = c.String(nullable: false, maxLength: 220),
                         Email = c.String(nullable: false, maxLength: 220),
                         Sexo = c.String(nullable: false, maxLength: 10),

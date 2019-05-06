@@ -207,7 +207,21 @@ namespace Antiguera.WebApi.Controllers.Api
                                 JoinDate = DateTime.Now
                             };
 
-                            await UserManager.CreateAsync(user, usuarioModel.Senha);
+                            var result = await UserManager.CreateAsync(user, usuarioModel.Senha);
+
+                            if (result.Succeeded)
+                            {
+                                usuarioModel.IdentityUserId = user.Id;
+                            }
+                            else
+                            {
+                                logger.Warn("InserirUsuario - Erro ao incluir usuário");
+                                stats.Status = HttpStatusCode.BadRequest;
+                                stats.Message = "Erro ao incluir usuário!";
+
+                                logger.Info("InserirUsuario - Finalizado");
+                                return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                            }
 
                             await UserManager.AddToRoleAsync(user.Id, role.Name);
                         }
@@ -300,7 +314,20 @@ namespace Antiguera.WebApi.Controllers.Api
                             await UserManager.RemoveFromRolesAsync(user.Id, roles.ToArray());
                             await UserManager.AddToRoleAsync(user.Id, role.Name);
 
-                            await UserManager.UpdateAsync(user);
+                            var result = await UserManager.UpdateAsync(user);
+                            if (result.Succeeded)
+                            {
+                                usuarioModel.IdentityUserId = user.Id;
+                            }
+                            else
+                            {
+                                logger.Warn("AtualizarUsuario - Erro ao atualizar usuário!");
+                                stats.Status = HttpStatusCode.BadRequest;
+                                stats.Message = "Erro ao atualizar usuário!";
+
+                                logger.Info("AtualizarUsuario - Finalizado");
+                                return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                            }
                         }
                         else
                         {

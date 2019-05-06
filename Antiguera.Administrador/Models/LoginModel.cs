@@ -12,4 +12,10 @@ namespace Antiguera.Administrador.Models
 
         public bool RememberMe { get; set; }
     }
+
+    public class PasswordRecoveryModel
+    {
+        [Required]
+        public string Email { get; set; }
+    }
 }

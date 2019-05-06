@@ -3,7 +3,7 @@ namespace Antiguera.Infra.Cross.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class CreateIdentity : DbMigration
+    public partial class Create_Identity : DbMigration
     {
         public override void Up()
         {

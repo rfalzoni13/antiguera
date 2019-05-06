@@ -401,11 +401,7 @@
     <Compile Include="AutoMapper\AutoMapperConfig.cs" />
     <Compile Include="AutoMapper\DTOToModelMappingProfile.cs" />
     <Compile Include="AutoMapper\ModelToDTOMappingProfile.cs" />
-    <Compile Include="Config\ApplicationDbContext.cs" />
-    <Compile Include="Config\ApplicationRoleManager.cs" />
-    <Compile Include="Config\ApplicationSignInManager.cs" />
     <Compile Include="Config\ApplicationUser.cs" />
-    <Compile Include="Config\ApplicationUserManager.cs" />
     <Compile Include="Config\UrlConfiguration.cs" />
     <Compile Include="Controllers\AcessoController.cs" />
     <Compile Include="Controllers\Base\BaseController.cs" />
@@ -473,6 +469,7 @@
     <Content Include="Views\Rom\Detalhes.cshtml" />
     <Content Include="Views\Usuario\Detalhes.cshtml" />
     <Content Include="Views\Acesso\Index.cshtml" />
+    <Content Include="Views\Home\RecuperarSenha.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

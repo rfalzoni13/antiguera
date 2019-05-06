@@ -7,13 +7,13 @@ namespace Antiguera.Infra.Cross.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class CreateIdentity : IMigrationMetadata
+    public sealed partial class Create_Identity : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(CreateIdentity));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Create_Identity));
         
         string IMigrationMetadata.Id
         {
-            get { return "201902102046278_Create-Identity"; }
+            get { return "201905042326476_Create_Identity"; }
         }
         
         string IMigrationMetadata.Source

@@ -6,6 +6,8 @@ namespace Antiguera.WebApi.Models
     {
         public int Id { get; set; }
 
+        public string IdentityRoleId { get; set; }
+
         public string Nome { get; set; }
 
         public bool? Novo { get; set; }

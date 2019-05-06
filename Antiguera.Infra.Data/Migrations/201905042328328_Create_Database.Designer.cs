@@ -13,7 +13,7 @@ namespace Antiguera.Infra.Data.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201904080343482_Create_Database"; }
+            get { return "201905042328328_Create_Database"; }
         }
         
         string IMigrationMetadata.Source

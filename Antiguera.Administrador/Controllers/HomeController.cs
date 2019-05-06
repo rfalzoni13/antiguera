@@ -14,8 +14,8 @@ namespace Antiguera.Administrador.Controllers
 {
     public class HomeController : BaseController
     {
-        // GET: Home
         [Authorize]
+        // GET: Home
         public ActionResult Index()
         {
             try
@@ -116,7 +116,12 @@ namespace Antiguera.Administrador.Controllers
                             {
                                 var user = responseFirstLogin.Content.ReadAsAsync<ApplicationUser>().Result;
 
-                                var applicationSign = HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+                                var claims = new[]
+                                {
+                                    new Claim(ClaimTypes.Name, user.UserName),
+                                    new Claim("AccessToken", token.access_token),
+                                    new Claim("RefreshToken", token.refresh_token)
+                                };
 
                                 if (model.RememberMe)
                                 {
@@ -127,31 +132,21 @@ namespace Antiguera.Administrador.Controllers
                                         ExpiresUtc = DateTime.Now.AddSeconds(token.expires_in)
                                     };
 
-                                    var claims = new[]
+                                    var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
+
+                                    HttpContext.Request.GetOwinContext().Authentication.SignIn(options, identity);
+                                }
+                                else
+                                {
+                                    AuthenticationProperties options = new AuthenticationProperties()
                                     {
-                                        new Claim(ClaimTypes.Name, user.UserName),
-                                        new Claim("AccessToken", token.access_token),
-                                        new Claim("RefreshToken", token.refresh_token)
+                                        AllowRefresh = false,
+                                        IsPersistent = false,
                                     };
 
                                     var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
 
                                     HttpContext.Request.GetOwinContext().Authentication.SignIn(options, identity);
-                                    applicationSign.SignIn(user, true, false);
-                                }
-                                else
-                                {
-                                    var claims = new[]
-                                    {
-                                        new Claim(ClaimTypes.Name, user.UserName),
-                                        new Claim("AccessToken", token.access_token),
-                                        new Claim("RefreshToken", token.refresh_token)
-                                    };
-
-                                    var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
-
-                                    HttpContext.Request.GetOwinContext().Authentication.SignIn(identity);
-                                    applicationSign.SignIn(user, false, false);
                                 }
                             }
                             return RedirectToAction("Index");
@@ -178,6 +173,42 @@ namespace Antiguera.Administrador.Controllers
                     HttpContext.GetOwinContext().Authentication.SignOut();
                 }
                 return View(model);
+            }
+        }
+        
+        public ActionResult RecuperarSenha()
+        {
+            if (HttpContext.Request.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                HttpContext.GetOwinContext().Authentication.SignOut();
+            }
+            if (Session["ErroMensagem"] != null)
+            {
+                ViewBag.ErroMensagem = Session["ErroMensagem"];
+                Session.Clear();
+            }
+
+            if (Session["Unauthorized"] != null)
+            {
+                ViewBag.ErroMensagem = Session["Unauthorized"];
+                Session.Clear();
+            }
+
+            var model = new PasswordRecoveryModel();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult RecuperarSenha(PasswordRecoveryModel model)
+        {
+            if(ModelState.IsValid)
+            {
+
             }
         }
 

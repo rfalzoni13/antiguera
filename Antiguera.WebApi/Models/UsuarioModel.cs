@@ -8,7 +8,9 @@ namespace Antiguera.WebApi.Models
         public int Id { get; set; }
         
         public int AcessoId { get; set; }
-        
+
+        public string IdentityUserId { get; set; }
+
         public string Nome { get; set; }
         
         public string Sexo { get; set; }

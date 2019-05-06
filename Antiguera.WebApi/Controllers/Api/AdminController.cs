@@ -566,6 +566,7 @@ namespace Antiguera.WebApi.Controllers.Api
         /// <param name="usuarioModel">Objeto do usuário</param>
         /// <returns></returns>
         // POST api/antiguera/admin/inserirusuario
+        [AllowAnonymous]
         [HttpPost]
         [Route("inserirusuario")]
         public async Task<HttpResponseMessage> InserirUsuario([FromBody] UsuarioModel usuarioModel)
@@ -598,7 +599,21 @@ namespace Antiguera.WebApi.Controllers.Api
                                 JoinDate = DateTime.Now
                             };
 
-                            await UserManager.CreateAsync(user, usuarioModel.Senha);
+                            var result = await UserManager.CreateAsync(user, usuarioModel.Senha);
+
+                            if(result.Succeeded)
+                            {
+                                usuarioModel.IdentityUserId = user.Id;
+                            }
+                            else
+                            {
+                                logger.Warn("InserirUsuario - Erro ao incluir usuário");
+                                stats.Status = HttpStatusCode.BadRequest;
+                                stats.Message = "Erro ao incluir usuário!";
+
+                                logger.Info("InserirUsuario - Finalizado");
+                                return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                            }
 
                             await UserManager.AddToRoleAsync(user.Id, role.Name);
                         }
@@ -658,6 +673,7 @@ namespace Antiguera.WebApi.Controllers.Api
         /// <param name="acessoModel">Objeto do acesso</param>
         /// <returns></returns>
         // POST api/antiguera/admin/inseriracesso
+        [AllowAnonymous]
         [HttpPost]
         [Route("inseriracesso")]
         public async Task<HttpResponseMessage> InserirAcesso([FromBody] AcessoModel acessoModel)
@@ -671,7 +687,21 @@ namespace Antiguera.WebApi.Controllers.Api
                     if (role == null)
                     {
                         role = new IdentityRole(acessoModel.Nome);
-                        await RoleManager.CreateAsync(role);
+                        var result = await RoleManager.CreateAsync(role);
+
+                        if(result.Succeeded)
+                        {
+                            acessoModel.IdentityRoleId = role.Id;
+                        }
+                        else
+                        {
+                            logger.Warn("InserirAcesso - Erro ao inserir acesso!");
+                            stats.Status = HttpStatusCode.BadRequest;
+                            stats.Message = "Erro ao inserir acesso!";
+
+                            logger.Info("InserirAcesso - Finalizado");
+                            return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                        }
                     }
 
                     acessoModel.Created = DateTime.Now;
@@ -752,7 +782,20 @@ namespace Antiguera.WebApi.Controllers.Api
                             await UserManager.RemoveFromRolesAsync(user.Id, roles.ToArray());
                             await UserManager.AddToRoleAsync(user.Id, role.Name);
 
-                            await UserManager.UpdateAsync(user);
+                            var result = await UserManager.UpdateAsync(user);
+                            if(result.Succeeded)
+                            {
+                                usuarioModel.IdentityUserId = user.Id;
+                            }
+                            else
+                            {
+                                logger.Warn("AtualizarUsuario - Erro ao atualizar usuário!");
+                                stats.Status = HttpStatusCode.BadRequest;
+                                stats.Message = "Erro ao atualizar usuário!";
+
+                                logger.Info("AtualizarUsuario - Finalizado");
+                                return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                            }
                         }
                         else
                         {

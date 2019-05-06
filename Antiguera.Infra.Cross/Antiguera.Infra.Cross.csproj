@@ -92,9 +92,9 @@
     <Compile Include="Infrastructure\ApplicationSignInManager.cs" />
     <Compile Include="Infrastructure\ApplicationUser.cs" />
     <Compile Include="Infrastructure\ApplicationUserManager.cs" />
-    <Compile Include="Migrations\201902102046278_Create-Identity.cs" />
-    <Compile Include="Migrations\201902102046278_Create-Identity.Designer.cs">
-      <DependentUpon>201902102046278_Create-Identity.cs</DependentUpon>
+    <Compile Include="Migrations\201905042326476_Create_Identity.cs" />
+    <Compile Include="Migrations\201905042326476_Create_Identity.Designer.cs">
+      <DependentUpon>201905042326476_Create_Identity.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -104,8 +104,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201902102046278_Create-Identity.resx">
-      <DependentUpon>201902102046278_Create-Identity.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905042326476_Create_Identity.resx">
+      <DependentUpon>201905042326476_Create_Identity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

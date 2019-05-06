@@ -1,8 +1,8 @@
-﻿@model Antiguera.Administrador.Models.LoginModel
+﻿@model Antiguera.Administrador.Models.PasswordRecoveryModel
 
 @{
+    ViewBag.Title = "Recuperar Senha";
     Layout = null;
-    ViewBag.Title = "Login";
 }
 
 <html lang="en">
@@ -26,7 +26,7 @@
         <img src="~/Content/Images/LogoAntiguera2.png" />
     </div>
     <div class="container">
-        @using (Html.BeginForm("Login", "Home", FormMethod.Post, new { @class = "form-signin" }))
+        @using (Html.BeginForm("RecuperarSenha", "Home", FormMethod.Post, new { @class = "form-signin" }))
         {
             if (ViewBag.ErroMensagem != null)
             {
@@ -44,21 +44,13 @@
                 </div>
             }
 
-            <h2 class="form-signin-heading">Painel de Administração</h2>
+            <h2 class="form-signin-heading">Recuperar senha</h2>
 
-            @Html.LabelFor(x => x.UserName, new { @class = "sr-only" })
-            @Html.TextBoxFor(x => x.UserName, new { @id = "Email", @class = "form-control", @autofocus = "autofocus", @placeholder = "Digite seu login ou e-mail", @required = "required" })
-
-            @Html.LabelFor(x => x.Password, new { @class = "sr-only" })
-            @Html.TextBoxFor(x => x.Password, new { @type = "password", @id = "Senha", @class = "form-control", @placeholder = "Digite sua senha" })
-            <div class="checkbox">
-                <label>
-                    @Html.CheckBoxFor(x => x.RememberMe) Lembrar-me
-                </label>
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Acessar</button>
-            </div>
+            @Html.LabelFor(x => x.Email, new { @class = "sr-only" })
+            @Html.TextBoxFor(x => x.Email, new { @type = "email", @id = "Senha", @class = "form-control", @placeholder = "Digite seu e-mail" })
             
-            @Html.ActionLink("Esqueci minha senha", "RecuperarSenha", "Home")
+            <br />
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Enviar link de recuperação de senha</button>
         }
 
     </div> <!-- /container -->
@@ -72,3 +64,4 @@
     @Scripts.Render("~/bundles/Scripts")
 </body>
 </html>
+
