@@ -8,6 +8,14 @@
     width: 50px;
 }
 
+.user-box {
+    display: inline-block;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
 .row .col-alert {
     padding: 10px 100px;
 }

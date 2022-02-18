@@ -1,7 +1,10 @@
 ﻿using Antiguera.Administrador.Controllers.Base;
-using Antiguera.Administrador.Models;
+using Antiguera.Administrador.Models.Tables;
+using Antiguera.Administrador.ViewModels;
+using Antiguera.Dominio.Interfaces.Servicos;
 using System;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using X.PagedList;
@@ -11,303 +14,248 @@ namespace Antiguera.Administrador.Controllers
     [Authorize]
     public class RomController : BaseController
     {
+        public RomController(IAcessoServico acessoServico, IEmuladorServico emuladorServico,
+            IHistoricoServico historicoServico, IJogoServico jogoServico,
+            IProgramaServico programaServico, IRomServico romServico,
+            IUsuarioServico usuarioServico)
+            : base(acessoServico, emuladorServico, historicoServico, jogoServico, programaServico,
+                 romServico, usuarioServico)
+        {
+        }
+
         // GET: Rom
         public ActionResult Index(int pagina = 1)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    if (Session["Mensagem"] != null)
-                    {
-                        ViewBag.Mensagem = Session["Mensagem"];
-                        Session.Clear();
-                    }
-
-                    if (Session["ErroMensagem"] != null)
-                    {
-                        ViewBag.ErroMensagem = Session["ErroMensagem"];
-                        Session.Clear();
-                    }
-
-                    var lista = ListarRoms();
-                    if (Session["Unauthorized"] != null)
-                    {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
-                    }
-                    return View(lista.OrderBy(x => x.Id).ToPagedList(pagina, 4));
-                }
-                else
-                {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
-                }
+                var lista = ListarRoms();
+                return View(lista.OrderBy(x => x.Id).ToPagedList(pagina, 4));
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: ", ex);
+                throw;
             }
         }
 
-        // GET: Cadastrar
+        //POST: Rom/CarregarRoms
+        [HttpPost]
+        public JsonResult CarregarRoms()
+        {
+            var obj = new RomTableModel();
+
+            try
+            {
+                var lista = ListarRoms();
+
+                foreach (var item in lista)
+                {
+                    obj.data.Add(new RomListTableModel()
+                    {
+                        Id = item.Id,
+                        Nome = item.Nome,
+                        Genero = item.Genero,
+                        Created = item.Created,
+                        Modified = item.Modified,
+                        Novo = item.Novo
+                    });
+                }
+
+                obj.recordsFiltered = obj.data.Count();
+                obj.recordsTotal = obj.data.Count();
+
+                return Json(obj);
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                Response.StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError);
+                obj.error = ex.Message;
+                return Json(obj);
+            }
+        }
+
+        // GET: Rom/Cadastrar
         public ActionResult Cadastrar()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    return View();
-                }
-                else
-                {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
-                }
+                return View();
             }
+
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: ", ex);
+                throw;
             }
         }
 
-        // POST: Cadastrar
+        // POST: Rom/Cadastrar
         [HttpPost]
-        public ActionResult Cadastrar(RomModel model)
+        public ActionResult Cadastrar(RomViewModel model)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                if (ModelState.IsValid)
                 {
-                    if (model != null && ModelState.IsValid)
-                    {
-
-                        CadastrarRom(model);
-
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-
-                        return View("Index");
-                    }
-                    else
-                    {
-                        return View(model);
-                    }
+                    CadastrarRom(model);
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
+                    AdicionarModelStateErrors(ModelState);
                 }
+                if (errorsList.Count() > 0)
+                {
+                    return Json(new { success = false, errors = errorsList });
+                }
+
+                return Json(new { success = true, message = "Rom inserida com sucesso!" });
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
             }
         }
 
-        // GET: Detalhes
+        // POST: Rom/Detalhes
+        [HttpPost]
         public ActionResult Detalhes(int id)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                var model = BuscarRomPorId(id);
+
+                if (model != null)
                 {
-                    var model = BuscarRomPorId(id);
-                    if (Session["Unauthorized"] != null)
+                    if (model.Novo == true)
                     {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
-                    }
-
-                    if (model != null)
-                    {
-                        if (model.Novo == true)
-                        {
-                            AtualizarRom(model);
-                        }
-
-                        return View(model);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index");
+                        AtualizarRom(model);
                     }
                 }
-                else
+
+                if (errorsList.Count > 0)
                 {
-                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                    return RedirectToAction("Login", "Home");
+                    return Json(new { success = false, errors = errorsList });
                 }
+
+                return Json(new { success = true, obj = model });
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
             }
         }
 
-        // GET: Editar
+        // GET: Rom/Editar
         public ActionResult Editar(int id)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                var model = BuscarRomPorId(id);
+
+                if (model != null)
                 {
-                    var model = BuscarRomPorId(id);
-                    if (Session["Unauthorized"] != null)
+                    if (model.Novo == true)
                     {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
-                    }
-
-                    if (model != null)
-                    {
-                        if (model.Novo == true)
-                        {
-                            AtualizarRom(model);
-                            Session.Clear();
-                        }
-
-                        return View(model);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index");
+                        AtualizarRom(model);
+                        Session.Clear();
                     }
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                    return RedirectToAction("Login", "Home");
+                    throw new HttpException(Convert.ToInt32(HttpStatusCode.NotFound), errorsList.FirstOrDefault());
                 }
+
+                return View(model);
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: ", ex);
+                throw;
             }
         }
 
-        // POST: Editar
+        // POST: Rom/Editar
         [HttpPost]
-        public ActionResult Editar(RomModel model)
+        public ActionResult Editar(RomViewModel model)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                if (ModelState.IsValid)
                 {
-                    if (model != null && ModelState.IsValid)
-                    {
-
-                        AtualizarRom(model);
-
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-
-                        return View("Index");
-                    }
-                    else
-                    {
-                        return View(model);
-                    }
+                    AtualizarRom(model);
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
+                    AdicionarModelStateErrors(ModelState);
                 }
+
+                if (errorsList.Count() > 0)
+                {
+                    return Json(new { success = false, errors = errorsList });
+                }
+
+                return Json(new { success = true, message = "Rom atualizada com sucesso!" });
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
             }
         }
 
-        // GET: Excluir
+        // POST: Rom/Excluir
+        [HttpPost]
         public ActionResult Excluir(int id)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                if (id > 0)
                 {
-                    if (id == 0)
-                    {
-                        ViewBag.ErroMensagem = "Parâmetros incorretos!";
-                    }
-                    else
-                    {
-                        var model = BuscarRomPorId(id);
+                    var model = BuscarRomPorId(id);
 
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-
-                        if(model != null)
-                        {
-                            ExcluirRom(model);
-                        }
-                        
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
+                    if (model != null)
+                    {
+                        ExcluirRom(model);
                     }
-                    return RedirectToAction("Index");
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
+                    errorsList.Add("Parâmetros incorretos!");
                 }
+
+                if (errorsList.Count > 0)
+                {
+                    return Json(new { success = false, errors = errorsList });
+                }
+
+                return Json(new { success = true, message = "Rom excluída com sucesso!" });
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
             }
         }
     }

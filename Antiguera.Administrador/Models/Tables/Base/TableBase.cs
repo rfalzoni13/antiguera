@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace Antiguera.Administrador.Models.Tables.Base
+{
+    public class TableBase
+    {
+        public int draw { get; set; } = 1;
+
+        public int recordsTotal { get; set; }
+
+        public int recordsFiltered { get; set; }
+
+        public string error { get; set; }
+
+    }
+}

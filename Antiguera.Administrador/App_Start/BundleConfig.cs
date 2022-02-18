@@ -8,59 +8,61 @@ namespace Antiguera.Administrador
         {
             //Scripts
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                        "~/Scripts/jquery/jquery-{version}.js"));
+                        "~/Scripts/libraries/jquery/jquery-{version}.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
-                        "~/Scripts/jqueryvalidate/jquery.validate*"));
+                        "~/Scripts/libraries/jqueryvalidate/jquery.validate*"));
+
+            bundles.Add(new ScriptBundle("~/bundles/jquerymask").Include(
+                        "~/Scripts/libraries/jquerymask/jquery.mask.*"));
 
             // Use a versão em desenvolvimento do Modernizr para desenvolver e aprender. Em seguida, quando estiver
             // pronto para a produção, utilize a ferramenta de build em https://modernizr.com para escolher somente os testes que precisa.
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
-                        "~/Scripts/modernizr-*"));
-
-            bundles.Add(new ScriptBundle("~/bundles/Scripts").Include(
-                      "~/Scripts/site.js"));
+                        "~/Scripts/libraries/modernizr-*"));
 
             bundles.Add(new ScriptBundle("~/bundles/js/admin-lte").Include(
+                      "~/admin-lte/icheck/icheck.js",
                       "~/admin-lte/js/adminlte.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/js/bootstrap").Include(
-                      "~/Scripts/bootstrap/bootstrap.js"));
+                      "~/Scripts/libraries/bootstrap/bootstrap*"));
 
             bundles.Add(new ScriptBundle("~/bundles/js/bootstrap-datepicker").Include(
-                      "~/Scripts/bootstrap-datepicker/bootstrap-datepicker.js"));
+                      "~/Scripts/libraries/bootstrap-datepicker/bootstrap-datepicker.js",
+                      "~/Scripts/libraries/locales/bootstrap-datepicker.pt-BR.js",
+                      "~/Scripts/libraries/locales/bootstrap-datepicker.es.js"
+                      ));
 
+            bundles.Add(new ScriptBundle("~/bundles/js/moment").Include(
+                      "~/Scripts/libraries/moment/moment.js",
+                      "~/Scripts/libraries/moment/moment-with-locales.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/js/core").Include(
+                      "~/Scripts/config/core.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/js/datatable").Include(
+                      "~/Scripts/libraries/datatable/datatable*",
+                      "~/Scripts/libraries/datatable.moment.datetime/datatable.moment.datetime.js"));
 
             //Styles
-            bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/Site.css"));
-
-            bundles.Add(new StyleBundle("~/Content/css/Login").Include(
-                      "~/Content/Login.css"));
-
             bundles.Add(new StyleBundle("~/bundles/bootstrap").Include(
-                      "~/Content/bootstrap/bootstrap.css"));
+                      "~/Content/libraries/bootstrap/bootstrap*"));
 
             bundles.Add(new StyleBundle("~/bundles/admin-lte").Include(
                 "~/admin-lte/css/AdminLTE.css",
-                "~/Content/font-awesome.css"));
+                "~/admin-lte/css/skins/_all-skins.css",
+                "~/admin-lte/icheck/skins/square/_all.css",
+                "~/Content/libraries/font-awesome.css"));
+
+            bundles.Add(new StyleBundle("~/bundles/datatable").Include(
+                      "~/Content/libraries/datatable/datatable*"));
 
             bundles.Add(new StyleBundle("~/bundles/bootstrap-datepicker").Include(
-                      "~/Content/bootstrap-datepicker/bootstrap-datepicker.css"));
+                      "~/Content/libraries/bootstrap-datepicker/bootstrap-datepicker.css"));
 
             bundles.Add(new StyleBundle("~/bundles/admin-lte/skins").Include(
-                "~/admin-lte/css/skins/skin-blue.css",
-                "~/admin-lte/css/skins/skin-blue-light.css",
-                "~/admin-lte/css/skins/skin-black.css",
-                "~/admin-lte/css/skins/skin-black-light.css",
-                "~/admin-lte/css/skins/skin-green.css",
-                "~/admin-lte/css/skins/skin-green-light.css",
-                "~/admin-lte/css/skins/skin-purple.css",
-                "~/admin-lte/css/skins/skin-purple-light.css",
-                "~/admin-lte/css/skins/skin-red.css",
-                "~/admin-lte/css/skins/skin-red-light.css",
-                "~/admin-lte/css/skins/skin-yellow.css",
-                "~/admin-lte/css/skins/skin-yellow-light.css"));
+                "~/admin-lte/css/skins/_all-skins.css"));
         }
     }
 }

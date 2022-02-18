@@ -11,6 +11,8 @@ namespace Antiguera.Administrador
     {
         public static void RegisterRoutes(RouteCollection routes)
         {
+            MapearRotasJavascript(routes);
+
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
@@ -18,6 +20,11 @@ namespace Antiguera.Administrador
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
+        }
+
+        private static void MapearRotasJavascript(RouteCollection routes)
+        {
+            routes.MapRoute("Rotas", "Scripts/rotas.js", new { controller = "Resource", action = "Rotas" });
         }
     }
 }

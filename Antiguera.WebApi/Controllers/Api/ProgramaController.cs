@@ -1,12 +1,9 @@
-﻿using Antiguera.Aplicacao.Interfaces;
-using Antiguera.Dominio.Entidades;
+﻿using Antiguera.Dominio.DTO;
+using Antiguera.Dominio.Interfaces.Servicos;
 using Antiguera.WebApi.Authorization;
-using Antiguera.WebApi.Controllers.Api.Base;
-using Antiguera.WebApi.Models;
-using AutoMapper;
+using Antiguera.WebApi.Utils;
 using NLog;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -16,15 +13,14 @@ namespace Antiguera.WebApi.Controllers.Api
 {
     [CustomAuthorize(Roles = "Administrador")]
     [RoutePrefix("api/antiguera/admin/programa")]
-    public class ProgramaController : BaseController
+    public class ProgramaController : ApiController
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-        private static StatusCode stats = new StatusCode();
-        private readonly IProgramaAppServico _programaAppServico;
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private readonly IProgramaServico _programaServico;
 
-        public ProgramaController(IProgramaAppServico programaAppServico)
+        public ProgramaController(IProgramaServico programaServico)
         {
-            _programaAppServico = programaAppServico;
+            _programaServico = programaServico;
         }
 
         /// <summary>
@@ -35,21 +31,23 @@ namespace Antiguera.WebApi.Controllers.Api
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Listagem de todos os programas</remarks>
         /// <returns></returns>
-        // GET api/antiguera/admin/programa/listartodososprogramas
+        // GET api/antiguera/admin/programa/ListarTodosProgramas
         [HttpGet]
-        [Route("listartodososprogramas")]
+        [Route("ListarTodosProgramas")]
         public HttpResponseMessage ListarTodosProgramas()
         {
-            logger.Info("ListarTodosProgramas - Iniciado");
+            string action = this.ActionContext.ActionDescriptor.ActionName;
+
+            _logger.Info(action + " - Iniciado");
             try
             {
-                var retorno = _programaAppServico.BuscarTodos();
+                var retorno = _programaServico.ListarTodos();
             
                 if (retorno != null && retorno.Count() > 0)
                 {
-                    logger.Info("ListarTodosProgramas - Sucesso!");
+                    _logger.Info(action + " - Sucesso!");
 
-                    logger.Info("ListarTodosProgramas - Finalizado");
+                    _logger.Info(action + " - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.OK, retorno);
                 }
                 else
@@ -58,23 +56,19 @@ namespace Antiguera.WebApi.Controllers.Api
                 }
             }
 
-            catch (HttpResponseException e)
+            catch (HttpResponseException ex)
             {
-                logger.Warn("ListarTodosProgramas - Error: " + e);
-                stats.Status = HttpStatusCode.NotFound;
-                stats.Message = "Nenhum registro encontrado!";
+                if (ex.Response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return ResponseMessageHelper.RetornoExceptionNaoEncontrado(ex, Request, _logger, action, "Nenhum registro encontrado!");
+                }
 
-                logger.Info("ListarTodosProgramas - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.NotFound, stats);
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
             }
 
-            catch (Exception e)
+            catch (Exception ex)
             {
-                logger.Error("ListarTodosProgramas - Error: " + e);
-                stats.Status = HttpStatusCode.InternalServerError;
-                stats.Message = e.Message;
-                logger.Info("ListarTodosProgramas - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
             }
         }
 
@@ -88,23 +82,24 @@ namespace Antiguera.WebApi.Controllers.Api
         /// <remarks>Retorna o programa através do Id do mesmo</remarks>
         /// <param name="Id">Id do programa</param>
         /// <returns></returns>
-        // GET api/antiguera/admin/programa/listarprogramasporid?id={Id}
+        // GET api/antiguera/admin/programa/ListarProgramasPorId?id={Id}
         [HttpGet]
-        [Route("listarprogramasporid")]
+        [Route("ListarProgramasPorId")]
         public HttpResponseMessage ListarProgramasPorId(int Id)
         {
-            logger.Info("ListarProgramasPorId - Iniciado");
+            string action = this.ActionContext.ActionDescriptor.ActionName;
+            _logger.Info(action + " - Iniciado");
             try
             {
                 if(Id > 0)
                 {
-                    var programa = _programaAppServico.BuscarPorId(Id);
+                    var programa = _programaServico.BuscarPorId(Id);
 
                     if (programa != null)
                     {
-                        logger.Info("ListarProgramasPorId - Sucesso!");
+                        _logger.Info(action + " - Sucesso!");
 
-                        logger.Info("ListarProgramasPorId - Finalizado");
+                        _logger.Info(action + " - Finalizado");
                         return Request.CreateResponse(HttpStatusCode.OK, programa);
                     }
                     else
@@ -114,118 +109,24 @@ namespace Antiguera.WebApi.Controllers.Api
                 }
                 else
                 {
-                    logger.Warn("ListarProgramasPorId - Parâmetro incorreto!");
-                    stats.Status = HttpStatusCode.BadRequest;
-                    stats.Message = "Parâmetro incorreto!";
-
-                    logger.Info("ListarProgramasPorId - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                    return ResponseMessageHelper.RetornoRequisicaoInvalida(Request, _logger, action, "Parâmetro incorreto!");
                 }
-                
+
             }
 
-            catch (HttpResponseException e)
+            catch (HttpResponseException ex)
             {
-                logger.Error("ListarProgramasPorId - Error: " + e);
-                stats.Status = HttpStatusCode.NotFound;
-                stats.Message = "Nenhum registro encontrado!";
-
-                logger.Info("ListarProgramasPorId - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.NotFound, stats);
-            }
-
-            catch (Exception e)
-            {
-                logger.Error("ListarProgramasPorId - Error: " + e);
-                stats.Status = HttpStatusCode.InternalServerError;
-                stats.Message = e.Message;
-
-                logger.Info("ListarProgramasPorId - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
-            }
-        }
-
-        /// <summary>
-        /// Pesquisar programa
-        /// </summary>
-        /// <response code="400">Bad Request</response>
-        /// <response code="401">Unauthorized</response>
-        /// <response code="404">Not Found</response>
-        /// <response code="500">Internal Server Error</response>
-        /// <remarks>
-        /// Efetua a pesquisa do programa por qualquer dado inserido
-        /// </remarks>
-        /// <param name="busca">String de busca</param>
-        /// <returns></returns>
-        //GET api/antiguera/admin/programa/pesquisaprograma?busca={busca}
-        [HttpGet]
-        [Route("pesquisaprograma")]
-        public HttpResponseMessage PesquisaPrograma([FromUri] string busca)
-        {
-            logger.Info("PesquisaPrograma - Iniciar");
-            try
-            {
-                if (!string.IsNullOrEmpty(busca))
+                if (ex.Response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    var isNumeric = int.TryParse(busca, out int n);
-
-                    List<Programa> retorno = null;
-
-                    if (isNumeric)
-                    {
-                        retorno = _programaAppServico.BuscaQuery(x => x.Id == n).ToList();
-                    }
-
-                    else
-                    {
-                        retorno = _programaAppServico.BuscaQuery(x => x.Nome.Contains(busca) ||
-                                    x.Nome == busca || RemoveDiacritics(x.Nome).ToLower().Contains(busca.ToLower()) ||
-                                    RemoveDiacritics(x.Developer).ToLower().Contains(busca.ToLower())
-                                    || RemoveDiacritics(x.Descricao).ToLower().Contains(busca.ToLower()) ||
-                                    RemoveDiacritics(x.Publisher).ToLower().Contains(busca.ToLower()) ||
-                                    RemoveDiacritics(x.TipoPrograma).ToLower().Contains(busca.ToLower())).ToList();
-                    }
-
-                    if (retorno != null && retorno.Count > 0)
-                    {
-                        logger.Info("PesquisaPrograma - Sucesso!");
-
-                        logger.Info("PesquisaPrograma - Finalizado");
-                        return Request.CreateResponse(HttpStatusCode.OK, retorno);
-                    }
-
-                    else
-                    {
-                        throw new HttpResponseException(HttpStatusCode.NotFound);
-                    }
+                    return ResponseMessageHelper.RetornoExceptionNaoEncontrado(ex, Request, _logger, action, "Nenhum registro encontrado!");
                 }
-                else
-                {
-                    logger.Warn("PesquisaPrograma - Por favor, preencha os campos corretamente!");
-                    stats.Status = HttpStatusCode.BadRequest;
-                    stats.Message = "Por favor, preencha os campos corretamente!";
 
-                    logger.Info("PesquisaPrograma - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
-                }
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
             }
-            catch (HttpResponseException e)
-            {
-                logger.Warn("PesquisaPrograma - Error: " + e);
-                stats.Status = HttpStatusCode.NotFound;
-                stats.Message = "Nenhum registro encontrado!";
 
-                logger.Info("PesquisaPrograma - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.NotFound, stats);
-            }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                logger.Error("PesquisaPrograma - Error: " + e);
-                stats.Status = HttpStatusCode.InternalServerError;
-                stats.Message = e.Message;
-
-                logger.Info("PesquisaPrograma - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
             }
         }
 
@@ -236,50 +137,40 @@ namespace Antiguera.WebApi.Controllers.Api
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Insere um novo programa passando um objeto no body da requisição no método POST</remarks>
-        /// <param name="programaModel">Objeto do programa</param>
+        /// <param name="programaDto">Objeto do programa</param>
         /// <returns></returns>
-        // POST api/antiguera/admin/programa/inserirprograma
+        // POST api/antiguera/admin/programa/InserirPrograma
         [HttpPost]
-        [Route("inserirprograma")]
-        public HttpResponseMessage InserirPrograma([FromBody] ProgramaModel programaModel)
+        [Route("InserirPrograma")]
+        public HttpResponseMessage InserirPrograma([FromBody] ProgramaDTO programaDto)
         {
-            logger.Info("InserirPrograma - Iniciado");
+            string action = this.ActionContext.ActionDescriptor.ActionName;
+            _logger.Info(action + " - Iniciado");
             try
             {
                 if(ModelState.IsValid)
                 {
-                    programaModel.Created = DateTime.Now;
+                    programaDto.Created = DateTime.Now;
 
-                    programaModel.Novo = true;
+                    programaDto.Novo = true;
 
-                    var programa = Mapper.Map<ProgramaModel, Programa>(programaModel);
+                    _programaServico.Adicionar(programaDto);
 
-                    _programaAppServico.Adicionar(programa);
+                    _logger.Info(action + " - Sucesso!");
 
-                    logger.Info("InserirPrograma - Sucesso!");
+                    _logger.Info(action + " - Finalizado");
 
-                    logger.Info("InserirPrograma - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.Created, "Programa inserido com sucesso!");
                 }
                 else
                 {
-                    logger.Warn("InserirPrograma - Por favor, preencha os campos corretamente!");
-                    stats.Status = HttpStatusCode.BadRequest;
-                    stats.Message = "Por favor, preencha os campos corretamente!";
-
-                    logger.Info("InserirPrograma - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                    return ResponseMessageHelper.RetornoRequisicaoInvalida(Request, _logger, action, "Por favor, preencha os campos corretamente!");
                 }
             }
 
-            catch (Exception e)
+            catch (Exception ex)
             {
-                logger.Error("InserirPrograma - Error: " + e);
-                stats.Status = HttpStatusCode.InternalServerError;
-                stats.Message = e.Message;
-
-                logger.Info("InserirPrograma - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
             }
         }
 
@@ -290,50 +181,40 @@ namespace Antiguera.WebApi.Controllers.Api
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza o programa passando o objeto no body da requisição pelo método PUT</remarks>
-        /// <param name="programaModel">Objeto do programa</param>
+        /// <param name="programaDto">Objeto do programa</param>
         /// <returns></returns>
-        // PUT api/antiguera/admin/programa/atualizarprograma
+        // PUT api/antiguera/admin/programa/AtualizarPrograma
         [HttpPut]
-        [Route("atualizarprograma")]
-        public HttpResponseMessage AtualizarPrograma([FromBody] ProgramaModel programaModel)
+        [Route("AtualizarPrograma")]
+        public HttpResponseMessage AtualizarPrograma([FromBody] ProgramaDTO programaDto)
         {
-            logger.Info("AtualizarPrograma - Iniciado");
+            string action = this.ActionContext.ActionDescriptor.ActionName;
+            _logger.Info(action + " - Iniciado");
             try
             {
                 if(ModelState.IsValid)
                 {
-                    programaModel.Modified = DateTime.Now;
+                    programaDto.Modified = DateTime.Now;
 
-                    programaModel.Novo = false;
+                    programaDto.Novo = false;
 
-                    var programa = Mapper.Map<ProgramaModel, Programa>(programaModel);
+                    _programaServico.Atualizar(programaDto);
 
-                    _programaAppServico.Atualizar(programa);
+                    _logger.Info(action + " - Sucesso!");
 
-                    logger.Info("AtualizarPrograma - Sucesso!");
+                    _logger.Info(action + " - Finalizado");
 
-                    logger.Info("AtualizarPrograma - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.OK, "Programa atualizado com sucesso!");
                 }
                 else
                 {
-                    logger.Warn("AtualizarPrograma - Por favor, preencha os campos corretamente!");
-                    stats.Status = HttpStatusCode.BadRequest;
-                    stats.Message = "Por favor, preencha os campos corretamente!";
-
-                    logger.Info("AtualizarPrograma - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                    return ResponseMessageHelper.RetornoRequisicaoInvalida(Request, _logger, action, "Por favor, preencha os campos corretamente!");
                 }
             }
 
-            catch (Exception e)
+            catch (Exception ex)
             {
-                logger.Error("AtualizarPrograma - Error: " + e);
-                stats.Status = HttpStatusCode.InternalServerError;
-                stats.Message = e.Message;
-
-                logger.Info("AtualizarPrograma - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
             }
         }
 
@@ -344,94 +225,36 @@ namespace Antiguera.WebApi.Controllers.Api
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Exclui o programa passando o objeto no body da requisição pelo método DELETE</remarks>
-        /// <param name="programaModel">Objeto do programa</param>
+        /// <param name="programaDto">Objeto do programa</param>
         /// <returns></returns>
-        // DELETE api/antiguera/admin/programa/excluirprograma
+        // DELETE api/antiguera/admin/programa/ExcluirPrograma
         [HttpDelete]
-        [Route("excluirprograma")]
-        public HttpResponseMessage ExcluirPrograma([FromBody] ProgramaModel programaModel)
+        [Route("ExcluirPrograma")]
+        public HttpResponseMessage ExcluirPrograma([FromBody] ProgramaDTO programaDto)
         {
-            logger.Info("ExcluirPrograma - Iniciado");
+            string action = this.ActionContext.ActionDescriptor.ActionName;
+            _logger.Info(action + " - Iniciado");
             try
             {
                 if(ModelState.IsValid)
                 {
-                    var programa = Mapper.Map<ProgramaModel, Programa>(programaModel);
+                    _programaServico.Apagar(programaDto);
 
-                    _programaAppServico.Apagar(programa);
+                    _logger.Info(action + " - Sucesso!");
 
-                    logger.Info("ExcluirPrograma - Sucesso!");
+                    _logger.Info(action + " - Finalizado");
 
-                    logger.Info("ExcluirPrograma - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.OK, "Programa excluído com sucesso!");
                 }
                 else
                 {
-                    logger.Warn("ExcluirPrograma - Por favor, preencha os campos corretamente!");
-                    stats.Status = HttpStatusCode.BadRequest;
-                    stats.Message = "Por favor, preencha os campos corretamente!";
-
-                    logger.Info("ExcluirPrograma - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                    return ResponseMessageHelper.RetornoRequisicaoInvalida(Request, _logger, action, "Por favor, preencha os campos corretamente!");
                 }
             }
 
-            catch (Exception e)
+            catch (Exception ex)
             {
-                logger.Error("ExcluirPrograma - Error: " + e);
-                stats.Status = HttpStatusCode.InternalServerError;
-                stats.Message = e.Message;
-
-                logger.Info("ExcluirPrograma - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
-            }
-        }
-
-        /// <summary>
-        /// Apagar programas
-        /// </summary>
-        /// <response code="400">Bad Request</response>
-        /// <response code="401">Unauthorized</response>
-        /// <response code="500">Internal Server Error</response>
-        /// <remarks>Deleta uma lista de programas passando um array de Ids no body da requisição</remarks>
-        /// <param name="Ids">Ids de programas</param>
-        /// <returns></returns>
-        // DELETE api/antiguera/admin/programa/apagarprogramas
-        [HttpDelete]
-        [Route("apagarprogramas")]
-        public HttpResponseMessage ApagarProgramas([FromBody] int[] Ids)
-        {
-            logger.Info("ApagarProgramas - Iniciado");
-            try
-            {
-                if(Ids.Count() > 0)
-                {
-                    _programaAppServico.ApagarProgramas(Ids);
-
-                    logger.Info("ApagarProgramas - Sucesso!");
-
-                    logger.Info("ApagarProgramas - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.OK, "Programa(s) excluído(s) com sucesso!");
-                }
-                else
-                {
-                    logger.Warn("ApagarProgramas - Array preenchido incorretamente!");
-                    stats.Status = HttpStatusCode.BadRequest;
-                    stats.Message = "Array preenchido incorretamente!";
-
-                    logger.Info("ApagarProgramas - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
-                }
-            }
-
-            catch (Exception e)
-            {
-                logger.Error("ApagarProgramas - Error: " + e);
-                stats.Status = HttpStatusCode.InternalServerError;
-                stats.Message = e.Message;
-
-                logger.Info("ApagarProgramas - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
             }
         }
     }

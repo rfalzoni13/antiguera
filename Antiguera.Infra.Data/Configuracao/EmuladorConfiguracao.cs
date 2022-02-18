@@ -7,23 +7,28 @@ namespace Antiguera.Infra.Data.Configuracao
     {
         public EmuladorConfiguracao()
         {
-            HasKey(e => e.Id).Property(e => e.Id).HasColumnOrder(1);
+            HasKey(e => e.Id).Property(e => e.Id);
 
-            Property(e => e.Nome).IsRequired().HasMaxLength(100).HasColumnOrder(2);
+            Property(e => e.Nome).IsRequired();
 
-            Property(e => e.DataLancamento).IsRequired().HasColumnOrder(3);
+            Property(e => e.Lancamento).IsRequired();
 
-            Property(e => e.Descricao).HasColumnType("text").IsRequired().HasColumnOrder(4);
+            Property(e => e.Descricao).HasColumnType("text").IsRequired();
 
-            Property(e => e.Console).HasMaxLength(50).IsRequired().HasColumnOrder(5);
+            Property(e => e.Console).IsRequired();
 
-            Property(e => e.UrlArquivo).HasMaxLength(200).IsOptional().HasColumnOrder(6);
+            Property(e => e.nomeArquivo).IsOptional();
 
-            Property(e => e.Novo).IsOptional().HasColumnOrder(7);
+            Property(e => e.hashArquivo).IsOptional();
 
-            Property(e => e.Created).IsRequired().HasColumnOrder(8);
+            Property(e => e.Novo).IsOptional();
 
-            Property(e => e.Modified).IsOptional().HasColumnOrder(9);
+            Property(e => e.Created).IsRequired();
+
+            Property(e => e.Modified).IsOptional();
+
+            HasMany(e => e.Roms).WithRequired()
+                .HasForeignKey(r => r.EmuladorId).WillCascadeOnDelete();
         }
     }
 }

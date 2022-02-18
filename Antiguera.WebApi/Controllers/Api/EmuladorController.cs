@@ -1,12 +1,9 @@
-﻿using Antiguera.Aplicacao.Interfaces;
-using Antiguera.Dominio.Entidades;
+﻿using Antiguera.Dominio.DTO;
+using Antiguera.Dominio.Interfaces.Servicos;
 using Antiguera.WebApi.Authorization;
-using Antiguera.WebApi.Controllers.Api.Base;
-using Antiguera.WebApi.Models;
-using AutoMapper;
+using Antiguera.WebApi.Utils;
 using NLog;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -16,15 +13,14 @@ namespace Antiguera.WebApi.Controllers.Api
 {
     [CustomAuthorize(Roles = "Administrador")]
     [RoutePrefix("api/antiguera/admin/emulador")]
-    public class EmuladorController : BaseController
+    public class EmuladorController : ApiController
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-        private static StatusCode stats = new StatusCode();
-        private readonly IEmuladorAppServico _emuladorAppServico;
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private readonly IEmuladorServico _emuladorServico;
 
-        public EmuladorController(IEmuladorAppServico emuladorAppServico)
+        public EmuladorController(IEmuladorServico emuladorServico)
         {
-            _emuladorAppServico = emuladorAppServico;
+            _emuladorServico = emuladorServico;
         }
 
         /// <summary>
@@ -35,21 +31,22 @@ namespace Antiguera.WebApi.Controllers.Api
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Listagem de todos os emuladores</remarks>
         /// <returns></returns>
-        // GET api/antiguera/admin/emulador/listartodososemuladores
+        // GET api/antiguera/admin/emulador/ListarTodosEmuladores
         [HttpGet]
-        [Route("listartodososemuladores")]
+        [Route("ListarTodosEmuladores")]
         public HttpResponseMessage ListarTodosEmuladores()
         {
-            logger.Info("ListarTodosEmuladores - Iniciado");
+            string action = this.ActionContext.ActionDescriptor.ActionName;
+            _logger.Info(action + " - Iniciado");
             try
             {
-                var retorno = _emuladorAppServico.BuscarTodos();
+                var retorno = _emuladorServico.ListarTodos();
 
                 if (retorno != null && retorno.Count() > 0)
                 {
-                    logger.Info("ListarTodosEmuladores - Sucesso!");
+                    _logger.Info(action + " - Sucesso!");
 
-                    logger.Info("ListarTodosEmuladores - Finalizado");
+                    _logger.Info(action + " - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.OK, retorno);
                 }
                 else
@@ -58,22 +55,19 @@ namespace Antiguera.WebApi.Controllers.Api
                 }
             }
 
-            catch (HttpResponseException e)
+            catch (HttpResponseException ex)
             {
-                logger.Warn("ListarTodosEmuladores - Error: " + e);
-                stats.Status = HttpStatusCode.NotFound;
-                stats.Message = "Nenhum registro encontrado!";
-                return Request.CreateResponse(HttpStatusCode.NotFound, stats);
+                if (ex.Response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return ResponseMessageHelper.RetornoExceptionNaoEncontrado(ex, Request, _logger, action, "Nenhum registro encontrado!");
+                }
+
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
             }
 
-            catch (Exception e)
+            catch (Exception ex)
             {
-                logger.Error("ListarTodosEmuladores - Error: " + e);
-                stats.Status = HttpStatusCode.InternalServerError;
-                stats.Message = e.Message;
-
-                logger.Info("ListarTodosEmuladores - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
             }
         }
 
@@ -87,23 +81,24 @@ namespace Antiguera.WebApi.Controllers.Api
         /// <remarks>Retorna o emulador através do Id do mesmo</remarks>
         /// <param name="Id">Id do emulador</param>
         /// <returns></returns>
-        // GET api/antiguera/admin/emulador/listaremuladoresporid?id={Id}
+        // GET api/antiguera/admin/emulador/ListarEmuladoresPorId?id={Id}
         [HttpGet]
-        [Route("listaremuladoresporid")]
+        [Route("ListarEmuladoresPorId")]
         public HttpResponseMessage ListarEmuladoresPorId(int Id)
         {
-            logger.Info("ListarEmuladoresPorId - Iniciado");
+            string action = this.ActionContext.ActionDescriptor.ActionName;
+            _logger.Info(action + " - Iniciado");
             try
             {
                 if(Id > 0)
                 {
-                    var emulador = _emuladorAppServico.BuscarPorId(Id);
+                    var emulador = _emuladorServico.BuscarPorId(Id);
 
                     if (emulador != null)
                     {
-                        logger.Info("ListarEmuladoresPorId - Sucesso!");
+                        _logger.Info(action + " - Sucesso!");
 
-                        logger.Info("ListarEmuladoresPorId - Finalizado");
+                        _logger.Info(action + " - Finalizado");
                         return Request.CreateResponse(HttpStatusCode.OK, emulador);
                     }
                     else
@@ -113,115 +108,23 @@ namespace Antiguera.WebApi.Controllers.Api
                 }
                 else
                 {
-                    logger.Warn("ListarEmuladoresPorId - Parâmetro incorreto!");
-                    stats.Status = HttpStatusCode.BadRequest;
-                    stats.Message = "Parâmetro incorreto!";
-
-                    logger.Info("ListarEmuladoresPorId - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                    return ResponseMessageHelper.RetornoRequisicaoInvalida(Request, _logger, action, "Parâmetro incorreto!");
                 }
             }
 
-            catch (HttpResponseException e)
+            catch (HttpResponseException ex)
             {
-                logger.Error("ListarEmuladoresPorId - Error: " + e);
-                stats.Status = HttpStatusCode.NotFound;
-                stats.Message = "Nenhum registro encontrado!";
-
-                logger.Info("ListarEmuladoresPorId - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.NotFound, stats);
-            }
-
-            catch (Exception e)
-            {
-                logger.Error("ListarEmuladoresPorId - Error: " + e);
-                stats.Status = HttpStatusCode.InternalServerError;
-                stats.Message = e.Message;
-
-                logger.Info("ListarEmuladoresPorId - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
-            }
-        }
-
-        /// <summary>
-        /// Pesquisar emulador
-        /// </summary>
-        /// <response code="400">Bad Request</response>
-        /// <response code="401">Unauthorized</response>
-        /// <response code="404">Not Found</response>
-        /// <response code="500">Internal Server Error</response>
-        /// <remarks>
-        /// Efetua a pesquisa do emulador por qualquer dado inserido
-        /// </remarks>
-        /// <param name="busca">String de busca</param>
-        /// <returns></returns>
-        //GET api/antiguera/admin/emulador/pesquisaemulador?busca={busca}
-        [HttpGet]
-        [Route("pesquisaemulador")]
-        public HttpResponseMessage PesquisaEmulador([FromUri] string busca)
-        {
-            logger.Info("PesquisaEmulador - Iniciar");
-            try
-            {
-                if (!string.IsNullOrEmpty(busca))
+                if(ex.Response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    var isNumeric = int.TryParse(busca, out int n);
-
-                    List<Emulador> retorno = null;
-
-                    if (isNumeric)
-                    {
-                        retorno = _emuladorAppServico.BuscaQuery(x => x.Id == n).ToList();
-                    }
-
-                    else
-                    {
-                        retorno = _emuladorAppServico.BuscaQuery(x => x.Nome.Contains(busca) ||
-                                    x.Nome == busca || RemoveDiacritics(x.Nome).ToLower().Contains(busca.ToLower()) ||
-                                    x.Console.Contains(busca) || RemoveDiacritics(x.Console).ToLower().Contains(busca.ToLower())
-                                    || RemoveDiacritics(x.Descricao).ToLower().Contains(busca.ToLower())).ToList();
-                    }
-
-                    if (retorno != null && retorno.Count > 0)
-                    {
-                        logger.Info("PesquisaEmulador - Sucesso!");
-
-                        logger.Info("PesquisaEmulador - Finalizado");
-                        return Request.CreateResponse(HttpStatusCode.OK, retorno);
-                    }
-
-                    else
-                    {
-                        throw new HttpResponseException(HttpStatusCode.NotFound);
-                    }
+                    return ResponseMessageHelper.RetornoExceptionNaoEncontrado(ex, Request, _logger, action, "Nenhum registro encontrado!");
                 }
-                else
-                {
-                    logger.Warn("PesquisaEmulador - Por favor, preencha os campos corretamente!");
-                    stats.Status = HttpStatusCode.BadRequest;
-                    stats.Message = "Por favor, preencha os campos corretamente!";
 
-                    logger.Info("PesquisaEmulador - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
-                }
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
             }
-            catch (HttpResponseException e)
-            {
-                logger.Warn("PesquisaEmulador - Error: " + e);
-                stats.Status = HttpStatusCode.NotFound;
-                stats.Message = "Nenhum registro encontrado!";
 
-                logger.Info("PesquisaEmulador - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.NotFound, stats);
-            }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                logger.Error("PesquisaEmulador - Error: " + e);
-                stats.Status = HttpStatusCode.InternalServerError;
-                stats.Message = e.Message;
-
-                logger.Info("PesquisaEmulador - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
             }
         }
 
@@ -232,50 +135,40 @@ namespace Antiguera.WebApi.Controllers.Api
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Insere um novo emulador passando um objeto no body da requisição no método POST</remarks>
-        /// <param name="emuladorModel">Objeto do emulador</param>
+        /// <param name="emuladorDto">Objeto do emulador</param>
         /// <returns></returns>
-        // POST api/antiguera/admin/emulador/inseriremulador
+        // POST api/antiguera/admin/emulador/InserirEmulador
         [HttpPost]
-        [Route("inseriremulador")]
-        public HttpResponseMessage InserirEmulador([FromBody] EmuladorModel emuladorModel)
+        [Route("InserirEmulador")]
+        public HttpResponseMessage InserirEmulador([FromBody] EmuladorDTO emuladorDto)
         {
-            logger.Info("InserirEmulador - Iniciado");
+            string action = this.ActionContext.ActionDescriptor.ActionName;
+            _logger.Info(action + " - Iniciado");
             try
             {
                 if(ModelState.IsValid)
                 {
-                    emuladorModel.Created = DateTime.Now;
+                    emuladorDto.Created = DateTime.Now;
 
-                    emuladorModel.Novo = true;
+                    emuladorDto.Novo = true;
 
-                    var emulador = Mapper.Map<EmuladorModel, Emulador>(emuladorModel);
+                    _emuladorServico.Adicionar(emuladorDto);
 
-                    _emuladorAppServico.Adicionar(emulador);
+                    _logger.Info(action + " - Sucesso!");
 
-                    logger.Info("InserirEmulador - Sucesso!");
+                    _logger.Info(action + " - Finalizado");
 
-                    logger.Info("InserirEmulador - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.Created, "Emulador inserido com sucesso!");
                 }
                 else
                 {
-                    logger.Warn("InserirEmulador - Por favor, preencha os campos corretamente!");
-                    stats.Status = HttpStatusCode.BadRequest;
-                    stats.Message = "Por favor, preencha os campos corretamente!";
-
-                    logger.Info("InserirEmulador - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                    return ResponseMessageHelper.RetornoRequisicaoInvalida(Request, _logger, action, "Por favor, preencha os campos corretamente!");
                 }
             }
 
-            catch (Exception e)
+            catch (Exception ex)
             {
-                logger.Error("InserirEmulador - Error: " + e);
-                stats.Status = HttpStatusCode.InternalServerError;
-                stats.Message = e.Message;
-
-                logger.Info("InserirEmulador - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
             }
         }
 
@@ -286,50 +179,40 @@ namespace Antiguera.WebApi.Controllers.Api
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza o emulador passando o objeto no body da requisição pelo método PUT</remarks>
-        /// <param name="emuladorModel">Objeto do emulador</param>
+        /// <param name="emuladorDto">Objeto do emulador</param>
         /// <returns></returns>
-        // PUT api/antiguera/admin/emulador/atualizaremulador
+        // PUT api/antiguera/admin/emulador/AtualizarEmulador
         [HttpPut]
-        [Route("atualizaremulador")]
-        public HttpResponseMessage AtualizarEmulador([FromBody] EmuladorModel emuladorModel)
+        [Route("AtualizarEmulador")]
+        public HttpResponseMessage AtualizarEmulador([FromBody] EmuladorDTO emuladorDto)
         {
-            logger.Info("AtualizarEmulador - Iniciado");
+            string action = this.ActionContext.ActionDescriptor.ActionName;
+            _logger.Info(action + " - Iniciado");
             try
             {
                 if (ModelState.IsValid)
                 {
-                    emuladorModel.Modified = DateTime.Now;
+                    emuladorDto.Modified = DateTime.Now;
 
-                    emuladorModel.Novo = false;
+                    emuladorDto.Novo = false;
 
-                    var emulador = Mapper.Map<EmuladorModel, Emulador>(emuladorModel);
+                    _emuladorServico.Atualizar(emuladorDto);
 
-                    _emuladorAppServico.Atualizar(emulador);
+                    _logger.Info(action + " - Sucesso!");
 
-                    logger.Info("AtualizarEmulador - Sucesso!");
+                    _logger.Info(action + " - Finalizado");
 
-                    logger.Info("AtualizarEmulador - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.OK, "Emulador atualizado com sucesso!");
                 }
                 else
                 {
-                    logger.Warn("AtualizarEmulador - Por favor, preencha os campos corretamente!");
-                    stats.Status = HttpStatusCode.BadRequest;
-                    stats.Message = "Por favor, preencha os campos corretamente!";
-
-                    logger.Info("AtualizarEmulador - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                    return ResponseMessageHelper.RetornoRequisicaoInvalida(Request, _logger, action, "Por favor, preencha os campos corretamente!");
                 }
             }
 
-            catch (Exception e)
+            catch (Exception ex)
             {
-                logger.Error("AtualizarEmulador - Error: " + e);
-                stats.Status = HttpStatusCode.InternalServerError;
-                stats.Message = e.Message;
-
-                logger.Info("AtualizarEmulador - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
             }
         }
 
@@ -340,94 +223,36 @@ namespace Antiguera.WebApi.Controllers.Api
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Exclui o emulador passando o objeto no body da requisição pelo método DELETE</remarks>
-        /// <param name="emuladorModel">Objeto do emulador</param>
+        /// <param name="emuladorDto">Objeto do emulador</param>
         /// <returns></returns>
-        // DELETE api/antiguera/admin/emulador/excluiremulador
+        // DELETE api/antiguera/admin/emulador/ExcluirEmulador
         [HttpDelete]
-        [Route("excluiremulador")]
-        public HttpResponseMessage ExcluirEmulador([FromBody] EmuladorModel emuladorModel)
+        [Route("ExcluirEmulador")]
+        public HttpResponseMessage ExcluirEmulador([FromBody] EmuladorDTO emuladorDto)
         {
-            logger.Info("ExcluirEmulador - Iniciado");
+            string action = this.ActionContext.ActionDescriptor.ActionName;
+            _logger.Info(action + " - Iniciado");
             try
             {
                 if(ModelState.IsValid)
                 {
-                    var emulador = Mapper.Map<EmuladorModel, Emulador>(emuladorModel);
+                    _emuladorServico.Apagar(emuladorDto);
 
-                    _emuladorAppServico.Apagar(emulador);
+                    _logger.Info(action + " - Sucesso!");
 
-                    logger.Info("ExcluirEmulador - Sucesso!");
+                    _logger.Info(action + " - Finalizado");
 
-                    logger.Info("ExcluirEmulador - Finalizado");
                     return Request.CreateResponse(HttpStatusCode.OK, "Emulador excluído com sucesso!");
                 }
                 else
                 {
-                    logger.Warn("ExcluirEmulador - Por favor, preencha os campos corretamente!");
-                    stats.Status = HttpStatusCode.BadRequest;
-                    stats.Message = "Por favor, preencha os campos corretamente!";
-
-                    logger.Info("ExcluirEmulador - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
+                    return ResponseMessageHelper.RetornoRequisicaoInvalida(Request, _logger, action, "Por favor, preencha os campos corretamente!");
                 }
             }
 
-            catch (Exception e)
+            catch (Exception ex)
             {
-                logger.Error("ExcluirEmulador - Error: " + e);
-                stats.Status = HttpStatusCode.InternalServerError;
-                stats.Message = e.Message;
-
-                logger.Info("ExcluirEmulador - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
-            }
-        }
-
-        /// <summary>
-        /// Apagar emuladores
-        /// </summary>
-        /// <response code="400">Bad Request</response>
-        /// <response code="401">Unauthorized</response>
-        /// <response code="500">Internal Server Error</response>
-        /// <remarks>Deleta uma lista de emuladores passando um array de Ids no body da requisição</remarks>
-        /// <param name="Ids">Ids de emuladores</param>
-        /// <returns></returns>
-        // DELETE api/antiguera/admin/emulador/apagaremuladores
-        [HttpDelete]
-        [Route("apagaremuladores")]
-        public HttpResponseMessage ApagarEmuladores([FromBody] int[] Ids)
-        {
-            logger.Info("ApagarEmuladores - Iniciado");
-            try
-            {
-                if(Ids.Count() > 0)
-                {
-                    _emuladorAppServico.ApagarEmuladores(Ids);
-
-                    logger.Info("ApagarEmuladores - Sucesso!");
-
-                    logger.Info("ApagarEmuladores - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.OK, "Emulador(es) excluído(s) com sucesso!");
-                }
-                else
-                {
-                    logger.Warn("ApagarEmuladores - Array preenchido incorretamente!");
-                    stats.Status = HttpStatusCode.BadRequest;
-                    stats.Message = "Array preenchido incorretamente!";
-
-                    logger.Info("ApagarEmuladores - Finalizado");
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, stats);
-                }
-            }
-
-            catch (Exception e)
-            {
-                logger.Error("ApagarEmuladores - Error: " + e);
-                stats.Status = HttpStatusCode.InternalServerError;
-                stats.Message = e.Message;
-
-                logger.Info("ApagarEmuladores - Finalizado");
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, stats);
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
             }
         }
     }

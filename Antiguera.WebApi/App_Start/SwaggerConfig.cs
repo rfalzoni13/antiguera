@@ -37,7 +37,7 @@ namespace Antiguera.WebApi
                         // hold additional metadata for an API. Version and title are required but you can also provide
                         // additional fields by chaining methods off SingleApiVersion.
                         //
-                        c.SingleApiVersion("v1", "Antiguera").Description("Documentação Swagger da Api Antiguera");
+                        c.SingleApiVersion("v1", "Antiguera Api").Description("Documentação Swagger da Api Antiguera");
 
                         // If you want the output Swagger docs to be indented properly, enable the "PrettyPrint" option.
                         //
@@ -172,6 +172,7 @@ namespace Antiguera.WebApi
                         //
                         //c.DocumentFilter<ApplyDocumentVendorExtensions>();
                         c.DocumentFilter<AuthTokenOperation>();
+                        c.DocumentFilter<DocumentOperation>();
 
                         // In contrast to WebApi, Swagger 2.0 does not include the query string component when mapping a URL
                         // to an action. As a result, Swashbuckle will raise an exception if it encounters multiple actions
@@ -196,7 +197,7 @@ namespace Antiguera.WebApi
                         // The file must be included in your project as an "Embedded Resource", and then the resource's
                         // "Logical Name" is passed to the method as shown below.
                         //
-                        //c.InjectStylesheet(containingAssembly, "Swashbuckle.Dummy.SwaggerExtensions.testStyles1.css");
+                        c.InjectStylesheet(thisAssembly, "Antiguera.WebApi.Content.Site.css");
 
                         // Use the "InjectJavaScript" option to invoke one or more custom JavaScripts after the swagger-ui
                         // has loaded. The file must be included in your project as an "Embedded Resource", and then the resource's
@@ -233,7 +234,7 @@ namespace Antiguera.WebApi
                         // in your project as an "Embedded Resource", and then the resource's "Logical Name" is passed to
                         // the method as shown below.
                         //
-                        //c.CustomAsset("index", containingAssembly, "YourWebApiProject.SwaggerExtensions.index.html");
+                        c.CustomAsset("index", thisAssembly, "Antiguera.WebApi.Views.index.html");
 
                         // If your API has multiple versions and you've applied the MultipleApiVersions setting
                         // as described above, you can also enable a select box in the swagger-ui, that displays
@@ -261,6 +262,14 @@ namespace Antiguera.WebApi
         }
     }
 
+    public class DocumentOperation : IDocumentFilter
+    {
+        public void Apply(SwaggerDocument swaggerDoc, SchemaRegistry schemaRegistry, IApiExplorer apiExplorer)
+        {
+            swaggerDoc.basePath = "https://antiguera.com/api/antiguera";
+        }
+    }
+
     public class AuthTokenOperation : IDocumentFilter
     {
         /// <summary>
@@ -271,15 +280,15 @@ namespace Antiguera.WebApi
         /// <param name="apiExplorer">The api explorer.</param>
         public void Apply(SwaggerDocument swaggerDoc, SchemaRegistry schemaRegistry, IApiExplorer apiExplorer)
         {
-            swaggerDoc.paths.Add("/api/antiguera/token", new PathItem
+            swaggerDoc.paths.Add("/api/antiguera/Login", new PathItem
             {
                 post = new Operation
                 {
-                    summary = "Token de acesso",
+                    summary = "Bearer Token de acesso",
 
-                    description = "Token de autorização para endpoints",
+                    description = "Bearer Token de autorização para endpoints",
 
-                    tags = new List<string> { "Token" },
+                    tags = new List<string> { "Autenticação" },
                     consumes = new List<string>
                     {
                         "application/x-www-form-urlencoded"
@@ -360,7 +369,7 @@ namespace Antiguera.WebApi
             {
                 operation.parameters.Add(new Parameter
                 {
-                    name = "Authorization",
+                    name = "Autorização",
                     @in = "header",
                     description = "Token de acesso",
                     required = false,

@@ -3,18 +3,20 @@ using System.Collections.Generic;
 
 namespace Antiguera.Dominio.Interfaces.Servicos.Base
 {
-    public interface IServicoBase<T> : IDisposable where T : class
+    public interface IServicoBase<TDTO, TEntity> : IDisposable 
+        where TDTO : class, new()
+        where TEntity : class, new()
     {
-        void Adicionar(T obj);
+        void Adicionar(TDTO obj);
 
-        void Atualizar(T obj);
+        void Atualizar(TDTO obj);
 
-        void Apagar(T obj);
+        void Apagar(TDTO obj);
 
-        T BuscarPorId(int id);
+        TDTO BuscarPorId(int id);
 
-        IEnumerable<T> BuscarTodos();
+        IEnumerable<TDTO> ListarPorPesquisa(Func<TEntity, bool> predicate);
 
-        IEnumerable<T> BuscaQuery(Func<T, bool> predicate);
+        IEnumerable<TDTO> ListarTodos();
     }
 }

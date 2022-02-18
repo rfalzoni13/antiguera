@@ -1,6 +1,5 @@
 ﻿body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+    background-color: #ebebeb;
 }
 
 .container-image {
@@ -8,86 +7,34 @@
     margin: auto;
 }
 
-    .container-image img {
-        width: 300px;
-    }
-
-.form-signin {
-    max-width: 400px;
-    padding: 15px;
-    margin: 20px auto;
+.login-box, .register-box {
+    margin: 5% auto 2%;
 }
 
-.form-signin-heading {
-    text-align: center;
+.img-logo {
+    padding: 0 20px;
 }
 
-.form-signin .form-signin-heading,
-.form-signin .checkbox {
-    margin-bottom: 30px;
+.container-image img {
+    width: 300px;
 }
-
-.form-signin .checkbox {
-    font-weight: normal;
-}
-
-.form-signin .form-control {
-    position: relative;
-    height: auto;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    padding: 10px;
-    font-size: 16px;
-}
-
-    .form-signin .form-control:focus {
-        z-index: 2;
-    }
-
-.form-signin input[type="text"] {
-    margin-bottom: 30px;
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-}
-
-.form-signin input[type="password"] {
-    margin-bottom: 10px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-}
-
-.form-admin {
-    margin: 0;
-}
-
-    .form-admin input {
-        margin-bottom: 20px;
-        height: auto;
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        box-sizing: border-box;
-        padding: 8px 10px;
-        font-size: 14px;
-    }
-
-    .form-admin button {
-        margin-top: 35px;
-    }
-
-    .form-admin a.btn-block {
-        margin-top: 35px;
-    }
 
 .checkbox .btn-block {
     margin-top: 30px;
 }
 
-.alert {
+.alert-danger .validation-summary-errors ul {
+    list-style: none;
+    display: inline-block;
+    padding: 0 40px;
+}
+
+.alert-danger .validation-summary-errors ul li {
     text-align: center;
+}
+
+.alert {
     font-size: 15px;
-    max-height: 100px;
-    overflow: auto;
 }
 
     .alert .close {

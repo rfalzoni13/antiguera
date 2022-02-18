@@ -1,15 +1,13 @@
-﻿@model Antiguera.Administrador.Models.UsuarioModel
+﻿@model Antiguera.Administrador.ViewModels.UsuarioViewModel
 
 @{
     ViewBag.Title = "Editar usuário";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
-    .col-md-4 p {
-        margin: 5px 75px -25px;
-    }
-</style>
+@section styles {
+    <link rel="stylesheet" href="@Url.Content("~/Content/libraries/cropper/cropper.min.css")" />
+}
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -27,105 +25,76 @@
 
     <section class="content container-fluid">
         <div class="container">
-            @using (Html.BeginForm("Editar", "Usuario", FormMethod.Post, new { @class = "form-admin", enctype = "multipart/form-data" }))
-            {
-                if (ViewBag.ErroMensagem != null)
+            @Html.HiddenFor(x => x.Id)
+            <div class="row">
+                <div class="col-md-2">
+                    <img class="img-responsive img-bordered user-box" id="ImgFoto" src="/Content/Images/Profile/@(!string.IsNullOrEmpty(Model.Foto) ? Model.Foto : "user.png")" />
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-2">
+                    @Html.TextBoxFor(x => x.FileFoto, new { @type = "file", @style = "display:none" })
+                    <button type="button" id="BtnFoto" class="btn btn-block btn-primary">Inserir foto</button>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Nome)
+                    @Html.TextBoxFor(x => x.Nome, new { @class = "form-control", @autofocus = "autofocus" })
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Email)
+                    @Html.TextBoxFor(x => x.Email, new { @class = "form-control" })
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Sexo)
+                    @Html.DropDownListFor(x => x.Sexo, Model.Sexos, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Login)
+                    @Html.TextBoxFor(x => x.Login, new { @class = "form-control" })
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                @if (Model.ListaAcessos != null)
                 {
-                    <div class="col-md-11">
-                        <div class="alert alert-danger">
-                            <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
-                            @ViewBag.ErroMensagem
-                        </div>
+                    <div class="col-md-3">
+                        @Html.LabelFor(x => x.AcessoId)
+                        @Html.DropDownListFor(x => x.AcessoId, Model.ListaAcessos, new { @class = "form-control" })
                     </div>
                 }
-
-                if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
-                {
-                    <div class="col-md-11">
-                        <div class="alert alert-danger">
-                            <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
-                            @Html.ValidationSummary(false, "Ocorreram os seguintes erros: ")
-                        </div>
-                    </div>
-                }
-
-                @Html.HiddenFor(x => x.Id)
-                <div class="row">
-                    <div class="col-md-3">
-                        @Html.LabelFor(x => x.Nome)
-                        @Html.TextBoxFor(x => x.Nome, new { @class = "form-control", @autofocus = "autofocus" })
-                    </div>
-                    <div class="col-md-3">
-                        @Html.LabelFor(x => x.Email)
-                        @Html.TextBoxFor(x => x.Email, new { @class = "form-control" })
-                    </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-2">
+                    <button id="Salvar" class="btn btn-success btn-block" type="submit">Salvar</button>
                 </div>
-                <div class="row">
-                    <div class="col-md-3">
-                        @Html.LabelFor(x => x.Sexo)
-                        @Html.DropDownListFor(x => x.Sexo, Model.Sexos, new { @class = "form-control" })
-                    </div>
-                    <div class="col-md-3">
-                        @Html.LabelFor(x => x.Login)
-                        @Html.TextBoxFor(x => x.Login, new { @class = "form-control" })
-                    </div>
+                <div class="col-md-2">
+                    @Html.ActionLink("Voltar", "Index", null, new { @class = "btn btn-default btn-block" })
                 </div>
-                <div class="row">
-                    @if (Model.ListaAcessos != null)
-                    {
-                        <div class="col-md-3">
-                            @Html.LabelFor(x => x.AcessoId)
-                            @Html.DropDownListFor(x => x.AcessoId, Model.ListaAcessos, new { @class = "form-control" })
-                        </div>
-                    }
-                </div>
-                <br />
-                <div class="row">
-                    @if (!string.IsNullOrEmpty(Model.UrlFotoUpload))
-                    {
-                    <div class="col-md-4">
-                        @Html.LabelFor(x => x.FileFoto)
-                        @Html.TextBoxFor(x => x.FileFoto, new { @type = "file", @style = "display:none" })
-                        <p id="textFoto">@(Model.UrlFotoUpload.Split('/')[4])</p>
-                        <button type="button" id="ClickFoto" class="btn btn-primary">Alterar</button>
-                    </div>
-                    }
-                    else
-                    {
-                    <div class="col-md-4">
-                        @Html.LabelFor(x => x.FileFoto)
-                        @Html.TextBoxFor(x => x.FileFoto, new { @type = "file" })
-                    </div>
-                    }
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-md-2">
-                        <button class="btn btn-success btn-block" type="submit">Salvar</button>
-                    </div>
-                    <div class="col-md-2">
-                        @Html.ActionLink("Voltar", "Index", null, new { @class = "btn btn-default btn-block" })
-                    </div>
-                </div>
-            }
-
+            </div>
         </div> <!-- /container -->
     </section>
 </div>
 
-@section scripts {
+@section modals
+{
+    @Html.Partial("_ModalFoto")
+    @Html.Partial("_ModalSucesso")
+    @Html.Partial("_ModalError")
+}
 
-    <script>
-
-        $("#ClickFoto").on("click", function () {
-            $("#FileFoto").click();
-        });
-
-        $("#FileFoto").change(function (e) {
-            var fileName = e.target.files[0].name;
-            $("#textFoto").html(fileName);
-        });
-
-    </script>
+@section scripts
+{
+    <script src="@Url.Content("~/Scripts/libraries/cropper/cropper.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/libraries/jquery-cropper/jquery-cropper.min.js")"></script>
+    @Scripts.Render("~/bundles/js/core")
+    <script type="text/javascript" src="@Url.Content("~/Scripts/usuario/cadastrar.js")"></script>
 }
 

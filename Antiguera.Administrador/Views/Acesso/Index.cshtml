@@ -1,9 +1,10 @@
-﻿@using X.PagedList.Mvc;
-@model X.PagedList.PagedList<Antiguera.Administrador.Models.AcessoModel>
-
-@{
-    ViewBag.Title = "Módulo Permissões";
+﻿@{
+    ViewBag.Title = "Módulo Permissões de acesso";
     Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    @Styles.Render("~/bundles/datatable")
 }
 
 <!-- Content Wrapper. Contains page content -->
@@ -18,232 +19,59 @@
             <li class="active"><i class="fa fa-shopping-bag"></i> @ViewContext.RouteData.GetRequiredString("controller")</li>
         </ol>
     </section><!--section -->
-
-    @if (ViewBag.ErroMensagem != null)
-    {
-        <div class="row">
-            <div class="col-md-12 col-alert">
-                <div class="alert alert-danger">
-                    <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
-                    @ViewBag.ErroMensagem
-                </div>
-            </div>
-        </div>
-    }
-
-    @if (ViewBag.Mensagem != null)
-    {
-        <div class="row">
-            <div class="col-md-12 col-alert">
-                <div class="alert alert-success">
-                    <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
-                    @ViewBag.Mensagem
-                </div>
-            </div>
-        </div>
-    }
-
-    <div class="row row-acesso">
-        <div class="col-md-12">
-            <div class="alert alert-success">
-                <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
-            </div>
-        </div>
-    </div>
-
     <!-- Main content -->
     <section class="content container-fluid">
-        @using (Html.BeginForm("Pesquisa", "Acesso", FormMethod.Get, new { @class = "form-admin" }))
-        {
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="input-group">
-                        @Html.TextBox("busca", null, new { @class = "form-control", @placeholder = "Pesquisar acesso..." })
-
-                        <span class="input-group-btn">
-                            <button type="submit" class="btn btn-primary" id="Pesquisar">Pesquisar</button>
-                        </span>
-
-                    </div><!-- /input-group -->
-                </div><!-- /.col-lg-6 -->
-            </div><!-- /.row -->
-        }
+        <div class="row">
+            <div class="col-md-12">
+                <button type="button" id="Cadastrar" class="btn btn-info">Novo Acesso</button>
+            </div><!-- /.col-lg-12 -->
+        </div><!-- /.row -->
         <br /><br />
-
-        @if (Model != null && Model.Count > 0)
-        {
-            <div class="row">
-                <div class="col-md-12 col-sm-6">
-                    <div class="box box-info">
-                        <div class="box-header">
-                            <h3 class="box-title">Lista de níveis de acesso</h3>
-                        </div>
-                        <div class="box-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped">
+        <div class="row">
+            <div class="col-md-12 col-sm-6">
+                <div class="box box-info">
+                    <div class="box-header">
+                        <h3 class="box-title">Lista de níveis de acesso</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="table-responsive">
+                            <table id="TabelaAcesso" class="table table-striped">
+                                <thead>
                                     <tr>
                                         <th>
-                                            @Html.DisplayName("Nome")
+                                            Nome
                                         </th>
                                         <th>
-                                            @Html.DisplayName("Adicionado em:")
+                                            Adicionado em
                                         </th>
                                         <th>
-                                            @Html.DisplayName("Modificado em:")
-                                        </th>
-                                        <th>
-                                        <th>
+                                            Modificado em
                                         </th>
                                         <th></th>
+                                        <th></th>
                                     </tr>
-
-                                    @foreach (var item in Model)
-                                    {
-                                        <tr data-row="@item.Id">
-                                            <td>
-                                                @Html.HiddenFor(x => item.Nome)
-                                                @if (item.Novo == true)
-                                                {
-                                                    <strong>@item.Nome</strong>
-                                                    <span class="label label-success">Novo</span>
-                                                }
-                                                else
-                                                {
-                                                    @item.Nome
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (item.Novo == true)
-                                                {
-                                                    <strong>@item.Created.ToString("dd/MM/yyyy")</strong>
-                                                }
-                                                else
-                                                {
-                                                    @item.Created.ToString("dd/MM/yyyy")
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (item.Novo == true)
-                                                {
-                                                    <strong>@(item.Modified != null ? item.Modified.Value.ToString("dd/MM/yyyy") : item.Created.ToString("dd/MM/yyyy"))</strong>
-                                                }
-                                                else
-                                                {
-                                                    @(item.Modified != null ? item.Modified.Value.ToString("dd/MM/yyyy") : item.Created.ToString("dd/MM/yyyy"))
-                                                }
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-primary button-editar-acesso pull-left" data-toggle="modal" data-target="#EdModal">Editar</button>
-                                            </td>
-                                            <td>
-                                                @Html.ActionLink("Excluir", "Excluir", new { id = item.Id }, new { @class = "btn btn-danger btn-excluir" })
-                                            </td>
-                                        </tr>
-                                    }
-                                </table>
-                            </div>
-                        </div>
-                        <div class="box-footer">
-                            <button class="btn btn-info pull-left" id="cadastrarAcesso" data-toggle="modal" data-target="#CadModal">Cadastrar</button>
-                            @Html.PagedListPager(Model, pagina => Url.Action("Index", new { pagina }))
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-            </div><!-- /.row -->
-        }
-        else
-        {
-            <div class="row">
-                <div class="col-md-2">
-                    <button class="btn btn-info pull-left" data-toggle="modal" data-target="#CadModal">Cadastrar</button>
-                </div>
             </div>
-            <br /><br />
-            <div class="row">
-                <div class="col-lg-4">
-                    <p>@ViewBag.ErroListaMensagem</p>
-                </div><!-- /.col-lg-4 -->
-            </div><!-- /.row -->
-        }
+        </div><!-- /.row -->
     </section><!--section-->
 </div><!--div-->
 
-<div class="modal fade" id="CadModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            @using (Html.BeginForm("Cadastrar", "Acesso", FormMethod.Post))
-            {
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Cadastrar Acesso</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="alert alert-modal alert-danger">
-                                <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
+@section modals
+{
+    @Html.Partial("_ModalSucesso")
+    @Html.Partial("_ModalError")
+    @Html.Partial("_ModalCadastro")
+}
 
-                            @Html.Label("Nome do acesso")
-                            @Html.TextBox("Nome", null, new { @class = "form-control", @placeholder = "Nome do acesso..." })
-
-                            @*<label>Nome do acesso</label>
-                                <input type="text" name="Acesso" id="Acesso" class="form-control" placeholder="Nome do acesso..." />*@
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-                    <button type="submit" id="salvarAcesso" class="btn btn-primary">Salvar</button>
-                </div>
-            }
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<div class="modal fade" id="EdModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            @using (Html.BeginForm("Editar", "Acesso", FormMethod.Post))
-            {
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Editar Acesso</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="alert alert-modal alert-danger">
-                                <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            @Html.Hidden("Id", null, new { @class = "id-acesso" })
-                            @Html.Hidden("Created", null, new { @class = "id-data-created" })
-                            @Html.Label("Nome do acesso")
-                            @Html.TextBox("Nome", null, new { @class = "form-control nome-acesso", @placeholder = "Nome do acesso..." })
-
-                            @*<label>Nome do acesso</label>
-                                <input type="text" name="Acesso" id="Acesso" class="form-control" placeholder="Nome do acesso..." />*@
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-                    <button type="submit" id="salvarAcesso" class="btn btn-primary">Salvar</button>
-                </div>
-            }
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-@*@section scripts {
-        <script>
-            var urlSalvarAcesso = "@Url.Action("Salvar", "Acesso")";
-        </script>
-    }*@
+@section scripts {
+    @Scripts.Render("~/bundles/js/datatable")
+    @Scripts.Render("~/bundles/js/moment")
+    @Scripts.Render("~/bundles/js/core")
+    <script type="text/javascript" src="@Url.Content("~/Scripts/config/defaults.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/acesso/main.js")"></script>
+}

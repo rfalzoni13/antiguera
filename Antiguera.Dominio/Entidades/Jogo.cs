@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Antiguera.Dominio.Entidades.Base;
+using System;
 
 namespace Antiguera.Dominio.Entidades
 {
-    public class Jogo
+    public class Jogo : EntityBase
     {
-        public int Id { get; set; }
-
         public string Nome { get; set; }
 
         public string Descricao { get; set; }
@@ -18,16 +17,12 @@ namespace Antiguera.Dominio.Entidades
 
         public string Genero { get; set; }
 
-        public string UrlBoxArt { get; set; }
+        public string BoxArt { get; set; }
 
-        public string UrlArquivo { get; set; }
+        public string nomeArquivo { get; set; }
 
-        public bool? Novo { get; set; }
+        public string hashArquivo { get; set; }
 
         public string Plataforma { get; set; }
-
-        public DateTime Created { get; set; }
-
-        public DateTime? Modified { get; set; }
     }
 }

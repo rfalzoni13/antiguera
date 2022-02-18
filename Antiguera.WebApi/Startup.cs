@@ -1,15 +1,11 @@
-﻿using Antiguera.Infra.Cross.Infrastructure;
+﻿using Antiguera.Infra.Cross.Identity;
 using Antiguera.WebApi.Authorization;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
-using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
-using Newtonsoft.Json.Serialization;
 using Owin;
 using System;
-using System.Linq;
-using System.Net.Http.Formatting;
 using System.Web.Http;
 
 [assembly: OwinStartup(typeof(Antiguera.WebApi.Startup))]

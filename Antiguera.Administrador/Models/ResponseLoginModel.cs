@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Antiguera.Administrador.ViewModels;
+using System;
 
 namespace Antiguera.Administrador.Models
 {
@@ -18,5 +19,27 @@ namespace Antiguera.Administrador.Models
         public string error { get; set; }
 
         public string error_description { get; set; }
+    }
+
+    public class TokenModel
+    {
+        public int Id { get; set; }
+
+        public int UsuarioId { get; set; }
+
+        public string AccessToken { get; set; }
+
+        public string RefreshToken { get; set; }
+
+        public DateTime? Expire { get; set; }
+
+        public bool? Novo { get; set; }
+
+        public DateTime? Created { get; set; }
+
+        public DateTime? Modified { get; set; }
+
+        public virtual UsuarioViewModel Usuario { get; set; }
+
     }
 }

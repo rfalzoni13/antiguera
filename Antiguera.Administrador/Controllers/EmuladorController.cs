@@ -1,312 +1,261 @@
-﻿using Antiguera.Administrador.Controllers.Base;
-using Antiguera.Administrador.Models;
+﻿using Antiguera.Administrador.Models.Tables;
+using Antiguera.Administrador.ViewModels;
+using Antiguera.Dominio.Interfaces.Servicos;
+using NLog;
 using System;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using X.PagedList;
 
 namespace Antiguera.Administrador.Controllers
 {
     [Authorize]
-    public class EmuladorController : BaseController
+    public class EmuladorController : Controller
     {
+        private readonly IEmuladorServico _emuladorServico;
+        private static Logger _logger;
+
+        public EmuladorController(IEmuladorServico emuladorServico)
+        {
+            _logger = LogManager.GetCurrentClassLogger();
+            _emuladorServico = emuladorServico;
+        }
+
         // GET: Emulador
         public ActionResult Index(int pagina = 1)
         {
-            try
+            if (!User.Identity.IsAuthenticated)
             {
-                if(HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    if (Session["Mensagem"] != null)
-                    {
-                        ViewBag.Mensagem = Session["Mensagem"];
-                        Session.Clear();
-                    }
-
-                    if (Session["ErroMensagem"] != null)
-                    {
-                        ViewBag.ErroMensagem = Session["ErroMensagem"];
-                        Session.Clear();
-                    }
-
-                    var lista = ListarEmuladores();
-                    if (Session["Unauthorized"] != null)
-                    {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
-                    }
-                    return View(lista.OrderBy(x => x.Id).ToPagedList(pagina, 4));
-                }
-                else
-                {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
-                }
-            }
-            catch(Exception ex)
-            {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
                 return RedirectToAction("Login", "Home");
             }
-        }
 
-        // GET: Cadastrar
-        public ActionResult Cadastrar()
-        {
             try
             {
-                if(HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                { 
-                    return View();
-                }
-                else
-                {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
-                }
-            }
-            catch(Exception ex)
-            {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
-            }
-        }
-
-        // POST: Cadastrar
-        [HttpPost]
-        public ActionResult Cadastrar(EmuladorModel model)
-        {
-            try
-            {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    if (model != null && ModelState.IsValid)
-                    {
-                        
-                        CadastrarEmulador(model);
-                        
-                        if(Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-
-                        return View("Index");
-                    }
-                    else
-                    {
-                        return View(model);
-                    }
-                }
-                else
-                {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
-                }
+                return View();
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: ", ex);
+                throw;
             }
         }
 
-        // GET: Detalhes
+        //POST: Emulador/CarregarEmuladores
+        [HttpPost]
+        public JsonResult CarregarEmuladores()
+        {
+            var obj = new EmuladorTableModel();
+
+            try
+            {
+                var lista = _emuladorServico.ListarTodos();
+
+                foreach (var item in lista)
+                {
+                    obj.data.Add(new EmuladorListTableModel()
+                    {
+                        Id = item.Id,
+                        Nome = item.Nome,
+                        Console = item.Console,
+                        Roms = item.Roms.Count(),
+                        Created = item.Created,
+                        Modified = item.Modified,
+                        Novo = item.Novo
+                    });
+                }
+
+                obj.recordsFiltered = obj.data.Count();
+                obj.recordsTotal = obj.data.Count();
+
+                return Json(obj);
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                Response.StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError);
+                obj.error = ex.Message;
+                return Json(obj);
+            }
+        }
+
+
+        // GET: Emulador/Cadastrar
+        public ActionResult Cadastrar()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            try
+            {
+                return View();
+            }
+
+            catch(Exception ex)
+            {
+                _logger.Fatal("Ocorreu um erro: ", ex);
+                throw;
+            }
+        }
+
+        // POST: Emulador/Cadastrar
+        [HttpPost]
+        public ActionResult Cadastrar(EmuladorViewModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    CadastrarEmulador(model);
+                }
+                else
+                {
+                    AdicionarModelStateErrors(ModelState);
+                }
+                if (errorsList.Count() > 0)
+                {
+                    return Json(new { success = false, errors = errorsList });
+                }
+
+                return Json(new { success = true, message = "Emulador cadastrado com sucesso!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
+            }
+        }
+
+        // POST: Emulador/Detalhes
+        [HttpPost]
         public ActionResult Detalhes(int id)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                var model = BuscarEmuladorPorId(id);
+
+                if (model != null)
                 {
-                    var model = BuscarEmuladorPorId(id);
-                    if (Session["Unauthorized"] != null)
+                    if(model.Novo == true)
                     {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
-                    }
-
-                    if (model != null)
-                    {
-                        if(model.Novo == true)
-                        {
-                            AtualizarEmulador(model);
-                        }
-
-                        return View(model);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index");
+                        AtualizarEmulador(model);
                     }
                 }
-                else
+
+                if(errorsList.Count > 0)
                 {
-                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                    return RedirectToAction("Login", "Home");
+                    return Json(new { success = false, errors = errorsList });
                 }
+
+                return Json(new { success = true, obj = model });
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
             }
         }
 
-        // GET: Editar
+        // GET: Emulador/Editar
         public ActionResult Editar(int id)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    var model = BuscarEmuladorPorId(id);
-                    if (Session["Unauthorized"] != null)
-                    {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
-                    }
+                var model = BuscarEmuladorPorId(id);
 
-                    if (model != null)
+                if (model != null)
+                {
+                    if (model.Novo == true)
                     {
-                        if (model.Novo == true)
-                        {
-                            AtualizarEmulador(model);
-                            Session.Clear();
-                        }
-                        return View(model);
+                        AtualizarEmulador(model);
+                        Session.Clear();
                     }
-                    else
-                    {
-                        return RedirectToAction("Index");
-                    }      
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                    return RedirectToAction("Login", "Home");
+                    throw new HttpException(Convert.ToInt32(HttpStatusCode.NotFound), errorsList.FirstOrDefault());
                 }
+
+                return View(model);
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: ", ex);
+                throw;
             }
         }
 
-        // POST: Editar
+        // POST: Emulador/Editar
         [HttpPost]
-        public ActionResult Editar(EmuladorModel model)
+        public ActionResult Editar(EmuladorViewModel model)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                if (ModelState.IsValid)
                 {
-                    if (model != null && ModelState.IsValid)
-                    {
-
-                        AtualizarEmulador(model);
-
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-
-                        return View("Index");
-                    }
-                    else
-                    {
-                        return View(model);
-                    }
+                    AtualizarEmulador(model);
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
+                    AdicionarModelStateErrors(ModelState);
                 }
+
+                if (errorsList.Count() > 0)
+                {
+                    return Json(new { success = false, errors = errorsList });
+                }
+
+                return Json(new { success = true, message = "Emulador atualizado com sucesso!" });
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
             }
         }
 
-        // GET: Excluir
+        // POST: Emulador/Excluir
+        [HttpPost]
         public ActionResult Excluir(int id)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                if (id > 0)
                 {
-                    if (id == 0)
-                    {
-                        ViewBag.ErroMensagem = "Parâmetros incorretos!";
-                    }
-                    else
-                    {
-                        var model = BuscarEmuladorPorId(id);
+                    var model = BuscarEmuladorPorId(id);
 
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-
-                        if(model != null)
-                        {
-                            ExcluirEmulador(model);
-                        }
-                        
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
+                    if (model != null)
+                    {
+                        ExcluirEmulador(model);
                     }
-                    return RedirectToAction("Index");
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
+                    errorsList.Add("Parâmetros incorretos!");
                 }
+
+                if (errorsList.Count > 0)
+                {
+                    return Json(new { success = false, errors = errorsList });
+                }
+
+                return Json(new { success = true, message = "Emulador excluído com sucesso!" });
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
             }
         }
     }

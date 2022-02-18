@@ -1,4 +1,4 @@
-﻿@model Antiguera.Administrador.Models.JogoModel
+﻿@model Antiguera.Administrador.ViewModels.JogoViewModel
 
 @{
     ViewBag.Title = "Cadastrar novo jogo";
@@ -25,101 +25,81 @@
 
     <section class="content container-fluid">
         <div class="container">
-            @using (Html.BeginForm("Cadastrar", "Jogo", FormMethod.Post, new { @class = "form-admin", enctype = "multipart/form-data" }))
-            {
-                if (ViewBag.ErroMensagem != null)
-                {
-                    <div class="col-md-11">
-                        <div class="alert alert-danger">
-                            <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
-                            @ViewBag.ErroMensagem
+            <div class="row">
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Nome)
+                    @Html.TextBoxFor(x => x.Nome, new { @class = "form-control", @autofocus = "autofocus" })
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Developer)
+                    @Html.TextBoxFor(x => x.Developer, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Lancamento)
+                    <div class="input-group date" data-provide="datepicker">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
                         </div>
-                    </div>
-                }
-
-                if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
-                {
-                    <div class="col-md-11">
-                        <div class="alert alert-danger">
-                            <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
-                            @Html.ValidationSummary(false, "Ocorreram os seguintes erros: ")
-                        </div>
-                    </div>
-                }
-
-                <div class="row">
-                    <div class="col-md-3">
-                        @Html.LabelFor(x => x.Nome)
-                        @Html.TextBoxFor(x => x.Nome, new { @class = "form-control", @autofocus = "autofocus"})
-                    </div>
-                    <div class="col-md-3">
-                        @Html.LabelFor(x => x.Developer)
-                        @Html.TextBoxFor(x => x.Developer, new { @class = "form-control" })
-                    </div>
-                    <div class="col-md-3">
-                        @Html.LabelFor(x => x.Lancamento)
-                        <div class="input-group date" data-provide="datepicker">
-                            <div class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                            </div>
-                            @Html.TextBoxFor(x => x.Lancamento, new { @class = "form-control pull-right" })
-                        </div>
+                        @Html.TextBoxFor(x => x.Lancamento, new { @class = "form-control pull-right" })
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-3">
-                        @Html.LabelFor(x => x.Genero)
-                        @Html.TextBoxFor(x => x.Genero, new { @class = "form-control" })
-                    </div>
-                    <div class="col-md-3">
-                        @Html.LabelFor(x => x.Publisher)
-                        @Html.TextBoxFor(x => x.Publisher, new { @class = "form-control" })
-                    </div>
-                    <div class="col-md-3">
-                        @Html.LabelFor(x => x.Plataforma)
-                        @Html.TextBoxFor(x => x.Plataforma, new { @class = "form-control" })
-                    </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Genero)
+                    @Html.TextBoxFor(x => x.Genero, new { @class = "form-control" })
                 </div>
-                <br />
-                <div class="row">
-                    <div class="col-md-4">
-                        @Html.LabelFor(x => x.FileBoxArt)
-                        @Html.TextBoxFor(x => x.FileBoxArt, new { @type = "file" })
-                    </div>
-                    <div class="col-md-4">
-                        @Html.LabelFor(x => x.FileJogo)
-                        @Html.TextBoxFor(x => x.FileJogo, new { @type = "file" })
-                    </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Publisher)
+                    @Html.TextBoxFor(x => x.Publisher, new { @class = "form-control" })
                 </div>
-                <br />
-                <div class="row">
-                    <div class="col-md-5">
-                        @Html.LabelFor(x => x.Descricao)
-                        @Html.TextAreaFor(x => x.Descricao, new { @class = "form-control", @rows = "5" })
-                    </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Plataforma)
+                    @Html.TextBoxFor(x => x.Plataforma, new { @class = "form-control" })
                 </div>
-                <br />
-                <div class="row">
-                    <div class="col-md-2">
-                        <button class="btn btn-success btn-block" type="submit">Cadastrar</button>
-                    </div>
-                    <div class="col-md-2">
-                        @Html.ActionLink("Voltar", "Index", null, new { @class = "btn btn-default btn-block" })
-                    </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-4">
+                    @Html.LabelFor(x => x.FileBoxArt)
+                    @Html.TextBoxFor(x => x.FileBoxArt, new { @type = "file", @accept = "image/*" })
                 </div>
-            }
-
+                <div class="col-md-4">
+                    @Html.LabelFor(x => x.FileJogo)
+                    @Html.TextBoxFor(x => x.FileJogo, new { @type = "file", @accept = ".rar,.zip" })
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-5">
+                    @Html.LabelFor(x => x.Descricao)
+                    @Html.TextAreaFor(x => x.Descricao, new { @class = "form-control", @rows = "5" })
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-2">
+                    <button type="button" id="Salvar" class="btn btn-success btn-block">Cadastrar</button>
+                </div>
+                <div class="col-md-2">
+                    @Html.ActionLink("Voltar", "Index", null, new { @class = "btn btn-default btn-block" })
+                </div>
+            </div>
         </div> <!-- /container -->
     </section>
 </div>
 
+@section modals
+{
+    @Html.Partial("_ModalBoxArt")
+    @Html.Partial("_ModalSucesso")
+    @Html.Partial("_ModalError")
+}
+
 @section scripts {
     @Scripts.Render("~/bundles/js/bootstrap-datepicker")
-
-    <script>
-        $(".input-group.date").datepicker({
-        format: "dd/mm/yyyy"
-    });
-    </script>
+    <script src="@Url.Content("~/Scripts/libraries/bootstrap-datepicker/locales/bootstrap-datepicker.pt-BR.min.js")"></script>
+    @Scripts.Render("~/bundles/js/core")
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jogo/cadastrar.js")"></script>
 }
 

@@ -1,12 +1,9 @@
-﻿using Antiguera.Infra.Cross.Infrastructure;
-using Antiguera.WebApi.Models;
+﻿using Antiguera.Infra.Cross.Identity;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
 using System;
-using System.Collections.Generic;
-using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Security.Claims;
@@ -35,6 +32,7 @@ namespace Antiguera.WebApi.Authorization
                 {
                     var identity = new ClaimsIdentity(context.Options.AuthenticationType);
                     identity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
+                    identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
 
                     var roles = userManager.GetRoles(user.Id).ToList();
                     if (roles != null && roles.Count > 0)

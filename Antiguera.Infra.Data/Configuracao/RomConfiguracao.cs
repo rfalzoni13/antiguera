@@ -7,27 +7,27 @@ namespace Antiguera.Infra.Data.Configuracao
     {
         public RomConfiguracao()
         {
-            HasKey(r => r.Id).Property(r => r.Id).HasColumnOrder(1);
+            HasKey(r => r.Id).Property(r => r.Id);
 
-            Property(r => r.EmuladorId).IsRequired().HasColumnOrder(2);
+            Property(r => r.EmuladorId).IsRequired();
 
-            Property(r => r.Nome).HasMaxLength(100).IsRequired().HasColumnOrder(3);
+            Property(r => r.Nome).IsRequired();
 
-            Property(r => r.DataLancamento).IsRequired().HasColumnOrder(4);
+            Property(r => r.Lancamento).IsRequired();
 
-            Property(r => r.Descricao).HasColumnType("text").IsRequired().HasColumnOrder(5);
+            Property(r => r.Descricao).HasColumnType("text").IsRequired();
 
-            Property(r => r.Genero).HasMaxLength(50).IsRequired().HasColumnOrder(6);
+            Property(r => r.Genero).IsRequired();
 
-            Property(e => e.UrlArquivo).HasMaxLength(200).IsOptional().HasColumnOrder(7);
+            Property(e => e.nomeArquivo).IsOptional();
 
-            Property(e => e.UrlBoxArt).HasMaxLength(200).IsOptional().HasColumnOrder(8);
+            Property(e => e.BoxArt).IsOptional();
 
-            Property(r => r.Novo).IsOptional().HasColumnOrder(9);
+            Property(r => r.Novo).IsOptional();
 
-            Property(r => r.Created).IsRequired().HasColumnOrder(10);
+            Property(r => r.Created).IsRequired();
 
-            Property(r => r.Modified).IsOptional().HasColumnOrder(11);
+            Property(r => r.Modified).IsOptional();
         }
     }
 }

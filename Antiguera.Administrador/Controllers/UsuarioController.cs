@@ -1,357 +1,268 @@
-﻿using Antiguera.Administrador.Controllers.Base;
-using Antiguera.Administrador.Models;
+﻿using Antiguera.Administrador.Models.Tables;
+using Antiguera.Administrador.ViewModels;
+using Antiguera.Dominio.Interfaces.Servicos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using X.PagedList;
 
 namespace Antiguera.Administrador.Controllers
 {
     [Authorize]
-    public class UsuarioController : BaseController
+    public class UsuarioController : Controller
     {
+        public UsuarioController(IAcessoServico acessoServico, IEmuladorServico emuladorServico,
+            IHistoricoServico historicoServico, IJogoServico jogoServico,
+            IProgramaServico programaServico, IRomServico romServico,
+            IUsuarioServico usuarioServico)
+            : base(acessoServico, emuladorServico, historicoServico, jogoServico, programaServico,
+                 romServico, usuarioServico)
+        {
+        }
+
         // GET: Usuario
         public ActionResult Index(int pagina = 1)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    if (Session["Mensagem"] != null)
-                    {
-                        ViewBag.Mensagem = Session["Mensagem"];
-                        Session.Clear();
-                    }
-
-                    if (Session["ErroMensagem"] != null)
-                    {
-                        ViewBag.ErroMensagem = Session["ErroMensagem"];
-                        Session.Clear();
-                    }
-
-                    var lista = ListarUsuarios();
-                    if (Session["Unauthorized"] != null)
-                    {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
-                    }
-                    return View(lista.OrderBy(x => x.Id).ToPagedList(pagina, 4));
-                }
-                else
-                {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
-                }
+                return View();
             }
+
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: ", ex);
+                throw;
             }
         }
 
-        // GET: Cadastrar
+        //POST: Usuario/CarregarUsuarios
+        [HttpPost]
+        public JsonResult CarregarUsuarios()
+        {
+            var obj = new UsuarioTableModel();
+
+            try
+            {
+                var lista = ListarUsuarios();
+
+                foreach (var item in lista)
+                {
+                    obj.data.Add(new UsuarioListTableModel()
+                    {
+                        Id = item.Id,
+                        Nome = item.Nome,
+                        Email = item.Email,
+                        Login = item.Login,
+                        Sexo = item.Sexo,
+                        Created = item.Created,
+                        Modified = item.Modified,
+                        Novo = item.Novo
+                    });
+                }
+
+                obj.recordsFiltered = obj.data.Count();
+                obj.recordsTotal = obj.data.Count();
+
+                return Json(obj);
+            }
+            catch(Exception ex)
+            {
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                Response.StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError);
+                obj.error = ex.Message;
+                return Json(obj);
+            }
+        }
+
+        // GET: Usuario/Cadastrar
         public ActionResult Cadastrar()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            try
+            {
+                var model = new UsuarioViewModel();
+                model.ListaAcessos = new List<SelectListItem>();
+
+                model.ListaAcessos.Add(new SelectListItem() { Text = "Selecione uma opção...", Value = "0" });
+
+                var acessos = ListarAcessos();
+
+                if(acessos.Count() > 0)
+                {
+                    foreach (var acesso in acessos)
+                    {
+                        model.ListaAcessos.Add(new SelectListItem() { Text = acesso.Nome, Value = acesso.Id.ToString() });
+                    }
+                }
+                    
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("Ocorreu um erro: ", ex);
+                throw;
+            }
+        }
+
+        // POST: Usuario/Cadastrar
+        [HttpPost]
+        public async Task<ActionResult> Cadastrar(UsuarioViewModel model)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                if (ModelState.IsValid)
                 {
-                    var model = new UsuarioModel();
-                    model.ListaAcessos = new List<SelectListItem>();
+                    await CadastrarUsuario(model);
+                }
+                else
+                {
+                    AdicionarModelStateErrors(ModelState);
+                }
+                if (errorsList.Count() > 0)
+                {
+                    return Json(new { success = false, errors = errorsList });
+                }
 
-                    model.ListaAcessos.Add(new SelectListItem() { Text = "Selecione uma opção...", Value = "0" });
+                return Json(new { success = true, message = "Usuário inserido com sucesso!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
+            }
+        }
 
-                    var acessos = ListarAcessos();
-                    if (TempData["Unauthorized"] != null)
+        // GET: Usuario/Editar
+        public async Task<ActionResult> Editar(int id)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            try
+            {
+                var model = BuscarUsuarioPorId(id);
+                model.ListaAcessos = new List<SelectListItem>();
+
+                model.ListaAcessos.Add(new SelectListItem() { Text = "Selecione uma opção...", Value = "0" });
+
+                var acessos = ListarAcessos();
+
+                if (model != null)
+                {
+                    if (model.Novo == true)
                     {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
+                        await AtualizarUsuario(model);
                     }
 
-                    foreach(var acesso in acessos)
+                    if(acessos.Count() > 0)
                     {
-                        if(acesso != null)
+                        foreach (var acesso in acessos)
                         {
                             model.ListaAcessos.Add(new SelectListItem() { Text = acesso.Nome, Value = acesso.Id.ToString() });
                         }
                     }
-                    
+
                     return View(model);
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
+                    throw new HttpException(Convert.ToInt32(HttpStatusCode.NotFound), errorsList.FirstOrDefault());
                 }
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: ", ex);
+                throw;
             }
         }
 
-        // POST: Cadastrar
+        // POST: Usuario/Editar
         [HttpPost]
-        public ActionResult Cadastrar(UsuarioModel model)
+        public async Task<ActionResult> Editar(UsuarioViewModel model)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                var usuario = BuscarUsuarioPorId(model.Id);
+                if (usuario != null)
                 {
-                    if (model != null && ModelState.IsValid)
-                    {
+                    model.Foto = usuario.Foto;
+                    model.Created = usuario.Created;
+                }
 
-                        CadastrarUsuario(model);
+                ModelState.Remove("Senha");
+                ModelState.Remove("ConfirmarSenha");
 
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        return View(model);
-                    }
+                if (ModelState.IsValid)
+                {
+                    await AtualizarUsuario(model);
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
+                    AdicionarModelStateErrors(ModelState);
                 }
+
+                if(errorsList.Count() > 0)
+                {
+                    return Json(new { success = false, errors = errorsList });
+                }
+
+                return Json(new { success = true, message = "Usuário atualizado com sucesso!" });
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
             }
         }
 
-        // GET: Detalhes
-        public ActionResult Detalhes(int id)
+        // POST: Usuario/Excluir
+        [HttpPost]
+        public async Task<ActionResult> Excluir(int id)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                if (id > 0)
                 {
                     var model = BuscarUsuarioPorId(id);
 
-                    model.Acesso = BuscarAcessoPorId(model.AcessoId);
-
-                    if (TempData["Unauthorized"] != null)
-                    {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
-                    }
-
                     if (model != null)
                     {
-                        if (model.Novo == true)
-                        {
-                            AtualizarUsuario(model);
-                        }
-
-                        return View(model);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index");
+                        await ExcluirUsuario(model);
                     }
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
+                    errorsList.Add("Parâmetros incorretos!");
                 }
+
+                if (errorsList.Count > 0)
+                {
+                    return Json(new { success = false, errors = errorsList });
+                }
+
+                return Json(new { success = true, message = "Usuário excluído com sucesso!" });
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
-            }
-        }
-
-        // GET: Editar
-        public ActionResult Editar(int id)
-        {
-            try
-            {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    var model = BuscarUsuarioPorId(id);
-                    model.ListaAcessos = new List<SelectListItem>();
-
-                    model.ListaAcessos.Add(new SelectListItem() { Text = "Selecione uma opção...", Value = "0" });
-
-                    var acessos = ListarAcessos();
-                    if (TempData["Unauthorized"] != null)
-                    {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
-                    }
-
-                    if (model != null)
-                    {
-                        if (model.Novo == true)
-                        {
-                            AtualizarUsuario(model);
-                        }
-
-                        foreach (var acesso in acessos)
-                        {
-                            if (acesso != null)
-                            {
-                                model.ListaAcessos.Add(new SelectListItem() { Text = acesso.Nome, Value = acesso.Id.ToString() });
-                            }
-                        }
-
-                        return View(model);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index");
-                    }
-                }
-                else
-                {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
-                }
-            }
-            catch (Exception ex)
-            {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
-            }
-        }
-
-        // POST: Editar
-        [HttpPost]
-        public ActionResult Editar(UsuarioModel model)
-        {
-            try
-            {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    var oldModel = BuscarUsuarioPorId(model.Id);
-                    if (oldModel != null)
-                    {
-                        model.Senha = oldModel.Senha;
-                        model.Created = oldModel.Created;
-                        model.UrlFotoUpload = oldModel.UrlFotoUpload;
-                    }
-
-                    ModelState.Remove("Senha");
-                    ModelState.Remove("ConfirmarSenha");
-
-                    if (model != null && ModelState.IsValid)
-                    {
-                        AtualizarUsuario(model);
-
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        return View(model);
-                    }
-                }
-                else
-                {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
-                }
-            }
-            catch (Exception ex)
-            {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
-            }
-        }
-
-        // GET: Excluir
-        public ActionResult Excluir(int id)
-        {
-            try
-            {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    if (id == 0)
-                    {
-                        ViewBag.ErroMensagem = "Parâmetros incorretos!";
-                    }
-                    else
-                    {
-                        var model = BuscarUsuarioPorId(id);
-
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-
-                        if(model != null)
-                        {
-                            ExcluirUsuario(model);
-                        }                        
-
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-                    }
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
-                }
-            }
-            catch (Exception ex)
-            {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
             }
         }
     }

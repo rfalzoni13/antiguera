@@ -1,17 +1,20 @@
-﻿@model Antiguera.Administrador.Models.PasswordRecoveryModel
+﻿@model Antiguera.Administrador.ViewModels.PasswordRecoveryViewModel
 
 @{
     ViewBag.Title = "Recuperar Senha";
     Layout = null;
 }
 
-<html lang="en">
+
+<html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Antiguera - @ViewBag.Title</title>
     @Styles.Render("~/bundles/bootstrap")
+    @Styles.Render("~/bundles/admin-lte")
+    @Styles.Render("~/bundles/admin-lte/skins")
     @Styles.Render("~/Content/css/Login")
     @Scripts.Render("~/bundles/modernizr")
     <style>
@@ -21,47 +24,102 @@
     </style>
 </head>
 
-<body>
-    <div class="container-image">
-        <img src="~/Content/Images/LogoAntiguera2.png" />
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="login-logo">
+            <img class="img-responsive img-logo" src="~/Content/Images/LogoAntiguera2.png" />
+        </div>
+        <!-- /.login-logo -->
+        <div class="login-box-body">
+            @Html.ValidationSummary()
+            <h4 class="login-box-msg">@Dominio.SenhaRecuperacao</h4>
+            @using (Html.BeginForm("Login", "Home", FormMethod.Post, new { @class = "form-signin" }))
+            {
+            <div class="form-group has-feedback">
+                @Html.TextBoxFor(x => x.Email, new { @type = "email", @id = "Senha", @class = "form-control", @placeholder = "Digite seu e-mail" })
+                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary btn-block btn-flat">@Acoes.Entrar</button>
+                </div>
+            </div>
+            }
+        </div>
+        <!-- /.login-box-body -->
     </div>
-    <div class="container">
-        @using (Html.BeginForm("RecuperarSenha", "Home", FormMethod.Post, new { @class = "form-signin" }))
-        {
-            if (ViewBag.ErroMensagem != null)
-            {
-                <div class="alert alert-danger">
-                    <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
-                    <p>@ViewBag.ErroMensagem</p>
-                </div>
-            }
 
-            if (ViewBag.StatusMensagem != null)
-            {
-                <div class="alert alert-info">
-                    <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
-                    <p>@ViewBag.StatusMensagem</p>
-                </div>
-            }
-
-            <h2 class="form-signin-heading">Recuperar senha</h2>
-
-            @Html.LabelFor(x => x.Email, new { @class = "sr-only" })
-            @Html.TextBoxFor(x => x.Email, new { @type = "email", @id = "Senha", @class = "form-control", @placeholder = "Digite seu e-mail" })
-            
-            <br />
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Enviar link de recuperação de senha</button>
-        }
-
-    </div> <!-- /container -->
     <div class="container container-footer">
         <footer>
-            <p>&copy; @DateTime.Now.Year - Renato Falzoni - Todos os direitos reservados.</p>
+            <p>&copy; @DateTime.Now.Year - Renato Falzoni - @Login.Copyright</p>
         </footer>
     </div>
+
     @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/js/bootstrap")
+    @Scripts.Render("~/bundles/js/admin-lte")
     @Scripts.Render("~/bundles/Scripts")
 </body>
 </html>
+
+
+@*<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Antiguera - @ViewBag.Title</title>
+        @Styles.Render("~/bundles/bootstrap")
+        @Styles.Render("~/Content/css/Login")
+        @Scripts.Render("~/bundles/modernizr")
+        <style>
+            body {
+                background-color: #ebebeb;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container-image">
+            <img src="~/Content/Images/LogoAntiguera2.png" />
+        </div>
+        <div class="container">
+            @using (Html.BeginForm("RecuperarSenha", "Home", FormMethod.Post, new { @class = "form-signin" }))
+            {
+                if (ViewBag.ErroMensagem != null)
+                {
+                    <div class="alert alert-danger">
+                        <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
+                        <p>@ViewBag.ErroMensagem</p>
+                    </div>
+                }
+
+                if (ViewBag.StatusMensagem != null)
+                {
+                    <div class="alert alert-info">
+                        <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
+                        <p>@ViewBag.StatusMensagem</p>
+                    </div>
+                }
+
+                <h2 class="form-signin-heading">Recuperar senha</h2>
+
+                @Html.LabelFor(x => x.Email, new { @class = "sr-only" })
+                @Html.TextBoxFor(x => x.Email, new { @type = "email", @id = "Senha", @class = "form-control", @placeholder = "Digite seu e-mail" })
+
+                <br />
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Enviar link de recuperação de senha</button>
+            }
+
+        </div>  /container
+        <div class="container container-footer">
+            <footer>
+                <p>&copy; @DateTime.Now.Year - Renato Falzoni - Todos os direitos reservados.</p>
+            </footer>
+        </div>
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @Scripts.Render("~/bundles/Scripts")
+    </body>
+    </html>*@
 

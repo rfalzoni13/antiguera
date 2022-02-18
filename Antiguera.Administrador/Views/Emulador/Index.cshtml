@@ -1,9 +1,10 @@
-﻿@using X.PagedList.Mvc;
-@model X.PagedList.PagedList<Antiguera.Administrador.Models.EmuladorModel>
-
-@{
-    ViewBag.Title = "Index";
+﻿@{
+    ViewBag.Title = "Módulo emuladores";
     Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    @Styles.Render("~/bundles/datatable")
 }
 
 <!-- Content Wrapper. Contains page content -->
@@ -20,51 +21,22 @@
     </section><!--section -->
     <!-- Main content -->
     <section class="content container-fluid">
-            @if (ViewBag.ErroMensagem != null)
-            {
-                <div class="row">
-                    <div class="col-md-12 col-alert">
-                        <div class="alert alert-danger">
-                            @ViewBag.ErroMensagem
-                            <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
-                        </div>
-                    </div>
-                </div>
-            }
-            @if (ViewBag.Mensagem != null)
-            {
-                <div class="row">
-                    <div class="col-md-12 col-alert">
-                        <div class="alert alert-success">
-                            @ViewBag.Mensagem
-                            <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
-                        </div>
-                    </div>
-                </div>
-            }
-
         <div class="row">
-            <div class="col-lg-6">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Pesquisar emulador...">
-                    <span class="input-group-btn">
-                        <button class="btn btn-primary" id="Pesquisar" type="button">Pesquisar</button>
-                    </span>
-                </div><!-- /input-group -->
-            </div><!-- /.col-lg-6 -->
+            <div class="col-md-12">
+                @Html.ActionLink("Novo emulador", "Cadastrar", null, new { @class = "btn btn-info" })
+            </div><!-- /.col-lg-12 -->
         </div><!-- /.row -->
         <br /><br />
-        @if (Model != null && Model.Count > 0)
-        {
-            <div class="row">
-                <div class="col-md-12 col-sm-6">
-                    <div class="box box-info">
-                        <div class="box-header">
-                            <h3 class="box-title">Lista de emuladores</h3>
-                        </div>
-                        <div class="box-body">
-                            <div class="table-responsive">
-                                <table class="table no-margin">
+        <div class="row">
+            <div class="col-md-12 col-sm-6">
+                <div class="box box-info">
+                    <div class="box-header">
+                        <h3 class="box-title">Lista de emuladores</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="table-responsive">
+                            <table id="TabelaEmulador" class="table no-margin">
+                                <thead>
                                     <tr>
                                         <th>
                                             @Html.DisplayName("Nome")
@@ -73,110 +45,32 @@
                                             @Html.DisplayName("Console")
                                         </th>
                                         <th>
-                                            @Html.DisplayName("Ano de lançamento")
+                                            @Html.DisplayName("Total de Roms")
                                         </th>
                                         <th>
                                             @Html.DisplayName("Inserido em:")
                                         </th>
                                         <th>
-                                            @Html.DisplayName("Data última modificação")
+                                            @Html.DisplayName("Modificado em:")
                                         </th>
                                         <th></th>
                                         <th></th>
-                                        <th></th>
-
                                     </tr>
-
-                                    @foreach (var item in Model)
-                                    {
-                                    <tr @(item.Novo == true ? "class=novo" : string.Empty)>
-                                        <td>
-                                            @if (item.Novo == true)
-                                            {
-                                                <strong>@item.Nome</strong>
-                                                <span class="label label-success">Novo</span>
-                                            }
-                                            else
-                                            {
-                                                @item.Nome
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (item.Novo == true)
-                                            {
-                                                <strong>@item.Console</strong>
-                                            }
-                                            else
-                                            {
-                                                @item.Console
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (item.Novo == true)
-                                            {
-                                                <strong>@item.DataLancamento.Year</strong>
-                                            }
-                                            else
-                                            {
-                                                @item.DataLancamento.Year
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (item.Novo == true)
-                                            {
-                                                <strong>@item.Created.ToString("dd/MM/yyyy")</strong>
-                                            }
-                                            else
-                                            {
-                                                @item.Created.ToString("dd/MM/yyyy")
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (item.Novo == true)
-                                            {
-                                                <strong>@(item.Modified != null ? item.Modified.Value.ToString("dd/MM/yyyy") : item.Created.ToString("dd/MM/yyyy"))</strong>
-                                            }
-                                            else
-                                            {
-                                                @(item.Modified != null ? item.Modified.Value.ToString("dd/MM/yyyy") : item.Created.ToString("dd/MM/yyyy"))
-                                            }
-                                        </td>
-                                        <td>
-                                            @Html.ActionLink("Detalhes", "Detalhes", new { id = item.Id }, new { @class = "btn btn-warning" })
-                                        </td>
-                                        <td>
-                                            @Html.ActionLink("Editar", "Editar", new { id = item.Id }, new { @class = "btn btn-primary" })
-                                        </td>
-                                        <td>
-                                            @Html.ActionLink("Excluir", "Excluir", new { id = item.Id }, new { @class = "btn btn-danger btn-excluir" })
-                                        </td>
-                                    </tr>
-                                    }
-
-                                </table>
-                            </div>
-                        </div>
-                        <div class="box-footer">
-                            @Html.ActionLink("Cadastrar", "Cadastrar", null, new { @class = "btn btn-info pull-left" })
-                            @Html.PagedListPager(Model, pagina => Url.Action("Index", new { pagina }))
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-            </div><!-- /.row -->
-        }
-        else
-        {
-            <div class="row">
-                <div class="col-md-2">
-                    @Html.ActionLink("Cadastrar", "Cadastrar", null, new { @class = "btn btn-info pull-left" })
-                </div>
             </div>
-            <br /><br />
-            <div class="row">
-                <div class="col-lg-4">
-                    <p>@ViewBag.ErroListaMensagem</p>
-                </div><!-- /.col-lg-4 -->
-            </div><!-- /.row -->
-        }
+        </div><!-- /.row -->
     </section><!--section-->
 </div><!--div-->
+
+@section scripts {
+    @Scripts.Render("~/bundles/js/datatable")
+    @Scripts.Render("~/bundles/js/moment")
+    @Scripts.Render("~/bundles/js/core")
+    <script type="text/javascript" src="@Url.Content("~/Scripts/config/defaults.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/emulador/main.js")"></script>
+}

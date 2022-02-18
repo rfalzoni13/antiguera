@@ -1,17 +1,11 @@
-﻿using Antiguera.Aplicacao.Interfaces;
-using Antiguera.Aplicacao.Interfaces.Base;
-using Antiguera.Aplicacao.Servicos;
-using Antiguera.Aplicacao.Servicos.Base;
-using Antiguera.Dominio.Interfaces;
+﻿using Antiguera.Dominio.Helpers;
 using Antiguera.Dominio.Interfaces.Repositorio;
 using Antiguera.Dominio.Interfaces.Repositorio.Base;
 using Antiguera.Dominio.Interfaces.Servicos;
-using Antiguera.Dominio.Interfaces.Servicos.Base;
-using Antiguera.Infra.Data.Contexto;
+using Antiguera.Dominio.Interfaces.Servicos.Helpers;
 using Antiguera.Infra.Data.Repositorios;
 using Antiguera.Infra.Data.Repositorios.Base;
-using Antiguera.Servicos.Base;
-using Antiguera.Servicos.Classes;
+using Antiguera.Servicos.Servicos;
 using Ninject.Modules;
 
 namespace Antiguera.Infra.IoC
@@ -33,30 +27,23 @@ namespace Antiguera.Infra.IoC
             public override void Load()
             {
                 Kernel.Bind(typeof(IRepositorioBase<>)).To(typeof(RepositorioBase<>));
-                Kernel.Bind<IUsuarioRepositorio>().To<UsuarioRepositorio>();
-                Kernel.Bind<IAcessoRepositorio>().To<AcessoRepositorio>();
+                Kernel.Bind<IAcessoRepositorio>().To<AcessoRepositorio>();                
+                Kernel.Bind<IEmuladorRepositorio>().To<EmuladorRepositorio>();
+                Kernel.Bind<IHistoricoRepositorio>().To<HistoricoRepositorio>();
                 Kernel.Bind<IJogoRepositorio>().To<JogoRepositorio>();
                 Kernel.Bind<IProgramaRepositorio>().To<ProgramaRepositorio>();
-                Kernel.Bind<IEmuladorRepositorio>().To<EmuladorRepositorio>();
                 Kernel.Bind<IRomRepositorio>().To<RomRepositorio>();
+                Kernel.Bind<IUsuarioRepositorio>().To<UsuarioRepositorio>();
 
-                Kernel.Bind(typeof(IServicoBase<>)).To(typeof(ServicoBase<>));
-                Kernel.Bind<IUsuarioServico>().To<UsuarioServico>();
                 Kernel.Bind<IAcessoServico>().To<AcessoServico>();
+                Kernel.Bind<IEmuladorServico>().To<EmuladorServico>();
                 Kernel.Bind<IJogoServico>().To<JogoServico>();
                 Kernel.Bind<IProgramaServico>().To<ProgramaServico>();
-                Kernel.Bind<IEmuladorServico>().To<EmuladorServico>();
                 Kernel.Bind<IRomServico>().To<RomServico>();
+                Kernel.Bind<IUsuarioServico>().To<UsuarioServico>();
 
-                Kernel.Bind(typeof(IAppServicoBase<>)).To(typeof(AppServicoBase<>));
-                Kernel.Bind<IUsuarioAppServico>().To<UsuarioAppServico>();
-                Kernel.Bind<IAcessoAppServico>().To<AcessoAppServico>();
-                Kernel.Bind<IJogoAppServico>().To<JogoAppServico>();
-                Kernel.Bind<IProgramaAppServico>().To<ProgramaAppServico>();
-                Kernel.Bind<IEmuladorAppServico>().To<EmuladorAppServico>();
-                Kernel.Bind<IRomAppServico>().To<RomAppServico>();
-
-                Kernel.Bind<IAntigueraContexto>().To<AntigueraContexto>();
+                Kernel.Bind(typeof(IConvertHelper<,>)).To(typeof(ConvertHelper<,>));
+                Kernel.Bind<IUnitOfWork, UnitOfWork>();
             }
         }
     }

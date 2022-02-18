@@ -5,24 +5,19 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Antiguera.Infra.Data.Repositorios.Base
 {
     public class RepositorioBase<T> : IDisposable, IRepositorioBase<T> where T : class
     {
         protected DbContext Context { get; private set; }
-        private IAntigueraContexto antigueraContexto { get; set; }
 
         public RepositorioBase()
         {
             Context = new AntigueraContexto();
         }
                 
-        public RepositorioBase(IAntigueraContexto antigueraContexto)
-        {
-            this.antigueraContexto = antigueraContexto;
-        }
-
         public RepositorioBase(AntigueraContexto antigueraContexto)
         {
             Context = antigueraContexto;
@@ -49,10 +44,10 @@ namespace Antiguera.Infra.Data.Repositorios.Base
 
         public virtual T BuscarPorId(int id) => Context.Set<T>().Find(id);
 
-        public virtual IEnumerable<T> BuscarTodos() => Context.Set<T>().ToList();
+        public virtual IEnumerable<T> ListarTodos() => Context.Set<T>().ToList();
 
-        public virtual IEnumerable<T> BuscaQuery(Func<T, bool> predicate) => Context.Set<T>().Where(predicate);
-
+        public virtual IEnumerable<T> ListarPorPesquisa(Func<T, bool> predicate) => Context.Set<T>().Where(predicate);
+        
         public void Dispose()
         {
             Context.Dispose();

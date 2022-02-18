@@ -1,7 +1,10 @@
 ﻿using Antiguera.Administrador.Controllers.Base;
-using Antiguera.Administrador.Models;
+using Antiguera.Administrador.Models.Tables;
+using Antiguera.Administrador.ViewModels;
+using Antiguera.Dominio.Interfaces.Servicos;
 using System;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using X.PagedList;
@@ -11,301 +14,252 @@ namespace Antiguera.Administrador.Controllers
     [Authorize]
     public class ProgramaController : BaseController
     {
+        public ProgramaController(IAcessoServico acessoServico, IEmuladorServico emuladorServico,
+            IHistoricoServico historicoServico, IJogoServico jogoServico,
+            IProgramaServico programaServico, IRomServico romServico,
+            IUsuarioServico usuarioServico)
+            : base(acessoServico, emuladorServico, historicoServico, jogoServico, programaServico,
+                 romServico, usuarioServico)
+        {
+        }
+
         // GET: Programa
         public ActionResult Index(int pagina = 1)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    if (Session["Mensagem"] != null)
-                    {
-                        ViewBag.Mensagem = Session["Mensagem"];
-                        Session.Clear();
-                    }
-
-                    if (Session["ErroMensagem"] != null)
-                    {
-                        ViewBag.ErroMensagem = Session["ErroMensagem"];
-                        Session.Clear();
-                    }
-
-                    var lista = ListarProgramas();
-                    if (Session["Unauthorized"] != null)
-                    {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
-                    }
-                    return View(lista.OrderBy(x => x.Id).ToPagedList(pagina, 4));
-                }
-                else
-                {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
-                }
+                var lista = ListarProgramas();
+                return View(lista.OrderBy(x => x.Id).ToPagedList(pagina, 4));
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: ", ex);
+                throw;
             }
         }
 
-        // GET: Cadastrar
+        //POST: Programa/CarregarProgramas
+        [HttpPost]
+        public JsonResult CarregarProgramas()
+        {
+            var obj = new ProgramaTableModel();
+
+            try
+            {
+                var lista = ListarProgramas();
+
+                foreach (var item in lista)
+                {
+                    obj.data.Add(new ProgramaListTableModel()
+                    {
+                        Id = item.Id,
+                        Nome = item.Nome,
+                        Developer = item.Developer,
+                        Publisher = item.Publisher,
+                        Tipo = item.Tipo,
+                        Created = item.Created,
+                        Modified = item.Modified,
+                        Novo = item.Novo
+                    });
+                }
+
+                obj.recordsFiltered = obj.data.Count();
+                obj.recordsTotal = obj.data.Count();
+
+                return Json(obj);
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                Response.StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError);
+                obj.error = ex.Message;
+                return Json(obj);
+            }
+        }
+
+
+        // GET: Programa/Cadastrar
         public ActionResult Cadastrar()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    return View();
-                }
-                else
-                {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
-                }
+                return View();
             }
+
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: ", ex);
+                throw;
             }
         }
 
-        // POST: Cadastrar
+        // POST: Programa/Cadastrar
         [HttpPost]
-        public ActionResult Cadastrar(ProgramaModel model)
+        public ActionResult Cadastrar(ProgramaViewModel model)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                if (ModelState.IsValid)
                 {
-                    if (model != null && ModelState.IsValid)
-                    {
-
-                        CadastrarPrograma(model);
-
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        return View(model);
-                    }
+                    CadastrarPrograma(model);
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
+                    AdicionarModelStateErrors(ModelState);
                 }
+                if (errorsList.Count() > 0)
+                {
+                    return Json(new { success = false, errors = errorsList });
+                }
+
+                return Json(new { success = true, message = "Programa inserido com sucesso!" });
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
             }
         }
 
-        // GET: Detalhes
+        // POST: Programa/Detalhes
+        [HttpPost]
         public ActionResult Detalhes(int id)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    var model = BuscarProgramaPorId(id);
-                    if (Session["Unauthorized"] != null)
-                    {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
-                    }
+                var model = BuscarProgramaPorId(id);
 
-                    if (model != null)
-                    {
-                        if (model.Novo == true)
-                        {
-                            AtualizarPrograma(model);
-                        }
-                        return View(model);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index");
-                    }
-                }
-                else
+                if (model != null)
                 {
-                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                    return RedirectToAction("Login", "Home");
+                    if (model.Novo == true)
+                    {
+                        AtualizarPrograma(model);
+                    }
                 }
+
+                if (errorsList.Count > 0)
+                {
+                    return Json(new { success = false, errors = errorsList });
+                }
+
+                return Json(new { success = true, obj = model });
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
             }
         }
 
-        // GET: Editar
+        // GET: Programa/Editar
         public ActionResult Editar(int id)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    var model = BuscarProgramaPorId(id);
-                    if (Session["Unauthorized"] != null)
-                    {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
-                    }
+                var model = BuscarProgramaPorId(id);
 
-                    if (model != null)
+                if (model != null)
+                {
+                    if (model.Novo == true)
                     {
-                        if (model.Novo == true)
-                        {
-                            AtualizarPrograma(model);
-                            Session.Clear();
-                        }
-                        return View(model);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index");
+                        AtualizarPrograma(model);
+                        Session.Clear();
                     }
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                    return RedirectToAction("Login", "Home");
+                    throw new HttpException(Convert.ToInt32(HttpStatusCode.NotFound), errorsList.FirstOrDefault());
                 }
+
+                return View(model);
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: ", ex);
+                throw;
             }
         }
 
-        // POST: Editar
+
+        // POST: Programa/Editar
         [HttpPost]
-        public ActionResult Editar(ProgramaModel model)
+        public ActionResult Editar(ProgramaViewModel model)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                if (ModelState.IsValid)
                 {
-                    if (model != null && ModelState.IsValid)
-                    {
-
-                        AtualizarPrograma(model);
-
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        return View(model);
-                    }
+                    AtualizarPrograma(model);
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
+                    AdicionarModelStateErrors(ModelState);
                 }
+
+                if (errorsList.Count() > 0)
+                {
+                    return Json(new { success = false, errors = errorsList });
+                }
+
+                return Json(new { success = true, message = "Programa atualizado com sucesso!" });
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
             }
         }
 
-        // GET: Excluir
+        // POST: Programa/Excluir
+        [HttpPost]
         public ActionResult Excluir(int id)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                if (id > 0)
                 {
-                    if (id == 0)
-                    {
-                        ViewBag.ErroMensagem = "Parâmetros incorretos!";
-                    }
-                    else
-                    {
-                        var model = BuscarProgramaPorId(id);
+                    var model = BuscarProgramaPorId(id);
 
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-
-                        if(model != null)
-                        {
-                            ExcluirPrograma(model);
-                        }
-                        
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
+                    if (model != null)
+                    {
+                        ExcluirPrograma(model);
                     }
-                    return RedirectToAction("Index");
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
+                    errorsList.Add("Parâmetros incorretos!");
                 }
+
+                if (errorsList.Count > 0)
+                {
+                    return Json(new { success = false, errors = errorsList });
+                }
+
+                return Json(new { success = true, message = "Programa excluído com sucesso!" });
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
             }
         }
     }

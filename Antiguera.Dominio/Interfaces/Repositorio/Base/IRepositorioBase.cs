@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Antiguera.Dominio.Interfaces.Repositorio.Base
 {
@@ -13,8 +14,8 @@ namespace Antiguera.Dominio.Interfaces.Repositorio.Base
 
         T BuscarPorId(int id);
 
-        IEnumerable<T> BuscarTodos();
+        IEnumerable<T> ListarTodos();
 
-        IEnumerable<T> BuscaQuery(Func<T, bool> predicate);
+        IEnumerable<T> ListarPorPesquisa(Func<T, bool> predicate);
     }
 }

@@ -1,4 +1,4 @@
-﻿@model Antiguera.Administrador.Models.EmuladorModel
+﻿@model Antiguera.Administrador.ViewModels.EmuladorViewModel
 
 @{
     ViewBag.Title = "Cadastrar novo emulador";
@@ -27,24 +27,10 @@
         <div class="container">
             @using (Html.BeginForm("Cadastrar", "Emulador", FormMethod.Post, new { @class = "form-admin", enctype = "multipart/form-data" }))
             {
-                if (ViewBag.ErroMensagem != null)
-                {
-                    <div class="col-md-11">
-                        <div class="alert alert-danger">
-                            <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
-                            @ViewBag.ErroMensagem
-                        </div>
-                    </div>
-                }
 
                 if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
                 {
-                    <div class="col-md-11">
-                        <div class="alert alert-danger">
-                            <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
-                            @Html.ValidationSummary(false, "Ocorreram os seguintes erros: ")
-                        </div>
-                    </div>
+                    @Html.Partial("_AlertaErro")
                 }
 
                 <div class="row">
@@ -57,12 +43,12 @@
                         @Html.TextBoxFor(x => x.Console, new { @class = "form-control" })
                     </div>
                     <div class="col-md-3">
-                        @Html.LabelFor(x => x.DataLancamento)
+                        @Html.LabelFor(x => x.Lancamento)
                         <div class="input-group date" data-provide="datepicker">
                             <div class="input-group-addon">
                                 <i class="fa fa-calendar"></i>
                             </div>
-                            @Html.TextBoxFor(x => x.DataLancamento, new { @class = "form-control pull-right" })
+                            @Html.TextBoxFor(x => x.Lancamento, new { @class = "form-control pull-right" })
                         </div>
                     </div>
                 </div>
@@ -83,7 +69,7 @@
                 <br />
                 <div class="row">
                     <div class="col-md-2">
-                        <button class="btn btn-success btn-block" type="submit">Cadastrar</button>
+                        <button id="Salvar" class="btn btn-success btn-block" type="submit">Cadastrar</button>
                     </div>
                     <div class="col-md-2">
                         @Html.ActionLink("Voltar", "Index", null, new { @class = "btn btn-default btn-block" })
@@ -95,7 +81,8 @@
     </section>
 </div>
 
-@section scripts {
+@section scripts
+{
     @Scripts.Render("~/bundles/js/bootstrap-datepicker")
 }
 

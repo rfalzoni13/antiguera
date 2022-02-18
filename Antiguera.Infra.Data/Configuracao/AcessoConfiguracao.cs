@@ -7,17 +7,17 @@ namespace Antiguera.Infra.Data.Configuracao
     {
         public AcessoConfiguracao()
         {
-            HasKey(a => a.Id).Property(a => a.Id).HasColumnOrder(1);
+            HasKey(a => a.Id).Property(a => a.Id);
 
-            Property(a => a.IdentityRoleId).IsRequired().HasColumnOrder(2);
+            Property(a => a.IdentityRoleId).IsRequired();
 
-            Property(a => a.Nome).HasMaxLength(100).IsRequired().HasColumnOrder(3);
+            Property(a => a.Nome).IsRequired();
 
-            Property(a => a.Novo).IsOptional().HasColumnOrder(4);
+            Property(a => a.Novo).IsOptional();
 
-            Property(a => a.Created).IsRequired().HasColumnOrder(5);
+            Property(a => a.Created).IsRequired();
 
-            Property(a => a.Modified).IsOptional().HasColumnOrder(6);
+            Property(a => a.Modified).IsOptional();
         }
     }
 }

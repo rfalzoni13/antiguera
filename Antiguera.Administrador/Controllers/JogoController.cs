@@ -1,7 +1,10 @@
 ﻿using Antiguera.Administrador.Controllers.Base;
-using Antiguera.Administrador.Models;
+using Antiguera.Administrador.Models.Tables;
+using Antiguera.Administrador.ViewModels;
+using Antiguera.Dominio.Interfaces.Servicos;
 using System;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using X.PagedList;
@@ -11,303 +14,251 @@ namespace Antiguera.Administrador.Controllers
     [Authorize]
     public class JogoController : BaseController
     {
+        public JogoController(IAcessoServico acessoServico, IEmuladorServico emuladorServico,
+            IHistoricoServico historicoServico, IJogoServico jogoServico,
+            IProgramaServico programaServico, IRomServico romServico,
+            IUsuarioServico usuarioServico)
+            : base(acessoServico, emuladorServico, historicoServico, jogoServico, programaServico,
+                 romServico, usuarioServico)
+        {
+        }
+
         // GET: Jogo
         public ActionResult Index(int pagina = 1)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    if (Session["Mensagem"] != null)
-                    {
-                        ViewBag.Mensagem = Session["Mensagem"];
-                        Session.Clear();
-                    }
-
-                    if (Session["ErroMensagem"] != null)
-                    {
-                        ViewBag.ErroMensagem = Session["ErroMensagem"];
-                        Session.Clear();
-                    }
-
-                    var lista = ListarJogos();
-                    if (Session["Unauthorized"] != null)
-                    {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
-                    }
-                    return View(lista.OrderBy(x => x.Id).ToPagedList(pagina, 4));
-                }
-                else
-                {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
-                }
+                var lista = ListarJogos();
+                return View(lista.OrderBy(x => x.Id).ToPagedList(pagina, 4));
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: ", ex);
+                throw;
             }
         }
 
-        // GET: Cadastrar
+        //POST: Jogo/CarregarJogos
+        [HttpPost]
+        public JsonResult CarregarJogos()
+        {
+            var obj = new JogoTableModel();
+
+            try
+            {
+                var lista = ListarJogos();
+                
+                foreach (var item in lista)
+                {
+                    obj.data.Add(new JogoListTableModel()
+                    {
+                        Id = item.Id,
+                        Nome = item.Nome,
+                        Developer = item.Developer,
+                        Publisher = item.Publisher,
+                        Genero = item.Genero,
+                        Plataforma = item.Plataforma,
+                        Created = item.Created,
+                        Modified = item.Modified,
+                        Novo = item.Novo
+                    });
+                }
+
+                obj.recordsFiltered = obj.data.Count();
+                obj.recordsTotal = obj.data.Count();
+
+                return Json(obj);
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                Response.StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError);
+                obj.error = ex.Message;
+                return Json(obj);
+            }
+        }
+
+        // GET: Jogo/Cadastrar
         public ActionResult Cadastrar()
         {
-            try
+            if (!User.Identity.IsAuthenticated)
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    return View();
-                }
-                else
-                {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
-                }
-            }
-            catch (Exception ex)
-            {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
                 return RedirectToAction("Login", "Home");
             }
-            
+
+            try
+            {
+                return View();
+            }
+
+            catch (Exception ex)
+            {
+                _logger.Fatal("Ocorreu um erro: ", ex);
+                throw;
+            }
         }
 
-        // POST: Cadastrar
+        // POST: Jogo/Cadastrar
         [HttpPost]
-        public ActionResult Cadastrar(JogoModel model)
+        public ActionResult Cadastrar(JogoViewModel model)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                if (ModelState.IsValid)
                 {
-                    if (model != null && ModelState.IsValid)
-                    {
-
-                        CadastrarJogo(model);
-
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        return View(model);
-                    }
+                    CadastrarJogo(model);
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
+                    AdicionarModelStateErrors(ModelState);
                 }
+                if (errorsList.Count() > 0)
+                {
+                    return Json(new { success = false, errors = errorsList });
+                }
+
+                return Json(new { success = true, message = "Jogo cadastrado com sucesso!" });
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
             }
         }
 
-        // GET: Detalhes
+        // POST: Jogo/Detalhes
+        [HttpPost]
         public ActionResult Detalhes(int id)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                var model = BuscarJogoPorId(id);
+
+                if (model != null)
                 {
-                    var model = BuscarJogoPorId(id);
-                    if (Session["Unauthorized"] != null)
+                    if (model.Novo == true)
                     {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
-                    }
-
-                    if (model != null)
-                    {
-                        if (model.Novo == true)
-                        {
-                            AtualizarJogo(model);
-                        }
-
-                        return View(model);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index");
+                        AtualizarJogo(model);
                     }
                 }
-                else
+
+                if (errorsList.Count > 0)
                 {
-                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                    return RedirectToAction("Login", "Home");
+                    return Json(new { success = false, errors = errorsList });
                 }
+
+                return Json(new { success = true, obj = model });
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
             }
         }
 
-        // GET: Editar
+        // GET: Jogo/Editar
         public ActionResult Editar(int id)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    var model = BuscarJogoPorId(id);
-                    if (Session["Unauthorized"] != null)
-                    {
-                        HttpContext.GetOwinContext().Authentication.SignOut();
-                        return RedirectToAction("Login", "Home");
-                    }
+                var model = BuscarJogoPorId(id);
 
-                    if (model != null)
+                if (model != null)
+                {
+                    if (model.Novo == true)
                     {
-                        if (model.Novo == true)
-                        {
-                            AtualizarJogo(model);
-                            Session.Clear();
-                        }
-                        return View(model);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index");
+                        AtualizarJogo(model);
+                        Session.Clear();
                     }
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Sua sessão expirou! Faça login novamente!";
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                    return RedirectToAction("Login", "Home");
+                    throw new HttpException(Convert.ToInt32(HttpStatusCode.NotFound), errorsList.FirstOrDefault());
                 }
+
+                return View(model);
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: ", ex);
+                throw;
             }
         }
 
-        // POST: Editar
+        // POST: Jogo/Editar
         [HttpPost]
-        public ActionResult Editar(JogoModel model)
+        public ActionResult Editar(JogoViewModel model)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                if (ModelState.IsValid)
                 {
-                    if (model != null && ModelState.IsValid)
-                    {
-
-                        AtualizarJogo(model);
-
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        return View(model);
-                    }
+                    AtualizarJogo(model);
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
+                    AdicionarModelStateErrors(ModelState);
                 }
+
+                if (errorsList.Count() > 0)
+                {
+                    return Json(new { success = false, errors = errorsList });
+                }
+
+                return Json(new { success = true, message = "Jogo atualizado com sucesso!" });
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
             }
         }
 
-        // GET: Excluir
+        // POST: Jogo/Excluir
+        [HttpPost]
         public ActionResult Excluir(int id)
         {
             try
             {
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                if (id > 0)
                 {
-                    if (id == 0)
+                    var model = BuscarJogoPorId(id);
+
+                    if (model != null)
                     {
-                        ViewBag.ErroMensagem = "Parâmetros incorretos!";
+                        ExcluirJogo(model);
                     }
-                    else
-                    {
-                        var model = BuscarJogoPorId(id);
-
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-
-                        if(model != null)
-                        {
-                            ExcluirJogo(model);
-                        }
-
-                        if (Session["Unauthorized"] != null)
-                        {
-                            HttpContext.GetOwinContext().Authentication.SignOut();
-                            return RedirectToAction("Login", "Home");
-                        }
-                    }
-                    return RedirectToAction("Index");
                 }
                 else
                 {
-                    Session["ErroMensagem"] = "Acesso restrito!";
-                    return RedirectToAction("Login", "Home");
+                    errorsList.Add("Parâmetros incorretos!");
                 }
+
+                if (errorsList.Count > 0)
+                {
+                    return Json(new { success = false, errors = errorsList });
+                }
+
+                return Json(new { success = true, message = "Jogo excluído com sucesso!" });
             }
             catch (Exception ex)
             {
-                Session["ErroMensagem"] = "Erro: " + ex.Message;
-                if (HttpContext.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
-                {
-                    HttpContext.GetOwinContext().Authentication.SignOut();
-                }
-                return RedirectToAction("Login", "Home");
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                return Json(new { success = false, errors = errorsList });
             }
         }
     }

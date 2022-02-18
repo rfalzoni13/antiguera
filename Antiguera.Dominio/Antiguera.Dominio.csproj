@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\Antiguera.Infra.IoC\bin\Debug\EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,21 +44,35 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTO\AcessoDTO.cs" />
+    <Compile Include="DTO\Base\BaseDTO.cs" />
+    <Compile Include="DTO\EmuladorDTO.cs" />
+    <Compile Include="DTO\HistoricoDTO.cs" />
+    <Compile Include="DTO\JogoDTO.cs" />
+    <Compile Include="DTO\ProgramaDTO.cs" />
+    <Compile Include="DTO\RomDTO.cs" />
+    <Compile Include="DTO\UsuarioDTO.cs" />
+    <Compile Include="Entidades\Base\EntityBase.cs" />
     <Compile Include="Entidades\Emulador.cs" />
     <Compile Include="Entidades\Acesso.cs" />
+    <Compile Include="Entidades\Historico.cs" />
     <Compile Include="Entidades\Jogo.cs" />
     <Compile Include="Entidades\Programa.cs" />
     <Compile Include="Entidades\Rom.cs" />
     <Compile Include="Entidades\Usuario.cs" />
-    <Compile Include="Interfaces\IAntigueraContexto.cs" />
-    <Compile Include="Interfaces\IUnitOfWork.cs" />
+    <Compile Include="Enum\ETipoHistorico.cs" />
+    <Compile Include="Helpers\ConvertHelper.cs" />
+    <Compile Include="Helpers\StringHelper.cs" />
+    <Compile Include="Interfaces\Repositorio\Base\IUnitOfWork.cs" />
     <Compile Include="Interfaces\Repositorio\Base\IRepositorioBase.cs" />
     <Compile Include="Interfaces\Repositorio\IAcessoRepositorio.cs" />
     <Compile Include="Interfaces\Repositorio\IEmuladorRepositorio.cs" />
+    <Compile Include="Interfaces\Repositorio\IHistoricoRepositorio.cs" />
     <Compile Include="Interfaces\Repositorio\IJogoRepositorio.cs" />
     <Compile Include="Interfaces\Repositorio\IProgramaRepositorio.cs" />
     <Compile Include="Interfaces\Repositorio\IRomRepositorio.cs" />
     <Compile Include="Interfaces\Repositorio\IUsuarioRepositorio.cs" />
+    <Compile Include="Interfaces\Servicos\Helpers\IConvertHelper.cs" />
     <Compile Include="Interfaces\Servicos\Base\IServicoBase.cs" />
     <Compile Include="Interfaces\Servicos\IAcessoServico.cs" />
     <Compile Include="Interfaces\Servicos\IEmuladorServico.cs" />

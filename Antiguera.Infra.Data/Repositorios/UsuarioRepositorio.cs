@@ -11,23 +11,18 @@ namespace Antiguera.Infra.Data.Repositorios
 {
     public class UsuarioRepositorio : RepositorioBase<Usuario>, IUsuarioRepositorio
     {
-        public override IEnumerable<Usuario> BuscaQuery(Func<Usuario, bool> predicate)
-            => Context.Set<Usuario>().Include(x => x.Acesso).Where(predicate);
-
-        public Usuario BuscarUsuarioPorLoginOuEmail(string data)
+        public override Usuario BuscarPorId(int id)
         {
             using (var c = new AntigueraContexto())
             {
-                var usuario = c.Usuarios.Where(u => u.Login == data || u.Email == data).FirstOrDefault();
-                if(usuario != null)
-                {
-                    return usuario;
-                }
-                else
-                {
-                    return null;
-                }
+                return c.Usuarios.AsNoTracking().Where(u => u.Id == id).FirstOrDefault();
             }
+        }
+
+        public override void Apagar(Usuario obj)
+        {
+            Context.Set<Usuario>().Attach(obj);
+            base.Apagar(obj);
         }
     }
 }

@@ -1,15 +1,20 @@
-﻿@model Antiguera.Administrador.Models.JogoModel
+﻿@model Antiguera.Administrador.ViewModels.JogoViewModel
 
 @{
     ViewBag.Title = "Editar jogo";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
-    .col-md-4 p {
-        margin: 5px 75px -25px;
-    }
-</style>
+@section styles {
+    @Styles.Render("~/Content/libraries/jquery.JCrop/jquery.JCrop.css")
+    @Styles.Render("~/bundles/bootstrap-datepicker")
+
+    <style>
+        .col-md-4 p {
+            margin: 5px 75px -25px;
+        }
+    </style>
+}
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -50,8 +55,8 @@
                 }
 
                 @Html.HiddenFor(x => x.Id)
-                @Html.HiddenFor(x => x.UrlArquivo)
-                @Html.HiddenFor(x => x.UrlBoxArt)
+                @Html.HiddenFor(x => x.Arquivo)
+                @Html.HiddenFor(x => x.BoxArt)
                 @Html.HiddenFor(x => x.Created)
                 <div class="row">
                     <div class="col-md-3">
@@ -88,12 +93,12 @@
                 </div>
                 <br />
                 <div class="row">
-                    @if (!string.IsNullOrEmpty(Model.UrlBoxArt))
+                    @if (!string.IsNullOrEmpty(Model.BoxArt))
                     {
                         <div class="col-md-4">
                             @Html.LabelFor(x => x.FileBoxArt)
                             @Html.TextBoxFor(x => x.FileBoxArt, new { @type = "file", @style = "display:none" })
-                            <p id="textBoxArt">@(Model.UrlBoxArt.Split('/')[4])</p>
+                            <p id="textBoxArt">@(Model.BoxArt.Split('/')[4])</p>
                             <button type="button" id="ClickBoxArt" class="btn btn-primary">Alterar</button>
                         </div>
                     }
@@ -104,12 +109,12 @@
                             @Html.TextBoxFor(x => x.FileBoxArt, new { @type = "file" })
                         </div>
                     }
-                    @if (!string.IsNullOrEmpty(Model.UrlArquivo))
+                    @if (!string.IsNullOrEmpty(Model.Arquivo))
                     {
                         <div class="col-md-4">
                             @Html.LabelFor(x => x.FileJogo)
                             @Html.TextBoxFor(x => x.FileJogo, new { @type = "file", @style = "display:none" })
-                            <p id="textFile">@(Model.UrlArquivo.Split('/')[3])</p>
+                            <p id="textFile">@(Model.Arquivo.Split('/')[3])</p>
                             <button type="button" id="ClickFile" class="btn btn-primary">Alterar</button>
                         </div>
                     }
@@ -122,17 +127,17 @@
                     }
                 </div>
                 @*<br />
-                <div class="row">
-                    <div class="col-md-3">
-                        <img src="@Model.UrlBoxArt" id="photoBoxArt" />
+                    <div class="row">
+                        <div class="col-md-3">
+                            <img src="@Model.UrlBoxArt" id="photoBoxArt" />
+                        </div>
                     </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-md-3">
-                        <button type="button" id="removePhoto" class="btn btn-danger">Remover foto</button>
-                    </div>
-                </div>*@
+                    <br />
+                    <div class="row">
+                        <div class="col-md-3">
+                            <button type="button" id="removePhoto" class="btn btn-danger">Remover foto</button>
+                        </div>
+                    </div>*@
                 <br />
                 <div class="row">
                     <div class="col-md-5">
@@ -155,32 +160,42 @@
     </section>
 </div>
 
+@section modals
+{
+    <div class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Recortar foto</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <img class="img-responsive center-block" id="ImagePreview" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        @*<div class="col-md-12">
+                                <button type="button" class="btn btn-primary" onclick="antiguera.usuario.cadastrar.cortarImagem()">Cortar foto</button>
+                            </div>*@
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-success">Recortar</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+}
+
 @section scripts {
+    <script src="@Url.Content("~/Scripts/libraries/jquery.JCrop/jquery.JCrop.js")"></script>
     @Scripts.Render("~/bundles/js/bootstrap-datepicker")
-
-    <script>
-        $(".input-group.date").datepicker({
-        format: "dd/mm/yyyy"
-        });
-
-        $("#ClickBoxArt").on("click", function () {
-            $("#FileBoxArt").click();
-        });
-
-        $("#ClickFile").on("click", function () {
-            $("#FileJogo").click();
-        });
-
-        $("#FileBoxArt").change(function (e) {
-            var fileName = e.target.files[0].name;
-            $("#textBoxArt").html(fileName);
-        });
-
-        $("#FileJogo").change(function (e) {
-            var fileName = e.target.files[0].name;
-            $("#textFile").html(fileName);
-        });
-
-    </script>
+    <script src="@Url.Content("~/Scripts/libraries/bootstrap-datepicker/locales/bootstrap-datepicker.pt-BR.min.js")"></script>
+    @Scripts.Render("~/bundles/js/core")
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jogo/cadastrar.js")"></script>
 }
 
