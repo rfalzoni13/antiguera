@@ -7,7 +7,7 @@ namespace Antiguera.Infra.Data.Contexto
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            :base("Falzoni", throwIfV1Schema: false)
+            :base("Antiguera", throwIfV1Schema: false)
         {
             Configuration.ProxyCreationEnabled = false;
             Configuration.LazyLoadingEnabled = false;
