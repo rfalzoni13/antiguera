@@ -121,7 +121,7 @@ namespace Antiguera.Servicos.Servicos.Base
             }
         }
 
-        public virtual TDTO BuscarPorId(int id)
+        public virtual TDTO BuscarPorId(Guid id)
         {
             var entity = _repositorioBase.BuscarPorId(id);
 

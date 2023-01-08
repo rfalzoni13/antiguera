@@ -4,7 +4,8 @@ using Antiguera.Dominio.Interfaces.Repositorio;
 using Antiguera.Dominio.Interfaces.Repositorio.Base;
 using Antiguera.Dominio.Interfaces.Servicos;
 using Antiguera.Dominio.Interfaces.Servicos.Helpers;
-using Antiguera.Infra.Cross.Identity;
+using Antiguera.Infra.Data.Identity;
+using Antiguera.Servicos.Identity;
 using Antiguera.Servicos.Servicos.Base;
 using Microsoft.AspNet.Identity.Owin;
 using System;
@@ -46,7 +47,7 @@ namespace Antiguera.Servicos.Servicos
                 throw new ArgumentNullException("Nenhum objeto encontrado!");
             }
 
-            using(var transaction = _unitOfWork.BeginTransaction())
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
@@ -59,18 +60,31 @@ namespace Antiguera.Servicos.Servicos
 
                     obj.IdentityRoleId = role.Id;
 
-                    base.Adicionar(obj);
+                    using(var transaction = _unitOfWork.BeginTransaction())
+                    {
+                        try
+                        {
+                            _acessoRepositorio.Adicionar(Acesso.ConvertToEntity(obj));
 
-                    transaction.Commit();
+                            transaction.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw ex;
+                        }
+                        finally
+                        {
+                            transaction.Dispose();
+                        }
+                    }
+
+                    scope.Complete();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    transaction.Rollback();
+                    scope.Dispose();
                     throw ex;
-                }
-                finally
-                {
-                    transaction.Dispose();
                 }
             }
         }
@@ -82,7 +96,7 @@ namespace Antiguera.Servicos.Servicos
                 throw new ArgumentNullException("Nenhum objeto encontrado!");
             }
 
-            using (var transaction = _unitOfWork.BeginTransaction())
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
@@ -92,18 +106,29 @@ namespace Antiguera.Servicos.Servicos
                         RoleManager.DeleteAsync(role);
                     }
 
-                    base.Apagar(obj);
+                    using (var transaction = _unitOfWork.BeginTransaction())
+                    {
+                        try
+                        {
+                            _acessoRepositorio.Apagar(Acesso.ConvertToEntity(obj));
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw ex;
+                        }
+                        finally
+                        {
+                            transaction.Dispose();
+                        }
+                    }
 
-                    transaction.Commit();
+                    scope.Complete();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    transaction.Rollback();
+                    scope.Dispose();
                     throw ex;
-                }
-                finally
-                {
-                    transaction.Dispose();
                 }
             }
         }
@@ -115,7 +140,7 @@ namespace Antiguera.Servicos.Servicos
                 throw new ArgumentNullException("Nenhum objeto encontrado!");
             }
 
-            using (var transaction = _unitOfWork.BeginTransaction())
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
@@ -127,18 +152,29 @@ namespace Antiguera.Servicos.Servicos
                         RoleManager.UpdateAsync(role);
                     }
 
-                    base.Atualizar(obj);
+                    using(var transaction = _unitOfWork.BeginTransaction())
+                    {
+                        try
+                        {
+                            _acessoRepositorio.Atualizar(Acesso.ConvertToEntity(obj));
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw ex;
+                        }
+                        finally
+                        {
+                            transaction.Dispose();
+                        }
+                    }
 
-                    transaction.Commit();
+                    scope.Complete();
                 }
                 catch(Exception ex)
                 {
-                    transaction.Rollback();
+                    scope.Dispose();
                     throw ex;
-                }
-                finally
-                {
-                    transaction.Dispose();
                 }
             }
         }

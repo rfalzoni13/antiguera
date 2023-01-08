@@ -6,7 +6,7 @@ namespace Antiguera.Infra.Cross.Identity
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            :base("Antiguera", throwIfV1Schema: false)
+            :base("Falzoni", throwIfV1Schema: false)
         {
             Configuration.ProxyCreationEnabled = false;
             Configuration.LazyLoadingEnabled = false;

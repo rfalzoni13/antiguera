@@ -1,260 +1,243 @@
-﻿using Antiguera.Administrador.Controllers.Base;
+﻿using Antiguera.Administrador.Helpers;
+using Antiguera.Administrador.Models;
 using Antiguera.Administrador.Models.Tables;
-using Antiguera.Administrador.ViewModels;
-using Antiguera.Dominio.Interfaces.Servicos;
+using NLog;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Web;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Mvc;
-using X.PagedList;
 
 namespace Antiguera.Administrador.Controllers
 {
     [Authorize]
-    public class RomController : BaseController
+    public class RomController : Controller
     {
-        public RomController(IAcessoServico acessoServico, IEmuladorServico emuladorServico,
-            IHistoricoServico historicoServico, IJogoServico jogoServico,
-            IProgramaServico programaServico, IRomServico romServico,
-            IUsuarioServico usuarioServico)
-            : base(acessoServico, emuladorServico, historicoServico, jogoServico, programaServico,
-                 romServico, usuarioServico)
-        {
-        }
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         // GET: Rom
-        public ActionResult Index(int pagina = 1)
+        public ActionResult Index()
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            try
-            {
-                var lista = ListarRoms();
-                return View(lista.OrderBy(x => x.Id).ToPagedList(pagina, 4));
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal("Ocorreu um erro: ", ex);
-                throw;
-            }
+            return View();
         }
 
         //POST: Rom/CarregarRoms
         [HttpPost]
-        public JsonResult CarregarRoms()
+        public async Task<JsonResult> CarregarRoms()
         {
             var obj = new RomTableModel();
 
             try
             {
-                var lista = ListarRoms();
-
-                foreach (var item in lista)
+                using (HttpClient client = new HttpClient())
                 {
-                    obj.data.Add(new RomListTableModel()
+                    var url = UrlConfiguration.VerifyCode;
+
+
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
                     {
-                        Id = item.Id,
-                        Nome = item.Nome,
-                        Genero = item.Genero,
-                        Created = item.Created,
-                        Modified = item.Modified,
-                        Novo = item.Novo
-                    });
+                        var result = await response.Content.ReadAsAsync<ICollection<RomModel>>();
+
+                        foreach (var item in result)
+                        {
+                            obj.data.Add(new RomListTableModel()
+                            {
+                                Id = item.Id,
+                                Nome = item.Nome,
+                                Created = item.Created,
+                                Modified = item.Modified,
+                                Novo = item.Novo
+                            });
+                        }
+
+                        obj.recordsFiltered = obj.data.Count();
+                        obj.recordsTotal = obj.data.Count();
+
+                        return Json(obj);
+                    }
+                    else
+                    {
+                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                        throw new Exception(statusCode.Message);
+                    }
                 }
-
-                obj.recordsFiltered = obj.data.Count();
-                obj.recordsTotal = obj.data.Count();
-
-                return Json(obj);
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
                 Response.StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError);
                 obj.error = ex.Message;
+#if !DEBUG
+                obj.error = "Ocorreu um erro ao processar a solicitação!";
+#endif
                 return Json(obj);
-            }
-        }
-
-        // GET: Rom/Cadastrar
-        public ActionResult Cadastrar()
-        {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            try
-            {
-                return View();
-            }
-
-            catch (Exception ex)
-            {
-                _logger.Fatal("Ocorreu um erro: ", ex);
-                throw;
             }
         }
 
         // POST: Rom/Cadastrar
         [HttpPost]
-        public ActionResult Cadastrar(RomViewModel model)
+        public async Task<JsonResult> Cadastrar(RomModel model)
         {
+            List<string> errorsList = new List<string>();
+
             try
             {
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
-                    CadastrarRom(model);
-                }
-                else
-                {
-                    AdicionarModelStateErrors(ModelState);
-                }
-                if (errorsList.Count() > 0)
-                {
+                    foreach (var modelState in ModelState.Values)
+                    {
+                        foreach (var error in modelState.Errors)
+                        {
+                            errorsList.Add(error.ErrorMessage);
+                        }
+                    }
+
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                return Json(new { success = true, message = "Rom inserida com sucesso!" });
+                using (HttpClient client = new HttpClient())
+                {
+                    var url = UrlConfiguration.SendCode;
+
+
+                    HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string result = await response.Content.ReadAsStringAsync();
+
+                        return Json(new { success = true, message = result });
+                    }
+                    else
+                    {
+                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                        throw new Exception(statusCode.Message);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add(ex.Message);
+#if !DEBUG
                 errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+#endif
+
                 return Json(new { success = false, errors = errorsList });
-            }
-        }
-
-        // POST: Rom/Detalhes
-        [HttpPost]
-        public ActionResult Detalhes(int id)
-        {
-            try
-            {
-                var model = BuscarRomPorId(id);
-
-                if (model != null)
-                {
-                    if (model.Novo == true)
-                    {
-                        AtualizarRom(model);
-                    }
-                }
-
-                if (errorsList.Count > 0)
-                {
-                    return Json(new { success = false, errors = errorsList });
-                }
-
-                return Json(new { success = true, obj = model });
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal("Ocorreu um erro: " + ex);
-                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
-                return Json(new { success = false, errors = errorsList });
-            }
-        }
-
-        // GET: Rom/Editar
-        public ActionResult Editar(int id)
-        {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            try
-            {
-                var model = BuscarRomPorId(id);
-
-                if (model != null)
-                {
-                    if (model.Novo == true)
-                    {
-                        AtualizarRom(model);
-                        Session.Clear();
-                    }
-                }
-                else
-                {
-                    throw new HttpException(Convert.ToInt32(HttpStatusCode.NotFound), errorsList.FirstOrDefault());
-                }
-
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal("Ocorreu um erro: ", ex);
-                throw;
             }
         }
 
         // POST: Rom/Editar
         [HttpPost]
-        public ActionResult Editar(RomViewModel model)
+        public async Task<ActionResult> Editar(RomModel model)
         {
+            List<string> errorsList = new List<string>();
+
             try
             {
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
-                    AtualizarRom(model);
-                }
-                else
-                {
-                    AdicionarModelStateErrors(ModelState);
-                }
+                    foreach (var modelState in ModelState.Values)
+                    {
+                        foreach (var error in modelState.Errors)
+                        {
+                            errorsList.Add(error.ErrorMessage);
+                        }
+                    }
 
-                if (errorsList.Count() > 0)
-                {
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                return Json(new { success = true, message = "Rom atualizada com sucesso!" });
+                using (HttpClient client = new HttpClient())
+                {
+                    var url = UrlConfiguration.SendCode;
+
+
+                    HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string result = await response.Content.ReadAsStringAsync();
+
+                        return Json(new { success = true, message = result });
+                    }
+                    else
+                    {
+                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                        throw new Exception(statusCode.Message);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add(ex.Message);
+#if !DEBUG
                 errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+#endif
+
                 return Json(new { success = false, errors = errorsList });
             }
         }
 
-        // POST: Rom/Excluir
+        //POST: Rom/Excluir
         [HttpPost]
-        public ActionResult Excluir(int id)
+        public async Task<ActionResult> Excluir(int id)
         {
+            List<string> errorsList = new List<string>();
+
             try
             {
-                if (id > 0)
+                if (!ModelState.IsValid)
                 {
-                    var model = BuscarRomPorId(id);
-
-                    if (model != null)
+                    foreach (var modelState in ModelState.Values)
                     {
-                        ExcluirRom(model);
+                        foreach (var error in modelState.Errors)
+                        {
+                            errorsList.Add(error.ErrorMessage);
+                        }
                     }
-                }
-                else
-                {
-                    errorsList.Add("Parâmetros incorretos!");
-                }
 
-                if (errorsList.Count > 0)
-                {
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                return Json(new { success = true, message = "Rom excluída com sucesso!" });
+                using (HttpClient client = new HttpClient())
+                {
+                    var url = UrlConfiguration.Login;
+
+                    string queryId = id.ToString();
+
+                    string param = $"acessoId={queryId}";
+
+                    HttpContent content = new StringContent(param, System.Text.Encoding.UTF8, "application/json");
+
+                    HttpResponseMessage response = await client.PostAsync(url, content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string result = await response.Content.ReadAsStringAsync();
+
+                        return Json(new { success = true, message = result });
+                    }
+                    else
+                    {
+                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                        throw new Exception(statusCode.Message);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add(ex.Message);
+#if !DEBUG
                 errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+#endif
+
                 return Json(new { success = false, errors = errorsList });
             }
         }

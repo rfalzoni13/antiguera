@@ -1,7 +1,7 @@
-﻿using Antiguera.Administrador.Controllers.Base;
-using Antiguera.Administrador.ViewModels;
-using Antiguera.Dominio.Interfaces.Servicos;
+﻿using Antiguera.Administrador.Models;
+using NLog;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Web.Configuration;
 using System.Web.Mvc;
@@ -9,16 +9,9 @@ using System.Web.Mvc;
 namespace Antiguera.Administrador.Controllers
 {
     [Authorize]
-    public class ConfiguracaoController : BaseController
+    public class ConfiguracaoController : Controller
     {
-        public ConfiguracaoController(IAcessoServico acessoServico, IEmuladorServico emuladorServico,
-            IHistoricoServico historicoServico, IJogoServico jogoServico,
-            IProgramaServico programaServico, IRomServico romServico,
-            IUsuarioServico usuarioServico)
-            : base(acessoServico, emuladorServico, historicoServico, jogoServico, programaServico,
-                 romServico, usuarioServico)
-        {
-        }
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         // GET: Configuracao
         public ActionResult Index()
@@ -30,7 +23,7 @@ namespace Antiguera.Administrador.Controllers
 
             try
             {
-                var model = new ConfigViewModel();
+                var model = new ConfigModel();
 
                 var corHeader = ConfigurationManager.AppSettings["CorHeader"];
 
@@ -113,8 +106,10 @@ namespace Antiguera.Administrador.Controllers
 
         // POST: Configuracao/Salvar
         [HttpPost]
-        public ActionResult Salvar(ConfigViewModel model)
+        public JsonResult Salvar(ConfigModel model)
         {
+            List<string> errorsList = new List<string>();
+
             try
             {
                 var corHeader = string.Empty;
@@ -185,7 +180,11 @@ namespace Antiguera.Administrador.Controllers
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add(ex.Message);
+#if !DEBUG
                 errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+#endif
+
                 return Json(new { success = false, errors = errorsList });
             }
         }

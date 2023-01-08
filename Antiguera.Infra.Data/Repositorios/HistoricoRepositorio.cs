@@ -1,8 +1,9 @@
 ﻿using Antiguera.Dominio.Entidades;
 using Antiguera.Dominio.Enum;
-using Antiguera.Dominio.Helpers;
 using Antiguera.Dominio.Interfaces.Repositorio;
+using Antiguera.Infra.Data.Contexto;
 using Antiguera.Infra.Data.Repositorios.Base;
+using Antiguera.Utils.Helpers;
 using System;
 using System.Threading.Tasks;
 
@@ -10,7 +11,15 @@ namespace Antiguera.Infra.Data.Repositorios
 {
     public class HistoricoRepositorio : RepositorioBase<Historico>, IHistoricoRepositorio
     {
-        public async Task GravarHistorico(int usuarioId, ETipoHistorico tipoHistorico)
+        private AntigueraContexto _context;
+
+        public HistoricoRepositorio(AntigueraContexto context)
+            : base(context)
+        {
+            _context = context;
+        }
+
+        public async Task GravarHistorico(Guid usuarioId, ETipoHistorico tipoHistorico)
         {
             var historico = new Historico
             {
@@ -22,8 +31,8 @@ namespace Antiguera.Infra.Data.Repositorios
                 Modified = DateTime.Now
             };
 
-            Context.Set<Historico>().Add(historico);
-            await Context.SaveChangesAsync();
+            _context.Set<Historico>().Add(historico);
+            await _context.SaveChangesAsync();
             //_logger.Info("Histórico atualizado na data de " + DateTime.Now.ToString());
         }
 

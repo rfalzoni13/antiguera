@@ -9,7 +9,7 @@ namespace Antiguera.Dominio.DTO
         {
         }
 
-        public int UsuarioId { get; set; }
+        public Guid UsuarioId { get; set; }
 
         public DateTime Data { get; set; }
 

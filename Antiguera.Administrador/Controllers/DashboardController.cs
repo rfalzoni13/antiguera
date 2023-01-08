@@ -1,43 +1,56 @@
-﻿using Antiguera.Administrador.Controllers.Base;
-using Antiguera.Dominio.Interfaces.Servicos;
+﻿using Antiguera.Administrador.Helpers;
+using Antiguera.Administrador.Models;
+using NLog;
 using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace Antiguera.Administrador.Controllers
 {
-    public class DashboardController : BaseController
+    public class DashboardController : Controller
     {
-        public DashboardController(IAcessoServico acessoServico, IEmuladorServico emuladorServico,
-            IHistoricoServico historicoServico, IJogoServico jogoServico,
-            IProgramaServico programaServico, IRomServico romServico,
-            IUsuarioServico usuarioServico)
-            : base(acessoServico, emuladorServico, historicoServico, jogoServico, programaServico,
-                 romServico, usuarioServico)
-        {
-        }
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         // POST: ListarUsuarios
         [HttpPost]
-        public ActionResult CarregarInformações()
+        public async Task<ActionResult> CarregarInformações()
         {
+            var obj = new DashboardModel();
+
             try
             {
-                var usuarios = ListarUsuarios();
-                var jogos = ListarJogos();
-                var programas = ListarProgramas();
-
-                return Json(new
+                using (HttpClient client = new HttpClient())
                 {
-                    success = true,
-                    users = usuarios,
-                    games = jogos,
-                    programs = programas
-                });
+                    var url = UrlConfiguration.VerifyCode;
+
+
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var result = await response.Content.ReadAsAsync<DashboardModel>();
+
+                        return Json(obj);
+                    }
+                    else
+                    {
+                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                        throw new Exception(statusCode.Message);
+                    }
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                _logger.Fatal("Ocorreu um erro: ", ex);
-                return Json(new { success = false, message = ex.Message });
+                _logger.Fatal("Ocorreu um erro: " + ex);
+                Response.StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError);
+                obj.error = ex.Message;
+#if !DEBUG
+                obj.error = "Ocorreu um erro ao processar a solicitação!";
+#endif
+                return Json(obj);
             }
         }
     }

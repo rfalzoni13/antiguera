@@ -1,4 +1,5 @@
-﻿using Antiguera.Dominio.Entidades.Base;
+﻿using Antiguera.Dominio.DTO;
+using Antiguera.Dominio.Entidades.Base;
 using System;
 
 namespace Antiguera.Dominio.Entidades
@@ -19,8 +20,28 @@ namespace Antiguera.Dominio.Entidades
 
         public string BoxArt { get; set; }
 
-        public string nomeArquivo { get; set; }
+        public string NomeArquivo { get; set; }
 
-        public string hashArquivo { get; set; }
+        public string HashArquivo { get; set; }
+
+        public static Programa ConvertToEntity(ProgramaDTO programaDTO)
+        {
+            return new Programa
+            {
+                Id = programaDTO.Id,
+                Nome = programaDTO.Nome,
+                Lancamento = programaDTO.Lancamento,
+                Descricao = programaDTO.Descricao,
+                NomeArquivo = programaDTO.NomeArquivo,
+                HashArquivo = programaDTO.HashArquivo,
+                Tipo = programaDTO.Tipo,
+                Publisher = programaDTO.Publisher,
+                BoxArt = programaDTO.BoxArt,
+                Developer = programaDTO.Developer,
+                Created = programaDTO.Created,
+                Modified = programaDTO.Modified,
+                Novo = programaDTO.Novo
+            };
+        }
     }
 }

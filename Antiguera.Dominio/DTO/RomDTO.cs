@@ -9,7 +9,7 @@ namespace Antiguera.Dominio.DTO
         {
         }
 
-        public int EmuladorId { get; set; }
+        public Guid EmuladorId { get; set; }
 
         public string Nome { get; set; }
 
@@ -21,6 +21,8 @@ namespace Antiguera.Dominio.DTO
 
         public string BoxArt { get; set; }
 
-        public string hashArquivo { get; set; }
+        public string NomeArquivo { get; set; }
+
+        public string HashArquivo { get; set; }
     }
 }

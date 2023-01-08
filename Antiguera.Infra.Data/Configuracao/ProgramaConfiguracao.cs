@@ -21,9 +21,9 @@ namespace Antiguera.Infra.Data.Configuracao
 
             Property(p => p.BoxArt).IsOptional();
 
-            Property(p => p.nomeArquivo).IsOptional();
+            Property(p => p.NomeArquivo).IsOptional();
 
-            Property(p => p.hashArquivo).IsOptional();
+            Property(p => p.HashArquivo).IsOptional();
 
             Property(p => p.Tipo).IsRequired();
 

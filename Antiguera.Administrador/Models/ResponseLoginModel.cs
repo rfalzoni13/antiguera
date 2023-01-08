@@ -1,5 +1,4 @@
-﻿using Antiguera.Administrador.ViewModels;
-using System;
+﻿using System;
 
 namespace Antiguera.Administrador.Models
 {
@@ -38,8 +37,6 @@ namespace Antiguera.Administrador.Models
         public DateTime? Created { get; set; }
 
         public DateTime? Modified { get; set; }
-
-        public virtual UsuarioViewModel Usuario { get; set; }
 
     }
 }

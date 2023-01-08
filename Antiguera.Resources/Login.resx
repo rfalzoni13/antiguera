@@ -132,4 +132,7 @@
   <data name="Senha" xml:space="preserve">
     <value>Digite sua senha</value>
   </data>
+  <data name="VoltarLogin" xml:space="preserve">
+    <value>Voltar para Login</value>
+  </data>
 </root>

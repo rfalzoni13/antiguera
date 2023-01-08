@@ -17,9 +17,9 @@ namespace Antiguera.Infra.Data.Configuracao
 
             Property(e => e.Console).IsRequired();
 
-            Property(e => e.nomeArquivo).IsOptional();
+            Property(e => e.NomeArquivo).IsOptional();
 
-            Property(e => e.hashArquivo).IsOptional();
+            Property(e => e.HashArquivo).IsOptional();
 
             Property(e => e.Novo).IsOptional();
 

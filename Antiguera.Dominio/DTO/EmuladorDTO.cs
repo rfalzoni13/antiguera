@@ -18,7 +18,9 @@ namespace Antiguera.Dominio.DTO
 
         public string Descricao { get; set; }
 
-        public string hashArquivo { get; set; }
+        public string NomeArquivo { get; set; }
+
+        public string HashArquivo { get; set; }
 
         public virtual ICollection<RomDTO> Roms { get; set; }
     }

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Antiguera.Dominio.Interfaces.Entity;
+using System;
 
 namespace Antiguera.Dominio.Entidades.Base
 {
-    public class EntityBase
+    public class EntityBase : IEntity
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public bool? Novo { get; set; }
 

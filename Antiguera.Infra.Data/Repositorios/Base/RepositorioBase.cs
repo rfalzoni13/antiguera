@@ -1,15 +1,14 @@
-﻿using Antiguera.Dominio.Interfaces;
+﻿using Antiguera.Dominio.Interfaces.Entity;
 using Antiguera.Dominio.Interfaces.Repositorio.Base;
 using Antiguera.Infra.Data.Contexto;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Antiguera.Infra.Data.Repositorios.Base
 {
-    public class RepositorioBase<T> : IDisposable, IRepositorioBase<T> where T : class
+    public class RepositorioBase<T> : IDisposable, IRepositorioBase<T> where T : class, IEntity
     {
         protected DbContext Context { get; private set; }
 
@@ -25,6 +24,7 @@ namespace Antiguera.Infra.Data.Repositorios.Base
 
         public virtual void Adicionar(T obj)
         {
+            obj.Id = Guid.NewGuid();
             Context.Set<T>().Add(obj);
             Context.SaveChanges();
         }
@@ -42,7 +42,7 @@ namespace Antiguera.Infra.Data.Repositorios.Base
             Context.SaveChanges();
         }
 
-        public virtual T BuscarPorId(int id) => Context.Set<T>().Find(id);
+        public virtual T BuscarPorId(Guid id) => Context.Set<T>().Find(id);
 
         public virtual IEnumerable<T> ListarTodos() => Context.Set<T>().ToList();
 

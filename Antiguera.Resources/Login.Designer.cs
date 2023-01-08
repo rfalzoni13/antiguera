@@ -19,7 +19,7 @@ namespace Antiguera.Resources {
     // através de uma ferramenta como ResGen ou Visual Studio.
     // Para adicionar ou remover um associado, edite o arquivo .ResX e execute ResGen novamente
     // com a opção /str, ou recrie o projeto do VS.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Login {
@@ -102,6 +102,15 @@ namespace Antiguera.Resources {
         public static string Senha {
             get {
                 return ResourceManager.GetString("Senha", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Voltar para Login.
+        /// </summary>
+        public static string VoltarLogin {
+            get {
+                return ResourceManager.GetString("VoltarLogin", resourceCulture);
             }
         }
     }

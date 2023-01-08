@@ -1,11 +1,13 @@
-﻿using Antiguera.Administrador.Models.Tables;
-using Antiguera.Administrador.ViewModels;
-using Antiguera.Dominio.Interfaces.Servicos;
+﻿using Antiguera.Administrador.Helpers;
+using Antiguera.Administrador.Models;
+using Antiguera.Administrador.Models.Tables;
 using NLog;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Web;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace Antiguera.Administrador.Controllers
@@ -13,248 +15,229 @@ namespace Antiguera.Administrador.Controllers
     [Authorize]
     public class EmuladorController : Controller
     {
-        private readonly IEmuladorServico _emuladorServico;
-        private static Logger _logger;
-
-        public EmuladorController(IEmuladorServico emuladorServico)
-        {
-            _logger = LogManager.GetCurrentClassLogger();
-            _emuladorServico = emuladorServico;
-        }
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         // GET: Emulador
-        public ActionResult Index(int pagina = 1)
+        public ActionResult Index()
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            try
-            {
-                return View();
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal("Ocorreu um erro: ", ex);
-                throw;
-            }
+            return View();
         }
 
         //POST: Emulador/CarregarEmuladores
         [HttpPost]
-        public JsonResult CarregarEmuladores()
+        public async Task<JsonResult> CarregarEmuladores()
         {
             var obj = new EmuladorTableModel();
 
             try
             {
-                var lista = _emuladorServico.ListarTodos();
-
-                foreach (var item in lista)
+                using (HttpClient client = new HttpClient())
                 {
-                    obj.data.Add(new EmuladorListTableModel()
+                    var url = UrlConfiguration.VerifyCode;
+
+
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
                     {
-                        Id = item.Id,
-                        Nome = item.Nome,
-                        Console = item.Console,
-                        Roms = item.Roms.Count(),
-                        Created = item.Created,
-                        Modified = item.Modified,
-                        Novo = item.Novo
-                    });
+                        var result = await response.Content.ReadAsAsync<ICollection<EmuladorModel>>();
+
+                        foreach (var item in result)
+                        {
+                            obj.data.Add(new EmuladorListTableModel()
+                            {
+                                Id = item.Id,
+                                Nome = item.Nome,
+                                Created = item.Created,
+                                Modified = item.Modified,
+                                Novo = item.Novo
+                            });
+                        }
+
+                        obj.recordsFiltered = obj.data.Count();
+                        obj.recordsTotal = obj.data.Count();
+
+                        return Json(obj);
+                    }
+                    else
+                    {
+                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                        throw new Exception(statusCode.Message);
+                    }
                 }
-
-                obj.recordsFiltered = obj.data.Count();
-                obj.recordsTotal = obj.data.Count();
-
-                return Json(obj);
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
                 Response.StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError);
                 obj.error = ex.Message;
+#if !DEBUG
+                obj.error = "Ocorreu um erro ao processar a solicitação!";
+#endif
                 return Json(obj);
-            }
-        }
-
-
-        // GET: Emulador/Cadastrar
-        public ActionResult Cadastrar()
-        {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            try
-            {
-                return View();
-            }
-
-            catch(Exception ex)
-            {
-                _logger.Fatal("Ocorreu um erro: ", ex);
-                throw;
             }
         }
 
         // POST: Emulador/Cadastrar
         [HttpPost]
-        public ActionResult Cadastrar(EmuladorViewModel model)
+        public async Task<JsonResult> Cadastrar(EmuladorModel model)
         {
+            List<string> errorsList = new List<string>();
+
             try
             {
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
-                    CadastrarEmulador(model);
-                }
-                else
-                {
-                    AdicionarModelStateErrors(ModelState);
-                }
-                if (errorsList.Count() > 0)
-                {
+                    foreach (var modelState in ModelState.Values)
+                    {
+                        foreach (var error in modelState.Errors)
+                        {
+                            errorsList.Add(error.ErrorMessage);
+                        }
+                    }
+
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                return Json(new { success = true, message = "Emulador cadastrado com sucesso!" });
+                using (HttpClient client = new HttpClient())
+                {
+                    var url = UrlConfiguration.SendCode;
+
+
+                    HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string result = await response.Content.ReadAsStringAsync();
+
+                        return Json(new { success = true, message = result });
+                    }
+                    else
+                    {
+                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                        throw new Exception(statusCode.Message);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add(ex.Message);
+#if !DEBUG
                 errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+#endif
+
                 return Json(new { success = false, errors = errorsList });
-            }
-        }
-
-        // POST: Emulador/Detalhes
-        [HttpPost]
-        public ActionResult Detalhes(int id)
-        {
-            try
-            {
-                var model = BuscarEmuladorPorId(id);
-
-                if (model != null)
-                {
-                    if(model.Novo == true)
-                    {
-                        AtualizarEmulador(model);
-                    }
-                }
-
-                if(errorsList.Count > 0)
-                {
-                    return Json(new { success = false, errors = errorsList });
-                }
-
-                return Json(new { success = true, obj = model });
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal("Ocorreu um erro: " + ex);
-                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
-                return Json(new { success = false, errors = errorsList });
-            }
-        }
-
-        // GET: Emulador/Editar
-        public ActionResult Editar(int id)
-        {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            try
-            {
-                var model = BuscarEmuladorPorId(id);
-
-                if (model != null)
-                {
-                    if (model.Novo == true)
-                    {
-                        AtualizarEmulador(model);
-                        Session.Clear();
-                    }
-                }
-                else
-                {
-                    throw new HttpException(Convert.ToInt32(HttpStatusCode.NotFound), errorsList.FirstOrDefault());
-                }
-
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal("Ocorreu um erro: ", ex);
-                throw;
             }
         }
 
         // POST: Emulador/Editar
         [HttpPost]
-        public ActionResult Editar(EmuladorViewModel model)
+        public async Task<ActionResult> Editar(EmuladorModel model)
         {
+            List<string> errorsList = new List<string>();
+
             try
             {
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
-                    AtualizarEmulador(model);
-                }
-                else
-                {
-                    AdicionarModelStateErrors(ModelState);
-                }
+                    foreach (var modelState in ModelState.Values)
+                    {
+                        foreach (var error in modelState.Errors)
+                        {
+                            errorsList.Add(error.ErrorMessage);
+                        }
+                    }
 
-                if (errorsList.Count() > 0)
-                {
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                return Json(new { success = true, message = "Emulador atualizado com sucesso!" });
+                using (HttpClient client = new HttpClient())
+                {
+                    var url = UrlConfiguration.SendCode;
+
+
+                    HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string result = await response.Content.ReadAsStringAsync();
+
+                        return Json(new { success = true, message = result });
+                    }
+                    else
+                    {
+                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                        throw new Exception(statusCode.Message);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add(ex.Message);
+#if !DEBUG
                 errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+#endif
+
                 return Json(new { success = false, errors = errorsList });
             }
         }
 
-        // POST: Emulador/Excluir
+        //POST: Emulador/Excluir
         [HttpPost]
-        public ActionResult Excluir(int id)
+        public async Task<ActionResult> Excluir(int id)
         {
+            List<string> errorsList = new List<string>();
+
             try
             {
-                if (id > 0)
+                if (!ModelState.IsValid)
                 {
-                    var model = BuscarEmuladorPorId(id);
-
-                    if (model != null)
+                    foreach (var modelState in ModelState.Values)
                     {
-                        ExcluirEmulador(model);
+                        foreach (var error in modelState.Errors)
+                        {
+                            errorsList.Add(error.ErrorMessage);
+                        }
                     }
-                }
-                else
-                {
-                    errorsList.Add("Parâmetros incorretos!");
-                }
 
-                if (errorsList.Count > 0)
-                {
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                return Json(new { success = true, message = "Emulador excluído com sucesso!" });
+                using (HttpClient client = new HttpClient())
+                {
+                    var url = UrlConfiguration.Login;
+
+                    string queryId = id.ToString();
+
+                    string param = $"acessoId={queryId}";
+
+                    HttpContent content = new StringContent(param, System.Text.Encoding.UTF8, "application/json");
+
+                    HttpResponseMessage response = await client.PostAsync(url, content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string result = await response.Content.ReadAsStringAsync();
+
+                        return Json(new { success = true, message = result });
+                    }
+                    else
+                    {
+                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                        throw new Exception(statusCode.Message);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add(ex.Message);
+#if !DEBUG
                 errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+#endif
+
                 return Json(new { success = false, errors = errorsList });
             }
         }

@@ -12,7 +12,7 @@ namespace Antiguera.Dominio.Interfaces.Repositorio.Base
 
         void Apagar(T obj);
 
-        T BuscarPorId(int id);
+        T BuscarPorId(Guid id);
 
         IEnumerable<T> ListarTodos();
 

@@ -5,5 +5,6 @@ namespace Antiguera.Dominio.Interfaces.Repositorio
 {
     public interface IAcessoRepositorio : IRepositorioBase<Acesso>
     {
+        Acesso BuscarPorIdentityRole(string identityRoleId);
     }
 }

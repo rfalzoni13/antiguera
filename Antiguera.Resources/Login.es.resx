@@ -132,4 +132,7 @@
   <data name="Senha" xml:space="preserve">
     <value>Contraseña</value>
   </data>
+  <data name="VoltarLogin" xml:space="preserve">
+    <value>Atrás para iniciar sesión</value>
+  </data>
 </root>

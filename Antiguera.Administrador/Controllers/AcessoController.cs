@@ -1,9 +1,12 @@
-﻿using Antiguera.Administrador.Models.Tables;
-using Antiguera.Administrador.ViewModels;
-using Antiguera.Servicos.Interfaces;
+﻿using Antiguera.Administrador.Helpers;
+using Antiguera.Administrador.Models;
+using Antiguera.Administrador.Models.Tables;
+using NLog;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -12,12 +15,7 @@ namespace Antiguera.Administrador.Controllers
     [Authorize]
     public class AcessoController : Controller
     {
-        private readonly IAcessoServico _acessoServico;
-
-        public AcessoController(IAcessoServico acessoServico)
-        {
-            _acessoServico = acessoServico;
-        }
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         // GET: Acesso
         public ActionResult Index()
@@ -27,95 +25,161 @@ namespace Antiguera.Administrador.Controllers
 
         //POST: Acesso/CarregarAcessos
         [HttpPost]
-        public JsonResult CarregarAcessos()
+        public async Task<JsonResult> CarregarAcessos()
         {
             var obj = new AcessoTableModel();
 
             try
             {
-                var lista = _acessoServico.ListarTodos();
-
-                foreach (var item in lista)
+                using (HttpClient client = new HttpClient())
                 {
-                    obj.data.Add(new AcessoListTableModel()
+                    var url = UrlConfiguration.VerifyCode;
+
+
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
                     {
-                        Id = item.Id,
-                        Nome = item.Nome,
-                        Created = item.Created,
-                        Modified = item.Modified,
-                        Novo = item.Novo
-                    });
+                        var result = await response.Content.ReadAsAsync<ICollection<AcessoModel>>();
+
+                        foreach (var item in result)
+                        {
+                            obj.data.Add(new AcessoListTableModel()
+                            {
+                                Id = item.Id,
+                                Nome = item.Nome,
+                                Created = item.Created,
+                                Modified = item.Modified,
+                                Novo = item.Novo
+                            });
+                        }
+
+                        obj.recordsFiltered = obj.data.Count();
+                        obj.recordsTotal = obj.data.Count();
+
+                        return Json(obj);
+                    }
+                    else
+                    {
+                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                        throw new Exception(statusCode.Message);
+                    }
                 }
-
-                obj.recordsFiltered = obj.data.Count();
-                obj.recordsTotal = obj.data.Count();
-
-                return Json(obj);
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
                 Response.StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError);
                 obj.error = ex.Message;
+#if !DEBUG
+                obj.error = "Ocorreu um erro ao processar a solicitação!";
+#endif
                 return Json(obj);
             }
         }
 
         // POST: Acesso/Cadastrar
         [HttpPost]
-        public async Task<ActionResult> Cadastrar(AcessoViewModel model)
+        public async Task<JsonResult> Cadastrar(AcessoModel model)
         {
+            List<string> errorsList = new List<string>();
+
             try
             {
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
-                    await CadastrarAcesso(model);
-                }
-                else
-                {
-                    AdicionarModelStateErrors(ModelState);
-                }
-                if (errorsList.Count() > 0)
-                {
+                    foreach(var modelState in ModelState.Values)
+                    {
+                        foreach(var error in modelState.Errors)
+                        {
+                            errorsList.Add(error.ErrorMessage);
+                        }
+                    }
+
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                return Json(new { success = true, message = "Acesso incluído com sucesso!" });
+                using (HttpClient client = new HttpClient())
+                {
+                    var url = UrlConfiguration.SendCode;
+
+
+                    HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string result = await response.Content.ReadAsStringAsync();
+
+                        return Json(new { success = true, message = result });
+                    }
+                    else
+                    {
+                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                        throw new Exception(statusCode.Message);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add(ex.Message);
+#if !DEBUG
                 errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+#endif
+
                 return Json(new { success = false, errors = errorsList });
             }
         }
 
         // POST: Acesso/Editar
         [HttpPost]
-        public async Task<ActionResult> Editar(AcessoViewModel model)
+        public async Task<ActionResult> Editar(AcessoModel model)
         {
+            List<string> errorsList = new List<string>();
+
             try
             {
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
-                    await AtualizarAcesso(model);
-                }
-                else
-                {
-                    AdicionarModelStateErrors(ModelState);
-                }
+                    foreach (var modelState in ModelState.Values)
+                    {
+                        foreach (var error in modelState.Errors)
+                        {
+                            errorsList.Add(error.ErrorMessage);
+                        }
+                    }
 
-                if (errorsList.Count() > 0)
-                {
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                return Json(new { success = true, message = "Acesso atualizado com sucesso!" });
+                using (HttpClient client = new HttpClient())
+                {
+                    var url = UrlConfiguration.SendCode;
+
+
+                    HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string result = await response.Content.ReadAsStringAsync();
+
+                        return Json(new { success = true, message = result });
+                    }
+                    else
+                    {
+                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                        throw new Exception(statusCode.Message);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add(ex.Message);
+#if !DEBUG
                 errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+#endif
+
                 return Json(new { success = false, errors = errorsList });
             }
         }
@@ -124,33 +188,56 @@ namespace Antiguera.Administrador.Controllers
         [HttpPost]
         public async Task<ActionResult> Excluir(int id)
         {
+            List<string> errorsList = new List<string>();
+
             try
             {
-                if (id > 0)
+                if (!ModelState.IsValid)
                 {
-                    var model = BuscarAcessoPorId(id);
-
-                    if (model != null)
+                    foreach (var modelState in ModelState.Values)
                     {
-                        await ExcluirAcesso(model);
+                        foreach (var error in modelState.Errors)
+                        {
+                            errorsList.Add(error.ErrorMessage);
+                        }
                     }
-                }
-                else
-                {
-                    errorsList.Add("Parâmetros incorretos!");
-                }
 
-                if(errorsList.Count > 0)
-                {
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                return Json(new { success = true, message = "Acesso excluído com sucesso!" });
+                using (HttpClient client = new HttpClient())
+                {
+                    var url = UrlConfiguration.Login;
+
+                    string queryId = id.ToString();
+
+                    string param = $"acessoId={queryId}";
+
+                    HttpContent content = new StringContent(param, System.Text.Encoding.UTF8, "application/json");
+
+                    HttpResponseMessage response = await client.PostAsync(url, content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string result = await response.Content.ReadAsStringAsync();
+
+                        return Json(new { success = true, message = result });
+                    }
+                    else
+                    {
+                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                        throw new Exception(statusCode.Message);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add(ex.Message);
+#if !DEBUG
                 errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+#endif
+
                 return Json(new { success = false, errors = errorsList });
             }
         }

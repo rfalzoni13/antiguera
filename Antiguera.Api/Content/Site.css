@@ -1,0 +1,26 @@
+﻿.swagger-section #header {
+    background-color: #0200aa;
+    height: 50px;
+}
+
+.logo__img {
+    width: 180px;
+    height: 70px;
+    margin-top: -5px !important;
+    margin-left: -10px;
+}
+
+.swagger-section #api_selector input {
+    font-size: 0.7em;
+    padding: 7px;
+    margin: 12px 5px;
+}
+
+.swagger-section #explore, .swagger-section #auth_container .authorize__btn {
+    padding: 12px 10px;
+    background-color: #3f9ca1;
+}
+
+    .swagger-section #explore:hover, .swagger-section #auth_container .authorize__btn:hover {
+        background-color: #45e0c8;
+    }

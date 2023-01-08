@@ -23,8 +23,8 @@ namespace Antiguera.Dominio.DTO
 
         public string BoxArt { get; set; }
 
-        public string nomeArquivo { get; set; }
+        public string NomeArquivo { get; set; }
 
-        public string hashArquivo { get; set; }
+        public string HashArquivo { get; set; }
     }
 }

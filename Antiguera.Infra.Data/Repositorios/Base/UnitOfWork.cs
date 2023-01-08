@@ -1,14 +1,13 @@
 ﻿using Antiguera.Dominio.Interfaces.Repositorio.Base;
-using Antiguera.Infra.Data.Contexto;
 using System.Data.Entity;
 
 namespace Antiguera.Infra.Data.Repositorios.Base
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly AntigueraContexto _context;
+        private readonly DbContext _context;
 
-        public UnitOfWork(AntigueraContexto context)
+        public UnitOfWork(DbContext context)
         {
             _context = context;
         }

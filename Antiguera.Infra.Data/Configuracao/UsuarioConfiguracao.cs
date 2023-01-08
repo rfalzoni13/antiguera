@@ -10,12 +10,16 @@ namespace Antiguera.Infra.Data.Configuracao
             HasKey(u => u.Id).Property(u => u.Id);
 
             Property(u => u.IdentityUserId).IsRequired();
-            
-            Property(u => u.UltimaVisita).IsOptional();
+
+            Property(u => u.Genero).IsRequired();
+
+            Property(u => u.DataNascimento).IsRequired();
+
+            Property(u => u.Telefone).IsOptional();
 
             Property(u => u.Novo).IsOptional();
 
-            Property(u => u.Created).IsOptional();
+            Property(u => u.Created).IsRequired();
 
             Property(u => u.Modified).IsOptional();
         }

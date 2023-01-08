@@ -13,7 +13,7 @@ namespace Antiguera.Dominio.Interfaces.Servicos.Base
 
         void Apagar(TDTO obj);
 
-        TDTO BuscarPorId(int id);
+        TDTO BuscarPorId(Guid id);
 
         IEnumerable<TDTO> ListarPorPesquisa(Func<TEntity, bool> predicate);
 

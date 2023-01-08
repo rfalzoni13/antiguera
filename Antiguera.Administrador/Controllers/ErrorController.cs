@@ -1,22 +1,11 @@
-﻿using Antiguera.Administrador.Controllers.Base;
-using Antiguera.Dominio.Interfaces.Servicos;
-using System;
+﻿using System;
 using System.Net;
 using System.Web.Mvc;
 
 namespace Antiguera.Administrador.Controllers
 {
-    public class ErrorController : BaseController
+    public class ErrorController : Controller
     {
-        public ErrorController(IAcessoServico acessoServico, IEmuladorServico emuladorServico,
-            IHistoricoServico historicoServico, IJogoServico jogoServico,
-            IProgramaServico programaServico, IRomServico romServico,
-            IUsuarioServico usuarioServico)
-            : base(acessoServico, emuladorServico, historicoServico, jogoServico, programaServico,
-                 romServico, usuarioServico)
-        {
-        }
-
         // GET: Error
         public ActionResult Index()
         {

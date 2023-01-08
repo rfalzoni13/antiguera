@@ -4,13 +4,13 @@ using Antiguera.Dominio.Interfaces.Repositorio;
 using Antiguera.Dominio.Interfaces.Repositorio.Base;
 using Antiguera.Dominio.Interfaces.Servicos;
 using Antiguera.Dominio.Interfaces.Servicos.Helpers;
-using Antiguera.Infra.Cross.Identity;
+using Antiguera.Infra.Data.Identity;
+using Antiguera.Servicos.Identity;
 using Antiguera.Servicos.Servicos.Base;
 using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
-using System.Transactions;
 using System.Web;
 
 namespace Antiguera.Servicos.Servicos
@@ -56,13 +56,6 @@ namespace Antiguera.Servicos.Servicos
 
         public override void Adicionar(UsuarioDTO usuarioDTO)
         {
-            var usuario = new Usuario
-            {
-                Novo = true,
-                Created = DateTime.Now,
-                pathFoto = usuarioDTO.pathFoto
-            };
-
             using (var transaction = _unitOfWork.BeginTransaction())
             {
                 try
@@ -85,6 +78,7 @@ namespace Antiguera.Servicos.Servicos
                         FirstName = usuarioDTO.Nome.Split(' ').FirstOrDefault(),
                         LastName = usuarioDTO.Nome.Split(' ').LastOrDefault(),
                         Email = usuarioDTO.Email,
+                        PhoneNumber = usuarioDTO.Telefone,
                         UserName = usuarioDTO.Login,
                         Active = true,
                         Created = DateTime.Now
@@ -92,22 +86,108 @@ namespace Antiguera.Servicos.Servicos
 
                     var result = UserManager.CreateAsync(user, usuarioDTO.Senha).Result;
 
-                    if (result.Succeeded)
-                    {
-                        usuario.IdentityUserId = user.Id;
-                    }
-                    else
+                    if (!result.Succeeded)
                     {
                         throw new DbUpdateException("Erro ao incluir usuário!");
                     }
 
-                    UserManager.AddToRoleAsync(user.Id, role.Name);
+
+                    result = UserManager.AddToRoleAsync(user.Id, role.Name).Result;
+
+                    if (!result.Succeeded)
+                    {
+                        throw new DbUpdateException("Erro ao incluir perfil de acesso!");
+                    }
+
+                    var usuario = new Usuario
+                    {
+                        Novo = true,
+                        IdentityUserId = user.Id,
+                        Created = DateTime.Now,
+                        PathFoto = usuarioDTO.PathFoto
+                    };
 
                     _usuarioRepositorio.Adicionar(usuario);
 
                     transaction.Commit();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
+            }
+        }
+
+        public override void Atualizar(UsuarioDTO usuarioDTO)
+        {
+            using (var transaction = _unitOfWork.BeginTransaction())
+            {
+                try
+                {
+                    var role = RoleManager.FindByNameAsync(usuarioDTO.Acesso.Nome).Result;
+                    if (role == null)
+                    {
+                        throw new ArgumentNullException("Nenhum registro de permissão de acesso encontrado!");
+                    }
+
+                    var user = UserManager.FindByIdAsync(usuarioDTO.IdentityUserId).Result;
+
+                    if (user == null)
+                    {
+                        throw new ApplicationException("Nenhum usuário encontrado!");
+                    }
+
+                    user.FirstName = usuarioDTO.Nome.Split(' ').FirstOrDefault();
+                    user.LastName = usuarioDTO.Nome.Split(' ').LastOrDefault();
+                    user.Email = usuarioDTO.Email;
+                    user.PhoneNumber = usuarioDTO.Telefone;
+                    user.Modified = DateTime.Now;
+
+                    var result = UserManager.UpdateAsync(user).Result;
+
+                    if (!result.Succeeded)
+                    {
+                        throw new DbUpdateException("Erro ao atualizar usuário!");
+                    }
+
+                    var roles = UserManager.GetRolesAsync(user.Id).Result;
+                    if(roles == null || roles.Count() <= 0)
+                    {
+                        throw new ApplicationException("Erro ao cadastrar novo perfil de acesso!");
+                    }
+
+                    result = UserManager.RemoveFromRolesAsync(user.Id, roles.ToArray()).Result;
+
+                    if (!result.Succeeded)
+                    {
+                        throw new DbUpdateException("Erro ao realizar manutenção de acesso!");
+                    }
+
+                    result = UserManager.AddToRoleAsync(user.Id, role.Name).Result;
+
+                    if (!result.Succeeded)
+                    {
+                        throw new DbUpdateException("Erro ao atualizar acesso!");
+                    }
+
+                    var usuario = _usuarioRepositorio.BuscarPorIdentityId(usuarioDTO.IdentityUserId);
+                    if (usuario == null)
+                    {
+                        throw new ApplicationException("Usuário não encontrado!");
+                    }
+
+                    usuario.PathFoto = usuarioDTO.PathFoto;
+
+                    _usuarioRepositorio.Atualizar(usuario);
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
                 {
                     transaction.Rollback();
                     throw ex;
@@ -149,59 +229,6 @@ namespace Antiguera.Servicos.Servicos
                 catch (Exception ex)
                 {
                     transaction.Dispose();
-                    throw ex;
-                }
-                finally
-                {
-                    transaction.Dispose();
-                }
-            }
-        }
-
-        public override void Atualizar(UsuarioDTO usuarioDTO)
-        {
-            using (var transaction = _unitOfWork.BeginTransaction())
-            {
-                var usuario = _usuarioRepositorio.BuscarPorId(usuarioDTO.Id);
-
-                try
-                {
-                    var role = RoleManager.FindByNameAsync(usuarioDTO.Acesso.Nome).Result;
-                    if (role == null)
-                    {
-                        throw new ArgumentNullException("Nenhum registro de permissão de acesso encontrado!");
-                    }
-
-                    var user = UserManager.FindByIdAsync(usuario.IdentityUserId).Result;
-
-                    if (user == null)
-                    {
-                        throw new ApplicationException("Nenhum usuário encontrado!");
-                    }
-
-                    user.FirstName = usuarioDTO.Nome.Split(' ').FirstOrDefault();
-                    user.LastName = usuarioDTO.Nome.Split(' ').LastOrDefault();
-                    user.Email = usuarioDTO.Email;
-                    user.Modified = DateTime.Now;
-
-                    var result = UserManager.UpdateAsync(user).Result;
-
-                    if (!result.Succeeded)
-                    {
-                        throw new DbUpdateException("Erro ao atualizar usuário!");
-                    }
-
-                    var roles = UserManager.GetRolesAsync(user.Id).Result;
-                    UserManager.RemoveFromRolesAsync(user.Id, roles.ToArray());
-                    UserManager.AddToRoleAsync(user.Id, role.Name);
-
-                    _usuarioRepositorio.Atualizar(usuario);
-
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
                     throw ex;
                 }
                 finally

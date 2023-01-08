@@ -9,11 +9,15 @@ namespace Antiguera.Dominio.DTO
         {
         }
 
-        public int AcessoId { get; set; }
+        public Guid AcessoId { get; set; }
 
         public string Nome { get; set; }
 
         public string Email { get; set; }
+
+        public string Genero { get; set; }
+
+        public DateTime DataNascimento { get; set; }
 
         public string Login { get; set; }
 
@@ -21,7 +25,9 @@ namespace Antiguera.Dominio.DTO
 
         public string IdentityUserId { get; set; }
 
-        public string pathFoto { get; set; }
+        public string PathFoto { get; set; }
+
+        public string Telefone { get; set; }
 
         public DateTime? UltimaVisita { get; set; }
 

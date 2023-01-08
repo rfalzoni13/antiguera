@@ -5,5 +5,6 @@ namespace Antiguera.Dominio.Interfaces.Repositorio
 {
     public interface IUsuarioRepositorio : IRepositorioBase<Usuario>
     {
+        Usuario BuscarPorIdentityId(string identityId);
     }
 }

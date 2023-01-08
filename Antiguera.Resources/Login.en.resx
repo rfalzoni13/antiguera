@@ -132,4 +132,7 @@
   <data name="Senha" xml:space="preserve">
     <value>Type your password</value>
   </data>
+  <data name="VoltarLogin" xml:space="preserve">
+    <value>Back to login</value>
+  </data>
 </root>

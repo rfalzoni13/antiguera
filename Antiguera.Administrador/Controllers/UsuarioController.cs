@@ -1,10 +1,12 @@
-﻿using Antiguera.Administrador.Models.Tables;
-using Antiguera.Administrador.ViewModels;
-using Antiguera.Dominio.Interfaces.Servicos;
+﻿using Antiguera.Administrador.Helpers;
+using Antiguera.Administrador.Models;
+using Antiguera.Administrador.Models.Tables;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -14,254 +16,229 @@ namespace Antiguera.Administrador.Controllers
     [Authorize]
     public class UsuarioController : Controller
     {
-        public UsuarioController(IAcessoServico acessoServico, IEmuladorServico emuladorServico,
-            IHistoricoServico historicoServico, IJogoServico jogoServico,
-            IProgramaServico programaServico, IRomServico romServico,
-            IUsuarioServico usuarioServico)
-            : base(acessoServico, emuladorServico, historicoServico, jogoServico, programaServico,
-                 romServico, usuarioServico)
-        {
-        }
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         // GET: Usuario
-        public ActionResult Index(int pagina = 1)
+        public ActionResult Index()
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            try
-            {
-                return View();
-            }
-
-            catch (Exception ex)
-            {
-                _logger.Fatal("Ocorreu um erro: ", ex);
-                throw;
-            }
+            return View();
         }
 
         //POST: Usuario/CarregarUsuarios
         [HttpPost]
-        public JsonResult CarregarUsuarios()
+        public async Task<JsonResult> CarregarUsuarios()
         {
             var obj = new UsuarioTableModel();
 
             try
             {
-                var lista = ListarUsuarios();
-
-                foreach (var item in lista)
+                using (HttpClient client = new HttpClient())
                 {
-                    obj.data.Add(new UsuarioListTableModel()
+                    var url = UrlConfiguration.VerifyCode;
+
+
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
                     {
-                        Id = item.Id,
-                        Nome = item.Nome,
-                        Email = item.Email,
-                        Login = item.Login,
-                        Sexo = item.Sexo,
-                        Created = item.Created,
-                        Modified = item.Modified,
-                        Novo = item.Novo
-                    });
+                        var result = await response.Content.ReadAsAsync<ICollection<UsuarioModel>>();
+
+                        foreach (var item in result)
+                        {
+                            obj.data.Add(new UsuarioListTableModel()
+                            {
+                                Id = item.Id,
+                                Nome = item.Nome,
+                                Created = item.Created,
+                                Modified = item.Modified,
+                                Novo = item.Novo
+                            });
+                        }
+
+                        obj.recordsFiltered = obj.data.Count();
+                        obj.recordsTotal = obj.data.Count();
+
+                        return Json(obj);
+                    }
+                    else
+                    {
+                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                        throw new Exception(statusCode.Message);
+                    }
                 }
-
-                obj.recordsFiltered = obj.data.Count();
-                obj.recordsTotal = obj.data.Count();
-
-                return Json(obj);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
                 Response.StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError);
                 obj.error = ex.Message;
+#if !DEBUG
+                obj.error = "Ocorreu um erro ao processar a solicitação!";
+#endif
                 return Json(obj);
-            }
-        }
-
-        // GET: Usuario/Cadastrar
-        public ActionResult Cadastrar()
-        {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            try
-            {
-                var model = new UsuarioViewModel();
-                model.ListaAcessos = new List<SelectListItem>();
-
-                model.ListaAcessos.Add(new SelectListItem() { Text = "Selecione uma opção...", Value = "0" });
-
-                var acessos = ListarAcessos();
-
-                if(acessos.Count() > 0)
-                {
-                    foreach (var acesso in acessos)
-                    {
-                        model.ListaAcessos.Add(new SelectListItem() { Text = acesso.Nome, Value = acesso.Id.ToString() });
-                    }
-                }
-                    
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal("Ocorreu um erro: ", ex);
-                throw;
             }
         }
 
         // POST: Usuario/Cadastrar
         [HttpPost]
-        public async Task<ActionResult> Cadastrar(UsuarioViewModel model)
+        public async Task<JsonResult> Cadastrar(UsuarioModel model)
         {
+            List<string> errorsList = new List<string>();
+
             try
             {
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
-                    await CadastrarUsuario(model);
-                }
-                else
-                {
-                    AdicionarModelStateErrors(ModelState);
-                }
-                if (errorsList.Count() > 0)
-                {
+                    foreach (var modelState in ModelState.Values)
+                    {
+                        foreach (var error in modelState.Errors)
+                        {
+                            errorsList.Add(error.ErrorMessage);
+                        }
+                    }
+
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                return Json(new { success = true, message = "Usuário inserido com sucesso!" });
+                using (HttpClient client = new HttpClient())
+                {
+                    var url = UrlConfiguration.SendCode;
+
+
+                    HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string result = await response.Content.ReadAsStringAsync();
+
+                        return Json(new { success = true, message = result });
+                    }
+                    else
+                    {
+                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                        throw new Exception(statusCode.Message);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add(ex.Message);
+#if !DEBUG
                 errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+#endif
+
                 return Json(new { success = false, errors = errorsList });
-            }
-        }
-
-        // GET: Usuario/Editar
-        public async Task<ActionResult> Editar(int id)
-        {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            try
-            {
-                var model = BuscarUsuarioPorId(id);
-                model.ListaAcessos = new List<SelectListItem>();
-
-                model.ListaAcessos.Add(new SelectListItem() { Text = "Selecione uma opção...", Value = "0" });
-
-                var acessos = ListarAcessos();
-
-                if (model != null)
-                {
-                    if (model.Novo == true)
-                    {
-                        await AtualizarUsuario(model);
-                    }
-
-                    if(acessos.Count() > 0)
-                    {
-                        foreach (var acesso in acessos)
-                        {
-                            model.ListaAcessos.Add(new SelectListItem() { Text = acesso.Nome, Value = acesso.Id.ToString() });
-                        }
-                    }
-
-                    return View(model);
-                }
-                else
-                {
-                    throw new HttpException(Convert.ToInt32(HttpStatusCode.NotFound), errorsList.FirstOrDefault());
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal("Ocorreu um erro: ", ex);
-                throw;
             }
         }
 
         // POST: Usuario/Editar
         [HttpPost]
-        public async Task<ActionResult> Editar(UsuarioViewModel model)
+        public async Task<ActionResult> Editar(UsuarioModel model)
         {
+            List<string> errorsList = new List<string>();
+
             try
             {
-                var usuario = BuscarUsuarioPorId(model.Id);
-                if (usuario != null)
+                if (!ModelState.IsValid)
                 {
-                    model.Foto = usuario.Foto;
-                    model.Created = usuario.Created;
-                }
+                    foreach (var modelState in ModelState.Values)
+                    {
+                        foreach (var error in modelState.Errors)
+                        {
+                            errorsList.Add(error.ErrorMessage);
+                        }
+                    }
 
-                ModelState.Remove("Senha");
-                ModelState.Remove("ConfirmarSenha");
-
-                if (ModelState.IsValid)
-                {
-                    await AtualizarUsuario(model);
-                }
-                else
-                {
-                    AdicionarModelStateErrors(ModelState);
-                }
-
-                if(errorsList.Count() > 0)
-                {
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                return Json(new { success = true, message = "Usuário atualizado com sucesso!" });
+                using (HttpClient client = new HttpClient())
+                {
+                    var url = UrlConfiguration.SendCode;
+
+
+                    HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string result = await response.Content.ReadAsStringAsync();
+
+                        return Json(new { success = true, message = result });
+                    }
+                    else
+                    {
+                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                        throw new Exception(statusCode.Message);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add(ex.Message);
+#if !DEBUG
                 errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+#endif
+
                 return Json(new { success = false, errors = errorsList });
             }
         }
 
-        // POST: Usuario/Excluir
+        //POST: Usuario/Excluir
         [HttpPost]
         public async Task<ActionResult> Excluir(int id)
         {
+            List<string> errorsList = new List<string>();
+
             try
             {
-                if (id > 0)
+                if (!ModelState.IsValid)
                 {
-                    var model = BuscarUsuarioPorId(id);
-
-                    if (model != null)
+                    foreach (var modelState in ModelState.Values)
                     {
-                        await ExcluirUsuario(model);
+                        foreach (var error in modelState.Errors)
+                        {
+                            errorsList.Add(error.ErrorMessage);
+                        }
                     }
-                }
-                else
-                {
-                    errorsList.Add("Parâmetros incorretos!");
-                }
 
-                if (errorsList.Count > 0)
-                {
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                return Json(new { success = true, message = "Usuário excluído com sucesso!" });
+                using (HttpClient client = new HttpClient())
+                {
+                    var url = UrlConfiguration.Login;
+
+                    string queryId = id.ToString();
+
+                    string param = $"acessoId={queryId}";
+
+                    HttpContent content = new StringContent(param, System.Text.Encoding.UTF8, "application/json");
+
+                    HttpResponseMessage response = await client.PostAsync(url, content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string result = await response.Content.ReadAsStringAsync();
+
+                        return Json(new { success = true, message = result });
+                    }
+                    else
+                    {
+                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                        throw new Exception(statusCode.Message);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
+                errorsList.Add(ex.Message);
+#if !DEBUG
                 errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+#endif
+
                 return Json(new { success = false, errors = errorsList });
             }
         }

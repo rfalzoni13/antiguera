@@ -1,0 +1,93 @@
+﻿@model Antiguera.Administrador.Models.LoginModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Login";
+}
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antiguera - @ViewBag.Title</title>
+    @Styles.Render("~/bundles/bootstrap")
+    @Styles.Render("~/bundles/admin-lte")
+    @Styles.Render("~/bundles/admin-lte/skins")
+    <link rel="stylesheet" href="@Url.Content("~/Content/login.css")" />
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="login-logo">
+            <img class="img-responsive img-logo" src="~/Content/Images/LogoAntiguera2.png" />
+        </div>
+        <!-- /.login-logo -->
+        <div class="login-box-body">
+            @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+            {
+                <div class="col-md-12">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
+                        @Html.ValidationSummary(false, string.Empty)
+                    </div>
+                </div>
+            }
+
+            <h4 class="login-box-msg">@Dominio.PainelAdministracao</h4>
+            @using (Html.BeginForm("Login", "Home", FormMethod.Post, new { @class = "form-signin" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-group has-feedback">
+                    @Html.TextBoxFor(x => x.Login, new { @id = "Email", @class = "form-control", @autofocus = "autofocus", @placeholder = Login.Email })
+                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    @Html.TextBoxFor(x => x.Password, new { @type = "password", @id = "Senha", @class = "form-control", @placeholder = Login.Senha })
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                </div>
+                <div class="row">
+                    <div class="col-xs-8">
+                        <div class="checkbox icheck">
+                            <label for="RememberMe">
+                                @Html.CheckBoxFor(x => x.RememberMe) @Login.LembrarMe
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat">@Acoes.Entrar</button>
+                    </div>
+                </div>
+            }
+            <br />
+            @Html.ActionLink(Login.EsqueciMinhaSenha, "EsqueciMinhaSenha", "Account")
+        </div>
+        <!-- /.login-box-body -->
+    </div>
+
+    <div class="container container-footer">
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Renato Falzoni - @Login.Copyright</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/js/bootstrap")
+    @Scripts.Render("~/bundles/js/admin-lte")
+    @Scripts.Render("~/bundles/js/core")
+    <script src="@(Url.Content("~/Scripts/login/login.js"))"></script>
+
+    <script>
+        $(function () {
+            $('input').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%' /* optional */
+            });
+        });
+    </script>
+</body>
+</html>

@@ -2,27 +2,20 @@
 
 namespace Antiguera.Administrador.Helpers
 {
-    public class UrlConfiguration
+    public static class UrlConfiguration
     {
-
-        #region Url Principal
-        public string Api => ConfigurationManager.AppSettings["AmbienteApi"] == "true" ?
-            ConfigurationManager.AppSettings["UrlApiProd"] :
-            ConfigurationManager.AppSettings["UrlApiDev"];
-        #endregion
-
-        #region UrlFiles
-        public string Profile = "~/Content/Images/Profile/";
-
-        public string Emulador = "~/Content/Consoles/Emuladores/";
-
-        public string Rom = "~/Content/Consoles/Roms/";
-
-        public string BoxArt = "/Content/Images/BoxArt/";
-
-        public string Jogo = "~/Content/Games/";
-
-        public string Programa = "~/Content/Programas";
+        #region Account
+        public static string Login;
+        public static string Logout;
+        public static string SendCode;
+        public static string GetSmsProviders;
+        public static string VerifyCode;
+        public static string ConfirmEmail;
+        public static string ForgotPassword;
+        public static string ResetPassword;
+        public static string Register;
+        public static string Update;
+        public static string Delete;
         #endregion
     }
 }
