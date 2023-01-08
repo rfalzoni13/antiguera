@@ -263,3 +263,4 @@ __pycache__/
 *.zip
 *.jpg
 *.png
+/Antiguera.Infra.Data/Migrations
