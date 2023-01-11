@@ -173,7 +173,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utils\ChallengeResult.cs" />
-    <Compile Include="Utils\CustomAuthorize.cs" />
+    <Compile Include="Filters\CustomAuthorizeAttribute.cs" />
     <Compile Include="Utils\RandomOAuthStateGenerator.cs" />
     <Compile Include="Utils\ResponseMessageHelper.cs" />
   </ItemGroup>

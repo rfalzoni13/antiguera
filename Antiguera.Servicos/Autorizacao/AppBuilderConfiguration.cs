@@ -40,8 +40,8 @@ namespace Antiguera.Servicos.Autorizacao
             OAuthOptions = new OAuthAuthorizationServerOptions()
             {
                 AllowInsecureHttp = true, //true apenas para ambiente de desenvolvimento
-                TokenEndpointPath = new PathString("/api/antiguera/Account/Login"),
-                AuthorizeEndpointPath = new PathString("/api/antiguera/Account/ExternalLogin"),
+                TokenEndpointPath = new PathString("/Api/Account/Login"),
+                AuthorizeEndpointPath = new PathString("/Api/Account/ExternalLogin"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
                 Provider = new ApplicationOAuthProvider(PublicClientId),
                 RefreshTokenProvider = new AccessRefreshTokenProvider()

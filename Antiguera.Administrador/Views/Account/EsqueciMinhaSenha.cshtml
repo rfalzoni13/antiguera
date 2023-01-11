@@ -33,7 +33,7 @@
         <div class="login-box-body">
             @Html.ValidationSummary()
             <h4 class="login-box-msg">@Dominio.SenhaRecuperacao</h4>
-            @using (Html.BeginForm("Login", "Home", FormMethod.Post, new { @class = "form-signin" }))
+            @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "form-signin" }))
             {
                 <div class="form-group has-feedback">
                     @Html.TextBoxFor(x => x.Email, new { @type = "email", @id = "Senha", @class = "form-control", @placeholder = "Digite seu e-mail" })

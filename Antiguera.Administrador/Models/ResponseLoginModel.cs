@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace Antiguera.Administrador.Models
 {
@@ -26,11 +27,23 @@ namespace Antiguera.Administrador.Models
 
         public int UsuarioId { get; set; }
 
+        [JsonProperty("access_token")]
         public string AccessToken { get; set; }
 
+        [JsonProperty("refresh_token")]
         public string RefreshToken { get; set; }
 
+        [JsonProperty(".expires")]
         public DateTime? Expire { get; set; }
+
+        [JsonProperty(".issued")]
+        public DateTime? Issue { get; set; }
+
+        [JsonProperty("firstName")]
+        public string FirstName { get; set; }
+
+        [JsonProperty("lastName")]
+        public string LastName { get; set; }
 
         public bool? Novo { get; set; }
 

@@ -26,7 +26,7 @@ namespace Antiguera.Api.Models
         public string Email { get; set; }
     }
 
-    public class ExternalLoginViewModel
+    public class ExternalLoginModel
     {
         public string Name { get; set; }
         public string Url { get; set; }

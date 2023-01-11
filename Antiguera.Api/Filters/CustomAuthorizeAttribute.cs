@@ -7,7 +7,7 @@ using System.Web.Http.Controllers;
 
 namespace Antiguera.Api.Utils
 {
-    public class CustomAuthorize : AuthorizeAttribute
+    public class CustomAuthorizeAttribute : AuthorizeAttribute
     {
         protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
         {

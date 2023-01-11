@@ -11,7 +11,7 @@ using System.Web.Http;
 namespace Antiguera.Api.Controllers.Admin
 {
     [CustomAuthorize(Roles = "Administrador")]
-    [RoutePrefix("api/antiguera/jogo")]
+    [RoutePrefix("Api/Jogo")]
     public class JogoController : ApiController
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();

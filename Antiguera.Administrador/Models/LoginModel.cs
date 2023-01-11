@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace Antiguera.Administrador.Models
@@ -13,11 +14,14 @@ namespace Antiguera.Administrador.Models
     public class RegistrarModel
     {
         public string ID { get; set; }
-        public string UserName { get; set; }
+        public string Nome { get; set; }
         public string Email { get; set; }
-        public bool EmailConfirmed { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string Login { get; set; }
+        public string Senha { get; set; }
+        public string Genero { get; set; }
+        public DateTime DataNascimento { get; set; }
+        public Guid IdAcesso { get; set; }
+        public string PathFoto { get; set; }
         public bool AcceptTerms { get; set; }
     }
 
@@ -29,16 +33,6 @@ namespace Antiguera.Administrador.Models
         public string SelectedProvider { get; set; }
     }
 
-    public class ExternalLoginConfirmationModel
-    {
-        public string Email { get; set; }
-        public string UserName { get; set; }
-        public string FullName { get; set; }
-        public string IdProvider { get; set; }
-        public string ProviderName { get; set; }
-        public bool AcceptTerms { get; set; }
-    }
-
     public class VerifyCodeModel
     {
         public string Provider { get; set; }
@@ -46,13 +40,21 @@ namespace Antiguera.Administrador.Models
         public bool RememberMe { get; set; }
     }
 
-
-
-    public class ReturnCodeStatusModel
+    public class ReturnVerifyCodeModel
     {
-        public ESignInStatusCode Status { get; set; }
-        public string Message { get; set; }
         public string ReturnUrl { get; set; }
+    }
+
+    public class GenerateTokenEmailModel
+    {
+        public string UserId { get; set; }
+        public string Url { get; set; }
+    }
+
+    public class GenerateTokenPhoneModel
+    {
+        public string UserId { get; set; }
+        public string Phone { get; set; }
     }
 
     public class ConfirmEmailCodeModel
@@ -65,6 +67,13 @@ namespace Antiguera.Administrador.Models
     {
         public bool Succeeded { get; set; }
         public IEnumerable<string> Errors { get; set; }
+    }
+
+    public class ConfirmPhoneCodeModel
+    {
+        public string UserId { get; set; }
+        public string Code { get; set; }
+        public string Phone { get; set; }
     }
 
     public class ForgotPasswordModel
@@ -81,13 +90,21 @@ namespace Antiguera.Administrador.Models
         public string Code { get; set; }
     }
 
-
-    public enum ESignInStatusCode
+    public class ExternalLoginModel
     {
-        Success = 0,
-        LockedOut = 1,
-        RequiresVerification = 2,
-        Failure = 3
+        public string Name { get; set; }
+        public string Url { get; set; }
+        public string State { get; set; }
+    }
+
+    public class AddExternalLoginBindingModel
+    {
+        public string ExternalAccessToken { get; set; }
+    }
+
+    public class RegisterExternalBindingModel
+    {
+        public string Email { get; set; }
     }
 
     //public class RegistrarModel

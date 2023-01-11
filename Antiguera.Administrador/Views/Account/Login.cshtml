@@ -37,7 +37,7 @@
             }
 
             <h4 class="login-box-msg">@Dominio.PainelAdministracao</h4>
-            @using (Html.BeginForm("Login", "Home", FormMethod.Post, new { @class = "form-signin" }))
+            @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "form-signin" }))
             {
                 @Html.AntiForgeryToken()
 

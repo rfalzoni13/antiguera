@@ -16,7 +16,7 @@ namespace Antiguera.Dominio.DTO.Identity
         public string Code { get; set; }
     }
 
-    public class ReturnCodeStatusDTO
+    public class ReturnVerifyCodeDTO
     {
         public string ReturnUrl { get; set; }
     }
@@ -60,13 +60,5 @@ namespace Antiguera.Dominio.DTO.Identity
     {
         public bool Succeeded { get; set; }
         public IEnumerable<string> Errors { get; set; }
-    }
-
-    public enum ESignInStatusCode
-    {
-        Success = 0,
-        LockedOut = 1,
-        RequiresVerification = 2,
-        Failure = 3
     }
 }

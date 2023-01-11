@@ -1,4 +1,5 @@
-﻿using Antiguera.Infra.IoC;
+﻿using Antiguera.Api.Utils;
+using Antiguera.Infra.IoC;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json;
 using System.Web.Http;
@@ -14,6 +15,7 @@ namespace Antiguera.Api
             // Configuração e serviços de API Web
             // Configure a API Web para usar somente a autenticação de token de portador.
             config.SuppressDefaultHostAuthentication();
+            //config.Filters.Add(new CustomAuthorizeAttribute());
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
 
             UnityConfig.Register(config);

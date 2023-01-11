@@ -1,13 +1,11 @@
-﻿using Antiguera.Administrador.Helpers;
+﻿using Antiguera.Administrador.Client;
+using Antiguera.Administrador.Helpers;
 using Antiguera.Administrador.Models;
-using Microsoft.Owin.Security;
-using Newtonsoft.Json;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -17,6 +15,12 @@ namespace Antiguera.Administrador.Controllers
     public class AccountController : Controller
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private readonly AccountClient _accountClient;
+
+        public AccountController(AccountClient accountClient)
+        {
+            _accountClient = accountClient;
+        }
 
         // GET: Account
         [HttpGet]
@@ -30,7 +34,7 @@ namespace Antiguera.Administrador.Controllers
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
-                return View("Error");
+                throw;
             }
         }
 
@@ -40,53 +44,19 @@ namespace Antiguera.Administrador.Controllers
         {
             try
             {
-                var url = UrlConfiguration.Login;
-
-                using (HttpClient httpClient = new HttpClient())
-                {
-                    HttpContent content = new FormUrlEncodedContent(new[]
-                    {
-                        new KeyValuePair<string, string>("grant_type", "password"),
-                        new KeyValuePair<string, string>("username", model.Login),
-                        new KeyValuePair<string, string>("password", model.Password)
-                    });
-
-                    HttpResponseMessage response = httpClient.PostAsync(url, content).Result;
-                    if(response.IsSuccessStatusCode)
-                    {
-                        string resultContent = response.Content.ReadAsStringAsync().Result;
-
-                        var token = JsonConvert.DeserializeObject<TokenModel>(resultContent);
-
-                        AuthenticationProperties options = new AuthenticationProperties();
-
-                        options.AllowRefresh = true;
-                        options.IsPersistent = true;
-                        options.ExpiresUtc = DateTime.UtcNow.AddSeconds(DateTime.Now.Second + token.Expire.Value.Second);
-
-                        var claims = new[]
-                        {
-                            new Claim(ClaimTypes.Name, model.Login),
-                            new Claim("AcessToken", string.Format("Bearer {0}", token.AccessToken)),
-                        };
-
-                        var identity = new ClaimsIdentity(claims, "ApplicationCookie");
-
-                        Request.GetOwinContext().Authentication.SignIn(options, identity);
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, "Login e/ou Senha incorretos!");
-                        return View();
-                    }
-                }
+                _accountClient.Login(model, Request);
 
                 return RedirectToAction("Index", "Home");
+            }
+            catch(ApplicationException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View();
             }
             catch(Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
-                return View("Error");
+                throw;
             }
         }
 
@@ -96,109 +66,99 @@ namespace Antiguera.Administrador.Controllers
         {
             try
             {
-                using (HttpClient client = new HttpClient())
-                {
-                    var url = UrlConfiguration.VerifyCode;
+                var url = UrlConfiguration.Logout;
 
+                await _accountClient.Logout(Request);
 
-                    HttpResponseMessage response = await client.PostAsync(url, null);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        Request.GetOwinContext().Authentication.SignOut("ApplicationCookie");
-
-                        return RedirectToAction("Login");
-                    }
-                    else
-                    {
-                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
-
-                        throw new Exception(statusCode.Message);
-                    }
-                }
+                return RedirectToAction("Login");
             }
             catch (Exception ex)
             {
                 _logger.Fatal(ex, "Erro fatal!");
-                return View("Error");
+                throw;
+            }
+        }
+
+        //
+        // POST: /Account/LoginExterno
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> LoginExterno(string provider, string returnUrl)
+        {
+            var url = $"{UrlConfiguration.ExternalLogin}?provider={provider}";
+
+            await _accountClient.LoginExterno(url);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        // GET: /Account/EnviarCodigo
+        [AllowAnonymous]
+        public async Task<ActionResult> EnviarCodigo(string returnUrl, bool rememberMe)
+        {
+            try
+            {
+                var userFactors = await _accountClient.ObterAutenticacaoDoisFatores();
+
+                var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
+
+                return View(new SendCodeModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal(ex, "Erro fatal!");
+                throw;
+            }
+        }
+
+        // POST: /Account/EnviarCodigo
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EnviarCodigo(SendCodeModel model)
+        {
+            try
+            {
+                await _accountClient.EnviarCodigoDoisFatores(model);
+
+                return RedirectToAction("VerificarCodigo", new { Provider = model.SelectedProvider, model.ReturnUrl, model.RememberMe });
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal(ex, "Erro fatal!");
+                throw;
             }
         }
 
         // GET: /Account/VerificarCodigo
         [AllowAnonymous]
-        public async Task<ActionResult> VerificarCodigo(string provider, string returnUrl, bool rememberMe)
+        public ActionResult VerificarCodigo(string provider, string returnUrl, bool rememberMe)
         {
             try
             {
-                using (HttpClient client = new HttpClient())
-                {
-                    var url = UrlConfiguration.VerifyCode;
+                if (!Request.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+                    throw new Exception("Não autorizado!");
 
-
-                    HttpResponseMessage response = await client.GetAsync(url);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var userFactors = response.Content.ReadAsAsync<IList<string>>().Result;
-                        var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
-
-                        return View(new VerifyCodeModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
-                    }
-                    else
-                    {
-                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
-
-                        throw new Exception(statusCode.Message);
-                    }
-                }
+                return View(new VerifyCodeModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
             }
             catch (Exception ex)
             {
                 _logger.Fatal(ex, "Erro fatal!");
-                return View("Error");
+                throw;
             }
         }
 
-        // POST: /Account/VerificarCodigo
+        //
+        // POST: /Account/VerifyCode
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> VerificarCodigo(VerifyCodeModel model)
         {
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    var url = UrlConfiguration.VerifyCode;
+            var result = await _accountClient.VerificarCodigoDoisFatores(model);
 
-
-                    HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var result = await response.Content.ReadAsAsync<ReturnCodeStatusModel>();
-                        switch (result.Status)
-                        {
-                            case ESignInStatusCode.Success:
-                                return RedirectToLocal(model.ReturnUrl);
-                            case ESignInStatusCode.LockedOut:
-                                return View("Lockout");
-                            case ESignInStatusCode.Failure:
-                            default:
-                                ModelState.AddModelError(string.Empty, "Código inválido.");
-                                return View(model);
-                        }
-                    }
-                    else
-                    {
-                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
-
-                        throw new Exception(statusCode.Message);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal(ex, "Erro fatal!");
-                return View("Error");
-            }
+            return RedirectToLocal(result.ReturnUrl);
         }
 
         // GET: /Account/Registrar
@@ -213,7 +173,7 @@ namespace Antiguera.Administrador.Controllers
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
-                return View("Error");
+                throw;
             }
         }
 
@@ -232,33 +192,9 @@ namespace Antiguera.Administrador.Controllers
                     ModelState.AddModelError(string.Empty, "Você deve aceitar os termos de uso!");
                 }
 
-                if (ModelState.IsValid)
-                {
+                await _accountClient.Registrar(model);
 
-                    using (HttpClient client = new HttpClient())
-                    {
-                        var url = UrlConfiguration.Register;
-
-
-                        HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
-                        if (response.IsSuccessStatusCode)
-                        {
-                            return RedirectToAction("Account", "Login");
-                            // Para obter mais informações sobre como habilitar a confirmação da conta e redefinição de senha, visite https://go.microsoft.com/fwlink/?LinkID=320771
-                            // Enviar um email com este link
-                            // string code = await UserManager().GenerateEmailConfirmationTokenAsync(user.Id);
-                            // var callbackUrl = Url.Action("ConfirmEmail", "Home", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                            // await UserManager().SendEmailAsync(user.Id, "Confirmar sua conta", "Confirme sua conta clicando <a href=\"" + callbackUrl + "\">aqui</a>");
-
-                        }
-                        else
-                        {
-                            StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
-
-                            throw new Exception(statusCode.Message);
-                        }
-                    }
-                }
+                return RedirectToAction("Account", "Login");
 
                 // Se chegamos até aqui e houver alguma falha, exiba novamente o formulário
                 return View(model);
@@ -266,50 +202,7 @@ namespace Antiguera.Administrador.Controllers
             catch (Exception ex)
             {
                 _logger.Fatal(ex, "Erro fatal!");
-                return View("Error");
-            }
-        }
-
-        // GET: /Account/ConfirmarEmail
-        [AllowAnonymous]
-        public async Task<ActionResult> ConfirmarEmail(string userId, string code)
-        {
-            try
-            {
-                if (userId == null || code == null)
-                {
-                    return View("Error");
-                }
-
-                using (HttpClient client = new HttpClient())
-                {
-                    var url = UrlConfiguration.ConfirmEmail;
-
-                    var model = new ConfirmEmailCodeModel
-                    {
-                        UserId = userId,
-                        Code = code
-                    };
-
-                    HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var result = await response.Content.ReadAsAsync<IdentityResultCodeModel>();
-
-                        return View(result.Succeeded ? "ConfirmarEmail" : "Error");
-                    }
-                    else
-                    {
-                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
-
-                        throw new Exception(statusCode.Message);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal(ex, "Erro fatal!");
-                return View("Error");
+                throw;
             }
         }
 
@@ -350,7 +243,7 @@ namespace Antiguera.Administrador.Controllers
             catch (Exception ex)
             {
                 _logger.Fatal(ex, "Erro fatal!");
-                return View("Error");
+                throw;
             }
         }
 
@@ -404,90 +297,7 @@ namespace Antiguera.Administrador.Controllers
             catch (Exception ex)
             {
                 _logger.Fatal(ex, "Erro fatal!");
-                return View("Error");
-            }
-        }
-
-        //
-        // POST: /Account/LoginExterno
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public ActionResult LoginExterno(string provider, string returnUrl)
-        {
-            // Solicitar um redirecionamento para o provedor de logon externo
-            return new ChallengeResultHelper(provider, Url.Action("CallbackLoginExterno", "Account", new { ReturnUrl = returnUrl }));
-        }
-
-        // GET: /Account/EnviarCodigo
-        [AllowAnonymous]
-        public async Task<ActionResult> EnviarCodigo(string returnUrl, bool rememberMe)
-        {
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    var url = UrlConfiguration.GetSmsProviders;
-
-
-                    HttpResponseMessage response = await client.GetAsync(url);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var userFactors = response.Content.ReadAsAsync<IList<string>>().Result;
-                        var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
-
-                        return View(new SendCodeModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
-                    }
-                    else
-                    {
-                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
-
-                        throw new Exception(statusCode.Message);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal(ex, "Erro fatal!");
-                return View("Error");
-            }
-        }
-
-        // POST: /Account/EnviarCodigo
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EnviarCodigo(SendCodeModel model)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return View();
-                }
-
-                using (HttpClient client = new HttpClient())
-                {
-                    var url = UrlConfiguration.SendCode;
-
-
-                    HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        return RedirectToAction("VerificarCodigo", new { Provider = model.SelectedProvider, model.ReturnUrl, model.RememberMe });
-                    }
-                    else
-                    {
-                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
-
-                        throw new Exception(statusCode.Message);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal(ex, "Erro fatal!");
-                return View("Error");
+                throw;
             }
         }
 

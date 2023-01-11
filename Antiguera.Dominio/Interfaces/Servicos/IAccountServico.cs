@@ -20,7 +20,7 @@ namespace Antiguera.Dominio.Interfaces.Servicos
         Task<List<string>> ObterAutenticacaoDoisFatores(string email);
         Task<IdentityResultCodeDTO> RecuperarSenha(ResetPasswordDTO resetPasswordDTO);
         Task<IdentityResultCodeDTO> RemoverLoginExterno(string userId, string loginProvider, string loginKey);
-        Task<ReturnCodeStatusDTO> VerificarCodigo(VerifyCodeDTO verifiyCode);
+        Task<ReturnVerifyCodeDTO> VerificarCodigo(VerifyCodeDTO verifiyCode);
         Task<IdentityResultCodeDTO> VerificarCodigoConfirmacaoEmail(ConfirmEmailCodeDTO confirmEmailCodeDTO);
         Task<IdentityResultCodeDTO> VerificarCodigoConfirmacaoTelefone(ConfirmPhoneCodeDTO confirmPhoneCodeDTO);
     }

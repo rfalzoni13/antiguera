@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
@@ -69,7 +70,7 @@ namespace Antiguera.Servicos.Autorizacao
                 ClaimsIdentity cookiesIdentity = await user.GenerateUserIdentityAsync(userManager,
                     CookieAuthenticationDefaults.AuthenticationType);
 
-                AuthenticationProperties properties = CreateProperties(user.UserName);
+                AuthenticationProperties properties = CreateProperties(user);
                 AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
                 context.Validated(ticket);
                 context.Request.Context.Authentication.SignIn(cookiesIdentity);
@@ -158,7 +159,7 @@ namespace Antiguera.Servicos.Autorizacao
                 ClaimsIdentity cookieIdentity = await applicationUser.GenerateUserIdentityAsync(userManager,
                     CookieAuthenticationDefaults.AuthenticationType);
 
-                AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(applicationUser.UserName);
+                AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(applicationUser);
                 context.Authentication.SignIn(properties, oAuthIdentity, cookieIdentity);
             }
             else
@@ -204,11 +205,12 @@ namespace Antiguera.Servicos.Autorizacao
             return context.Authentication.GetExternalAuthenticationTypes();
         }
 
-        public static AuthenticationProperties CreateProperties(string userName)
+        public static AuthenticationProperties CreateProperties(ApplicationUser user)
         {
             IDictionary<string, string> data = new Dictionary<string, string>
             {
-                { "userName", userName }
+                { "userId", user.Id },
+                { "roleId", user.Roles.Select(x => x.RoleId).FirstOrDefault() }
             };
             return new AuthenticationProperties(data);
         }

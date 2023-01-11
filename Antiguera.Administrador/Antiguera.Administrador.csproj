@@ -437,7 +437,6 @@
     <Content Include="Content\Images\antiguera-mini-logo.fw.png" />
     <Content Include="Content\Images\LogoAntiguera.png" />
     <Content Include="Content\Images\LogoAntiguera2.png" />
-    <Content Include="Content\Images\Profile\user-fm.png" />
     <Content Include="Content\Images\Profile\user.png" />
     <Content Include="Content\Login.css" />
     <Content Include="Content\Site.css" />
@@ -768,9 +767,11 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Client\AccountClient.cs" />
+    <Compile Include="Client\Base\ClientBase.cs" />
+    <Compile Include="Client\Base\IClientBase.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
-    <Compile Include="Helpers\ChallengeResultHelper.cs" />
     <Compile Include="Models\AcessoModel.cs" />
     <Compile Include="Models\ConfigModel.cs" />
     <Compile Include="Models\DashboardModel.cs" />

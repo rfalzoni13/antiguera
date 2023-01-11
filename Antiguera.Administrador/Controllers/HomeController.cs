@@ -1,7 +1,6 @@
 ﻿using NLog;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 
 namespace Antiguera.Administrador.Controllers
@@ -14,6 +13,10 @@ namespace Antiguera.Administrador.Controllers
         {
             try
             {
+                var user = Request.GetOwinContext().Authentication.User;
+
+                ViewBag.Usuario = user.Identity.Name;
+
                 return View();
             }
 

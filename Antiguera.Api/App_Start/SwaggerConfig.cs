@@ -271,7 +271,7 @@ namespace Antiguera.Api
         /// <param name="apiExplorer">The api explorer.</param>
         public void Apply(SwaggerDocument swaggerDoc, SchemaRegistry schemaRegistry, IApiExplorer apiExplorer)
         {
-            swaggerDoc.paths.Add("/api/antiguera/Account/Login", new PathItem
+            swaggerDoc.paths.Add("/Api/Account/Login", new PathItem
             {
                 post = new Operation
                 {

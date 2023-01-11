@@ -523,7 +523,7 @@ namespace Antiguera.Servicos.Servicos.Identity
             };
         }
 
-        public async Task<ReturnCodeStatusDTO> VerificarCodigo(VerifyCodeDTO verifiyCode)
+        public async Task<ReturnVerifyCodeDTO> VerificarCodigo(VerifyCodeDTO verifiyCode)
         {
             try
             {
@@ -541,7 +541,7 @@ namespace Antiguera.Servicos.Servicos.Identity
                     throw new ApplicationException("Código inválido!");
                 }
 
-                return new ReturnCodeStatusDTO
+                return new ReturnVerifyCodeDTO
                 {
                     ReturnUrl = verifiyCode.ReturnUrl
                 };
