@@ -259,9 +259,9 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
-/Antiguera.WebApi/log.txt
 *.zip
 *.jpg
 *.png
 /Antiguera.Infra.Data/Migrations
 /Antiguera.Api/log.txt
+/Antiguera.Administrador/log.txt
