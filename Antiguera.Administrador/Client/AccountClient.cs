@@ -410,7 +410,7 @@ namespace Antiguera.Administrador.Client
             }
         }
 
-        public async Task<string> AlterarSenha(ForgotPasswordModel model)
+        public async Task<string> EsqueciMinhaSenha(ForgotPasswordModel model)
         {
             var url = UrlConfiguration.AccountForgotPassword;
 
