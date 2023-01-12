@@ -66,8 +66,6 @@ namespace Antiguera.Administrador.Controllers
         {
             try
             {
-                var url = UrlConfiguration.Logout;
-
                 await _accountClient.Logout(Request);
 
                 return RedirectToAction("Login");
@@ -86,7 +84,7 @@ namespace Antiguera.Administrador.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> LoginExterno(string provider, string returnUrl)
         {
-            var url = $"{UrlConfiguration.ExternalLogin}?provider={provider}";
+            var url = $"{UrlConfiguration.AccountExternalLogin}?provider={provider}";
 
             await _accountClient.LoginExterno(url);
 
@@ -223,22 +221,16 @@ namespace Antiguera.Administrador.Controllers
         {
             try
             {
-                using (HttpClient client = new HttpClient())
-                {
-                    var url = UrlConfiguration.ForgotPassword;
+                model.CallBackUrl = Url.Action("RecuperarSenha", "Account", new { userId = "{0}", code = "{1}" }, protocol: Request.Url.Scheme);
 
-                    model.CallBackUrl = Url.Action("RecuperarSenha", "Account", new { userId = "{0}", code = "{1}" }, protocol: Request.Url.Scheme);
+                await _accountClient.EsqueciMinhaSenha(model);
 
-                    HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        return View(model);
-                    }
-                    else
-                    {
-                        return RedirectToAction("ConfirmacaoRecuperacaoSenha", "Account");
-                    }
-                }
+                return View(model);
+            }
+            catch(ApplicationException ex)
+            {
+                _logger.Error(ex, ex.Message);
+                return RedirectToAction("ConfirmacaoRecuperacaoSenha", "Account");
             }
             catch (Exception ex)
             {
@@ -272,27 +264,21 @@ namespace Antiguera.Administrador.Controllers
         {
             try
             {
-                using (HttpClient client = new HttpClient())
+                var result = await _accountClient.RecuperarSenha(model);
+
+                if (result.Succeeded)
                 {
-                    var url = UrlConfiguration.ResetPassword;
-
-                    HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var result = await response.Content.ReadAsAsync<IdentityResultCodeModel>();
-
-                        if (result.Succeeded)
-                        {
-                            return RedirectToAction("ConfirmacaoRecuperacaoSenha", "Account");
-                        }
-
-                        return View(model);
-                    }
-                    else
-                    {
-                        return RedirectToAction("ConfirmacaoRecuperacaoSenha", "Account");
-                    }
+                    return View(model);
                 }
+                else
+                {
+                    return RedirectToAction("ConfirmacaoRecuperacaoSenha", "Account");
+                }
+            }
+            catch (ApplicationException ex)
+            {
+                _logger.Error(ex, ex.Message);
+                return RedirectToAction("ConfirmacaoRecuperacaoSenha", "Account");
             }
             catch (Exception ex)
             {
