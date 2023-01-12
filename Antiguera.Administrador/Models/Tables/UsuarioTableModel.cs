@@ -16,7 +16,7 @@ namespace Antiguera.Administrador.Models.Tables
 
     public class UsuarioListTableModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public string Nome { get; set; }
 

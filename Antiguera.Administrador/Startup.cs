@@ -46,6 +46,55 @@ namespace Antiguera.Administrador
             UrlConfiguration.AccountForgotPassword = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/EsqueciMinhaSenha";
             UrlConfiguration.AccountResetPassword = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/RecuperarSenha";
             #endregion
+
+            #region Acesso
+            UrlConfiguration.AcessoGetAll = $"{urlApi}/{ConfigurationManager.AppSettings["AcessoUrl"]}/ListarTodos";
+            UrlConfiguration.AcessoGet = $"{urlApi}/{ConfigurationManager.AppSettings["AcessoUrl"]}/ListarPorId";
+            UrlConfiguration.AcessoCreate = $"{urlApi}/{ConfigurationManager.AppSettings["AcessoUrl"]}/Adicionar";
+            UrlConfiguration.AcessoEdit = $"{urlApi}/{ConfigurationManager.AppSettings["AcessoUrl"]}/Atualizar";
+            UrlConfiguration.AcessoDelete = $"{urlApi}/{ConfigurationManager.AppSettings["AcessoUrl"]}/Deletar";
+            #endregion
+
+            #region Emulador
+            UrlConfiguration.EmuladorGetAll = $"{urlApi}/{ConfigurationManager.AppSettings["EmuladorUrl"]}/ListarTodos";
+            UrlConfiguration.EmuladorGet = $"{urlApi}/{ConfigurationManager.AppSettings["EmuladorUrl"]}/ListarPorId";
+            UrlConfiguration.EmuladorCreate = $"{urlApi}/{ConfigurationManager.AppSettings["EmuladorUrl"]}/Adicionar";
+            UrlConfiguration.EmuladorEdit = $"{urlApi}/{ConfigurationManager.AppSettings["EmuladorUrl"]}/Atualizar";
+            UrlConfiguration.EmuladorDelete = $"{urlApi}/{ConfigurationManager.AppSettings["EmuladorUrl"]}/Deletar";
+            #endregion
+
+            #region Jogo
+            UrlConfiguration.JogoGetAll = $"{urlApi}/{ConfigurationManager.AppSettings["JogoUrl"]}/ListarTodos";
+            UrlConfiguration.JogoGet = $"{urlApi}/{ConfigurationManager.AppSettings["JogoUrl"]}/ListarPorId";
+            UrlConfiguration.JogoCreate = $"{urlApi}/{ConfigurationManager.AppSettings["JogoUrl"]}/Adicionar";
+            UrlConfiguration.JogoEdit = $"{urlApi}/{ConfigurationManager.AppSettings["JogoUrl"]}/Atualizar";
+            UrlConfiguration.JogoDelete = $"{urlApi}/{ConfigurationManager.AppSettings["JogoUrl"]}/Deletar";
+            #endregion
+
+            #region Programa
+            UrlConfiguration.ProgramaGetAll = $"{urlApi}/{ConfigurationManager.AppSettings["ProgramaUrl"]}/ListarTodos";
+            UrlConfiguration.ProgramaGet = $"{urlApi}/{ConfigurationManager.AppSettings["ProgramaUrl"]}/ListarPorId";
+            UrlConfiguration.ProgramaCreate = $"{urlApi}/{ConfigurationManager.AppSettings["ProgramaUrl"]}/Adicionar";
+            UrlConfiguration.ProgramaEdit = $"{urlApi}/{ConfigurationManager.AppSettings["ProgramaUrl"]}/Atualizar";
+            UrlConfiguration.ProgramaDelete = $"{urlApi}/{ConfigurationManager.AppSettings["ProgramaUrl"]}/Deletar";
+            #endregion
+
+            #region Rom
+            UrlConfiguration.RomGetAll = $"{urlApi}/{ConfigurationManager.AppSettings["RomUrl"]}/ListarTodos";
+            UrlConfiguration.RomGet = $"{urlApi}/{ConfigurationManager.AppSettings["RomUrl"]}/ListarPorId";
+            UrlConfiguration.RomCreate = $"{urlApi}/{ConfigurationManager.AppSettings["RomUrl"]}/Adicionar";
+            UrlConfiguration.RomEdit = $"{urlApi}/{ConfigurationManager.AppSettings["RomUrl"]}/Atualizar";
+            UrlConfiguration.RomDelete = $"{urlApi}/{ConfigurationManager.AppSettings["RomUrl"]}/Deletar";
+            #endregion
+
+            #region Usuario
+            UrlConfiguration.UsuarioGetAll = $"{urlApi}/{ConfigurationManager.AppSettings["UsuarioUrl"]}/ListarTodos";
+            UrlConfiguration.UsuarioGet = $"{urlApi}/{ConfigurationManager.AppSettings["UsuarioUrl"]}/ListarPorId";
+            UrlConfiguration.UsuarioGetByUserId = $"{urlApi}/{ConfigurationManager.AppSettings["UsuarioUrl"]}/ListarPorUserId";
+            UrlConfiguration.UsuarioCreate = $"{urlApi}/{ConfigurationManager.AppSettings["UsuarioUrl"]}/Adicionar";
+            UrlConfiguration.UsuarioEdit = $"{urlApi}/{ConfigurationManager.AppSettings["UsuarioUrl"]}/Atualizar";
+            UrlConfiguration.UsuarioDelete = $"{urlApi}/{ConfigurationManager.AppSettings["UsuarioUrl"]}/Deletar";
+            #endregion
         }
     }
 }

@@ -3,6 +3,7 @@ using Antiguera.Dominio.Interfaces.Repositorio;
 using Antiguera.Infra.Data.Contexto;
 using Antiguera.Infra.Data.Repositorios.Base;
 using System;
+using System.Data.Entity;
 using System.Linq;
 
 namespace Antiguera.Infra.Data.Repositorios
@@ -22,8 +23,9 @@ namespace Antiguera.Infra.Data.Repositorios
             return _context.Usuarios.AsNoTracking().Where(u => u.Id == id).FirstOrDefault();
         }
 
-        public Usuario BuscarPorIdentityId(string identityId) 
-            => _context.Set<Usuario>().Where(x => x.IdentityUserId == identityId).FirstOrDefault();
+        public Usuario BuscarPorIdentityId(string identityId)
+            => _context.Set<Usuario>().Include(x => x.Acesso)
+            .Where(x => x.IdentityUserId == identityId).FirstOrDefault();
 
         public override void Apagar(Usuario obj)
         {

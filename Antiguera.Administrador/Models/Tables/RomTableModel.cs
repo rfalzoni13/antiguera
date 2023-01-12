@@ -16,9 +16,9 @@ namespace Antiguera.Administrador.Models.Tables
 
     public class RomListTableModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
-        public int EmuladorId { get; set; }
+        public Guid EmuladorId { get; set; }
 
         public string Nome { get; set; }
 

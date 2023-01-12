@@ -4,9 +4,9 @@ namespace Antiguera.Administrador.Models
 {
     public class UsuarioModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
-        public int AcessoId { get; set; }
+        public Guid AcessoId { get; set; }
 
         public string Nome { get; set; }
 

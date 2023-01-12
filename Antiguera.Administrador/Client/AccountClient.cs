@@ -43,8 +43,9 @@ namespace Antiguera.Administrador.Client
 
                     var claims = new[]
                     {
-                            new Claim(ClaimTypes.Name, $"{token.FirstName} {token.LastName}"),
-                            new Claim("AcessToken", string.Format("Bearer {0}", token.AccessToken)),
+                            new Claim(ClaimTypes.NameIdentifier, token.UserId),
+                            new Claim(ClaimTypes.Role, token.RoleId),
+                            new Claim("AccessToken", string.Format("Bearer {0}", token.AccessToken)),
                         };
 
                     var identity = new ClaimsIdentity(claims, "ApplicationCookie");

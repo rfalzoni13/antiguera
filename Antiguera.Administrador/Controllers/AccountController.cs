@@ -1,18 +1,17 @@
 ﻿using Antiguera.Administrador.Client;
+using Antiguera.Administrador.Controllers.Base;
 using Antiguera.Administrador.Helpers;
 using Antiguera.Administrador.Models;
 using NLog;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
 namespace Antiguera.Administrador.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly AccountClient _accountClient;
@@ -26,6 +25,11 @@ namespace Antiguera.Administrador.Controllers
         [HttpGet]
         public ActionResult Login()
         {
+            if(Request.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             try
             {
                 var model = new LoginModel();

@@ -82,6 +82,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <returns></returns>
         // GET api/antiguera/usuario/ListarPorId?id={Id}
         [HttpGet]
+        [AllowAnonymous]
         [Route("ListarPorId")]
         public HttpResponseMessage ListarPorId(Guid Id)
         {
@@ -120,6 +121,61 @@ namespace Antiguera.Api.Controllers.Admin
                 return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
             }
 
+            catch (Exception ex)
+            {
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
+            }
+        }
+
+        /// <summary>
+        /// Listar usuário pelo Identity Id
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>Retorna o usuário através do Id do mesmo</remarks>
+        /// <param name="UserId">Id Identity do usuário</param>
+        /// <returns></returns>
+        // GET api/antiguera/usuario/ListarPorUserId?id={Id}
+        [HttpGet]
+        [Route("ListarPorUserId")]
+        public HttpResponseMessage ListarPorUserId(string UserId)
+        {
+            string action = this.ActionContext.ActionDescriptor.ActionName;
+            _logger.Info(action + " - Iniciado");
+            try
+            {
+                if (!string.IsNullOrEmpty(UserId))
+                {
+                    var usuario = _usuarioServico.ListarPorIdentityId(UserId);
+
+                    if (usuario != null)
+                    {
+                        _logger.Info(action + " - Sucesso!");
+
+                        _logger.Info(action + " - Finalizado");
+                        return Request.CreateResponse(HttpStatusCode.OK, usuario);
+                    }
+                    else
+                    {
+                        throw new HttpResponseException(HttpStatusCode.NotFound);
+                    }
+                }
+                else
+                {
+                    return ResponseMessageHelper.RetornoRequisicaoInvalida(Request, _logger, action, "Parâmetro incorreto!");
+                }
+            }
+            catch (HttpResponseException ex)
+            {
+                if (ex.Response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return ResponseMessageHelper.RetornoExceptionNaoEncontrado(ex, Request, _logger, action, "Nenhum registro encontrado!");
+                }
+
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
+            }
             catch (Exception ex)
             {
                 return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);

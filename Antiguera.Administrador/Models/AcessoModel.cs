@@ -4,7 +4,7 @@ namespace Antiguera.Administrador.Models
 {
     public class AcessoModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public bool? Novo { get; set; }
 

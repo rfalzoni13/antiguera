@@ -237,5 +237,42 @@ namespace Antiguera.Servicos.Servicos
                 }
             }
         }
+
+        public UsuarioDTO ListarPorIdentityId(string userId)
+        {
+            var usuario = _usuarioRepositorio.BuscarPorIdentityId(userId);
+
+            var user = UserManager.FindByIdAsync(userId).Result;
+
+            if (usuario == null || user == null)
+                throw new ApplicationException("Usuário não encontrado!");
+
+            return new UsuarioDTO
+            {
+                Id = usuario.Id,
+                IdentityUserId = usuario.IdentityUserId,
+                AcessoId = usuario.AcessoId,
+                DataNascimento = usuario.DataNascimento,
+                Nome = usuario.Nome,
+                Email = user?.Email,
+                Genero = usuario.Genero,
+                Login = user?.UserName,
+                Novo = usuario.Novo,
+                PathFoto = usuario.PathFoto,
+                Telefone = usuario.Telefone,
+                UltimaVisita = DateTime.Now,
+                Created = usuario.Created,
+                Modified = usuario.Modified,
+                Acesso = new AcessoDTO
+                {
+                    Id = usuario.Acesso.Id,
+                    Nome = usuario.Acesso.Nome,
+                    IdentityRoleId = usuario.Acesso.IdentityRoleId,
+                    Created = usuario.Acesso.Created,
+                    Modified = usuario.Acesso.Modified,
+                    Novo = usuario.Acesso.Novo
+                }
+            };
+        }
     }
 }

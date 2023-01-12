@@ -1,4 +1,5 @@
-﻿using Antiguera.Administrador.Models;
+﻿using Antiguera.Administrador.Controllers.Base;
+using Antiguera.Administrador.Models;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Web.Mvc;
 namespace Antiguera.Administrador.Controllers
 {
     [Authorize]
-    public class ConfiguracaoController : Controller
+    public class ConfiguracaoController : BaseController
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 

@@ -39,11 +39,11 @@ namespace Antiguera.Administrador.Models
         [JsonProperty(".issued")]
         public DateTime? Issue { get; set; }
 
-        [JsonProperty("firstName")]
-        public string FirstName { get; set; }
+        [JsonProperty("userId")]
+        public string UserId { get; set; }
 
-        [JsonProperty("lastName")]
-        public string LastName { get; set; }
+        [JsonProperty("roleId")]
+        public string RoleId { get; set; }
 
         public bool? Novo { get; set; }
 

@@ -4,9 +4,9 @@ namespace Antiguera.Administrador.Models
 {
     public class RomModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
-        public int EmuladorId { get; set; }
+        public Guid EmuladorId { get; set; }
 
         public string Nome { get; set; }
 

@@ -1,21 +1,29 @@
-﻿using Antiguera.Administrador.Helpers;
+﻿using Antiguera.Administrador.Client.Interface;
+using Antiguera.Administrador.Controllers.Base;
+using Antiguera.Administrador.Helpers;
 using Antiguera.Administrador.Models;
 using Antiguera.Administrador.Models.Tables;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace Antiguera.Administrador.Controllers
 {
     [Authorize]
-    public class ProgramaController : Controller
+    public class ProgramaController : BaseController
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private readonly IProgramaClient _programaClient;
+
+        public ProgramaController(IProgramaClient programaClient)
+        {
+            _programaClient = programaClient;
+        }
 
         // GET: Programa
         public ActionResult Index()
@@ -31,49 +39,42 @@ namespace Antiguera.Administrador.Controllers
 
             try
             {
-                using (HttpClient client = new HttpClient())
+                var url = UrlConfiguration.ProgramaGetAll;
+
+                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
+
+                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
+
+                var programas = await _programaClient.ListarTodos(url, token);
+
+                foreach (var programa in programas)
                 {
-                    var url = UrlConfiguration.VerifyCode;
-
-
-                    HttpResponseMessage response = await client.GetAsync(url);
-                    if (response.IsSuccessStatusCode)
+                    obj.data.Add(new ProgramaListTableModel()
                     {
-                        var result = await response.Content.ReadAsAsync<ICollection<ProgramaModel>>();
-
-                        foreach (var item in result)
-                        {
-                            obj.data.Add(new ProgramaListTableModel()
-                            {
-                                Id = item.Id,
-                                Nome = item.Nome,
-                                Created = item.Created,
-                                Modified = item.Modified,
-                                Novo = item.Novo
-                            });
-                        }
-
-                        obj.recordsFiltered = obj.data.Count();
-                        obj.recordsTotal = obj.data.Count();
-
-                        return Json(obj);
-                    }
-                    else
-                    {
-                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
-
-                        throw new Exception(statusCode.Message);
-                    }
+                        Id = programa.Id,
+                        Nome = programa.Nome,
+                        Created = programa.Created,
+                        Modified = programa.Modified,
+                        Novo = programa.Novo
+                    });
                 }
+
+                obj.recordsFiltered = obj.data.Count();
+                obj.recordsTotal = obj.data.Count();
+
+                return Json(obj);
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
                 Response.StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError);
                 obj.error = ex.Message;
-#if !DEBUG
-                obj.error = "Ocorreu um erro ao processar a solicitação!";
-#endif
+
+                if (Debugger.IsAttached)
+                {
+                    obj.error = "Ocorreu um erro ao processar a solicitação!";
+                }
+
                 return Json(obj);
             }
         }
@@ -99,33 +100,35 @@ namespace Antiguera.Administrador.Controllers
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                using (HttpClient client = new HttpClient())
-                {
-                    var url = UrlConfiguration.SendCode;
+                var url = UrlConfiguration.ProgramaCreate;
 
+                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
 
-                    HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string result = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
 
-                        return Json(new { success = true, message = result });
-                    }
-                    else
-                    {
-                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+                string result = await _programaClient.Inserir(url, token, model);
 
-                        throw new Exception(statusCode.Message);
-                    }
-                }
+                return Json(new { success = true, message = result });
+            }
+            catch (ApplicationException ex)
+            {
+                _logger.Error("Ocorreu um erro: " + ex);
+                Response.StatusCode = Convert.ToInt32(HttpStatusCode.BadRequest);
+
+                errorsList.Add(ex.Message);
+
+                return Json(new { success = false, errors = errorsList });
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
+
                 errorsList.Add(ex.Message);
-#if !DEBUG
-                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
-#endif
+
+                if (Debugger.IsAttached)
+                {
+                    errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                }
 
                 return Json(new { success = false, errors = errorsList });
             }
@@ -152,33 +155,37 @@ namespace Antiguera.Administrador.Controllers
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                using (HttpClient client = new HttpClient())
-                {
-                    var url = UrlConfiguration.SendCode;
+                var url = UrlConfiguration.ProgramaEdit;
 
+                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
 
-                    HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string result = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
 
-                        return Json(new { success = true, message = result });
-                    }
-                    else
-                    {
-                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+                string result = await _programaClient.Atualizar(url, token, model);
 
-                        throw new Exception(statusCode.Message);
-                    }
-                }
+                return Json(new { success = true, message = result });
+
             }
+            catch (ApplicationException ex)
+            {
+                _logger.Error("Ocorreu um erro: " + ex);
+                Response.StatusCode = Convert.ToInt32(HttpStatusCode.BadRequest);
+
+                errorsList.Add(ex.Message);
+
+                return Json(new { success = false, errors = errorsList });
+            }
+
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
+
                 errorsList.Add(ex.Message);
-#if !DEBUG
-                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
-#endif
+
+                if (Debugger.IsAttached)
+                {
+                    errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                }
 
                 return Json(new { success = false, errors = errorsList });
             }
@@ -186,7 +193,7 @@ namespace Antiguera.Administrador.Controllers
 
         //POST: Programa/Excluir
         [HttpPost]
-        public async Task<ActionResult> Excluir(int id)
+        public async Task<ActionResult> Excluir(ProgramaModel model)
         {
             List<string> errorsList = new List<string>();
 
@@ -205,38 +212,36 @@ namespace Antiguera.Administrador.Controllers
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                using (HttpClient client = new HttpClient())
-                {
-                    var url = UrlConfiguration.Login;
+                var url = UrlConfiguration.ProgramaDelete;
 
-                    string queryId = id.ToString();
+                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
 
-                    string param = $"acessoId={queryId}";
+                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
 
-                    HttpContent content = new StringContent(param, System.Text.Encoding.UTF8, "application/json");
+                string result = await _programaClient.Excluir(url, token, model);
 
-                    HttpResponseMessage response = await client.PostAsync(url, content);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string result = await response.Content.ReadAsStringAsync();
-
-                        return Json(new { success = true, message = result });
-                    }
-                    else
-                    {
-                        StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
-
-                        throw new Exception(statusCode.Message);
-                    }
-                }
+                return Json(new { success = true, message = result });
             }
+            catch (ApplicationException ex)
+            {
+                _logger.Error("Ocorreu um erro: " + ex);
+                Response.StatusCode = Convert.ToInt32(HttpStatusCode.BadRequest);
+
+                errorsList.Add(ex.Message);
+
+                return Json(new { success = false, errors = errorsList });
+            }
+
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
+
                 errorsList.Add(ex.Message);
-#if !DEBUG
-                errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
-#endif
+
+                if (Debugger.IsAttached)
+                {
+                    errorsList.Add("Ocorreu um erro, verifique o arquivo de log e tente novamente!");
+                }
 
                 return Json(new { success = false, errors = errorsList });
             }

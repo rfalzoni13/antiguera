@@ -10,10 +10,12 @@ namespace Antiguera.Administrador.Client.Base
 {
     public abstract class ClientBase<T> : IClientBase<T> where T : class
     {
-        public async Task<string> Atualizar(string url, T obj)
+        public async Task<string> Atualizar(string url, string token, T obj)
         {
             using (HttpClient client = new HttpClient())
             {
+                client.DefaultRequestHeaders.Add("Bearer", token);
+
                 HttpResponseMessage response = await client.PutAsJsonAsync(url, obj);
                 if (response.IsSuccessStatusCode)
                 {
@@ -23,15 +25,17 @@ namespace Antiguera.Administrador.Client.Base
                 {
                     StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
 
-                    throw new Exception(statusCode.Message);
+                    throw new ApplicationException(statusCode.Message);
                 }
             }
         }
 
-        public async Task<string> Excluir(string url, T obj)
+        public async Task<string> Excluir(string url, string token, T obj)
         {
             using (HttpClient client = new HttpClient())
             {
+                client.DefaultRequestHeaders.Add("Bearer", token);
+
                 var request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Delete,
@@ -47,15 +51,17 @@ namespace Antiguera.Administrador.Client.Base
                 {
                     StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
 
-                    throw new Exception(statusCode.Message);
+                    throw new ApplicationException(statusCode.Message);
                 }
             }
         }
 
-        public async Task<string> Inserir(string url, T obj)
+        public async Task<string> Inserir(string url, string token, T obj)
         {
             using (HttpClient client = new HttpClient())
             {
+                client.DefaultRequestHeaders.Add("Bearer", token);
+
                 HttpResponseMessage response = await client.PostAsJsonAsync(url, obj);
                 if (response.IsSuccessStatusCode)
                 {
@@ -65,15 +71,17 @@ namespace Antiguera.Administrador.Client.Base
                 {
                     StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
 
-                    throw new Exception(statusCode.Message);
+                    throw new ApplicationException(statusCode.Message);
                 }
             }
         }
 
-        public async Task<T> Listar(string url)
+        public async Task<T> Listar(string url, string token)
         {
             using (HttpClient client = new HttpClient())
             {
+                client.DefaultRequestHeaders.Add("Bearer", token);
+
                 HttpResponseMessage response = await client.GetAsync(url);
                 if (response.IsSuccessStatusCode)
                 {
@@ -88,10 +96,12 @@ namespace Antiguera.Administrador.Client.Base
             }
         }
 
-        public async Task<ICollection<T>> ListarTodos(string url)
+        public async Task<ICollection<T>> ListarTodos(string url, string token)
         {
             using (HttpClient client = new HttpClient())
             {
+                client.DefaultRequestHeaders.Add("Bearer", token);
+
                 HttpResponseMessage response = await client.GetAsync(url);
                 if (response.IsSuccessStatusCode)
                 {
