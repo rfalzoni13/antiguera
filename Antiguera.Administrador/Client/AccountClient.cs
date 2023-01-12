@@ -87,7 +87,7 @@ namespace Antiguera.Administrador.Client
                 HttpResponseMessage response = await client.GetAsync(url);
                 if (!response.IsSuccessStatusCode)
                 {
-                    StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+                    StatusCodeModel statusCode = await response.Content.ReadAsAsync<StatusCodeModel>();
 
                     throw new ApplicationException(statusCode.Message);
                 }
@@ -249,7 +249,7 @@ namespace Antiguera.Administrador.Client
                     // var callbackUrl = Url.Action("ConfirmEmail", "Home", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager().SendEmailAsync(user.Id, "Confirmar sua conta", "Confirme sua conta clicando <a href=\"" + callbackUrl + "\">aqui</a>");
 
-                    return response.Content.ReadAsStringAsync().Result;
+                    return await response.Content.ReadAsStringAsync();
                 }
                 else
                 {
@@ -269,7 +269,7 @@ namespace Antiguera.Administrador.Client
                 HttpResponseMessage response = await client.PutAsJsonAsync(url, model);
                 if (response.IsSuccessStatusCode)
                 {
-                    return response.Content.ReadAsStringAsync().Result;
+                    return await response.Content.ReadAsStringAsync();
                 }
                 else
                 {
@@ -299,7 +299,7 @@ namespace Antiguera.Administrador.Client
                 }
                 else
                 {
-                    StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+                    StatusCodeModel statusCode = await response.Content.ReadAsAsync<StatusCodeModel>();
 
                     throw new Exception(statusCode.Message);
                 }
@@ -370,7 +370,7 @@ namespace Antiguera.Administrador.Client
 
         public async Task<string> VerificarCodigoConfirmacaoTelefone(ConfirmPhoneCodeModel model)
         {
-            string url = UrlConfiguration.AccountVerifyEmailConfirmationCode;
+            string url = UrlConfiguration.AccountVerifyPhoneConfirmationCode;
 
             using (HttpClient client = new HttpClient())
             {
@@ -387,6 +387,69 @@ namespace Antiguera.Administrador.Client
                 }
             }
         }
+        #endregion
+
+        #region SENHA
+        public async Task<IdentityResultCodeModel> AlterarSenha(ChangePasswordModel model)
+        {
+            var url = UrlConfiguration.AccountChangePassword;
+
+            using (HttpClient client = new HttpClient())
+            {
+                HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsAsync<IdentityResultCodeModel>();
+                }
+                else
+                {
+                    StatusCodeModel statusCode = await response.Content.ReadAsAsync<StatusCodeModel>();
+
+                    throw new ApplicationException(statusCode.Message);
+                }
+            }
+        }
+
+        public async Task<string> AlterarSenha(ForgotPasswordModel model)
+        {
+            var url = UrlConfiguration.AccountForgotPassword;
+
+            using (HttpClient client = new HttpClient())
+            {
+                HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    StatusCodeModel statusCode = await response.Content.ReadAsAsync<StatusCodeModel>();
+
+                    throw new ApplicationException(statusCode.Message);
+                }
+            }
+        }
+
+        public async Task<IdentityResultCodeModel> RecuperarSenha(ResetPasswordModel model)
+        {
+            var url = UrlConfiguration.AccountResetPassword;
+
+            using (HttpClient client = new HttpClient())
+            {
+                HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsAsync<IdentityResultCodeModel>();
+                }
+                else
+                {
+                    StatusCodeModel statusCode = await response.Content.ReadAsAsync<StatusCodeModel>();
+
+                    throw new ApplicationException(statusCode.Message);
+                }
+            }
+        }
+
         #endregion
     }
 }
