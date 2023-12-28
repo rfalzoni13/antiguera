@@ -22,7 +22,6 @@ namespace Antiguera.Infra.Data.Identity
         [MaxLength(100)]
         public string Gender { get; set; }
 
-        [Required]
         [MaxLength(1024)]
         public string PhotoPath { get; set; }
 

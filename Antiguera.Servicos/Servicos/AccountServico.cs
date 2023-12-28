@@ -91,6 +91,8 @@ namespace Antiguera.Servicos.Servicos
                         LastName = register.Nome.Split(' ').LastOrDefault(),
                         Email = register.Email,
                         PhoneNumber = register.Telefone,
+                        Gender = register.Genero,
+                        PhotoPath = register.PathFoto,
                         UserName = register.Login,
                         Active = true,
                         Created = DateTime.Now
