@@ -39,7 +39,7 @@ namespace Antiguera.Administrador
                       "~/Scripts/libraries/moment/moment-with-locales.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/js/core").Include(
-                      "~/Scripts/config/core.js"));
+                      "~/Scripts/core/root.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/js/datatable").Include(
                       "~/Scripts/libraries/datatable/datatable*",
@@ -47,11 +47,10 @@ namespace Antiguera.Administrador
 
             //Styles
             bundles.Add(new StyleBundle("~/bundles/bootstrap").Include(
-                      "~/Content/libraries/bootstrap/bootstrap*"));
+                      "~/Content/libraries/bootstrap/bootstrap.css"));
 
             bundles.Add(new StyleBundle("~/bundles/admin-lte").Include(
                 "~/admin-lte/css/AdminLTE.css",
-                "~/admin-lte/css/skins/_all-skins.css",
                 "~/admin-lte/icheck/skins/square/_all.css",
                 "~/Content/libraries/font-awesome.css"));
 
@@ -60,9 +59,6 @@ namespace Antiguera.Administrador
 
             bundles.Add(new StyleBundle("~/bundles/bootstrap-datepicker").Include(
                       "~/Content/libraries/bootstrap-datepicker/bootstrap-datepicker.css"));
-
-            bundles.Add(new StyleBundle("~/bundles/admin-lte/skins").Include(
-                "~/admin-lte/css/skins/_all-skins.css"));
         }
     }
 }

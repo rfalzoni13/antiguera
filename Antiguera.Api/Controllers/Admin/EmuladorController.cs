@@ -30,7 +30,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Listagem de todos os emuladores</remarks>
         /// <returns></returns>
-        // GET api/antiguera/admin/emulador/ListarTodos
+        // GET Api/Emulador/ListarTodos
         [HttpGet]
         [Route("ListarTodos")]
         public HttpResponseMessage ListarTodos()
@@ -80,7 +80,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Retorna o emulador através do Id do mesmo</remarks>
         /// <param name="Id">Id do emulador</param>
         /// <returns></returns>
-        // GET api/antiguera/admin/emulador/ListarPorId?id={Id}
+        // GET Api/Emulador/ListarPorId?id={Id}
         [HttpGet]
         [Route("ListarPorId")]
         public HttpResponseMessage ListarPorId(Guid Id)
@@ -136,10 +136,10 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Insere um novo emulador passando um objeto no body da requisição no método POST</remarks>
         /// <param name="emuladorDto">Objeto do emulador</param>
         /// <returns></returns>
-        // POST api/antiguera/admin/emulador/Adicionar
+        // POST Api/Emulador/Inserir
         [HttpPost]
-        [Route("Adicionar")]
-        public HttpResponseMessage Adicionar([FromBody] EmuladorDTO emuladorDto)
+        [Route("Inserir")]
+        public HttpResponseMessage Inserir([FromBody] EmuladorDTO emuladorDto)
         {
             string action = this.ActionContext.ActionDescriptor.ActionName;
             _logger.Info(action + " - Iniciado");
@@ -180,7 +180,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Atualiza o emulador passando o objeto no body da requisição pelo método PUT</remarks>
         /// <param name="emuladorDto">Objeto do emulador</param>
         /// <returns></returns>
-        // PUT api/antiguera/admin/emulador/Atualizar
+        // PUT Api/Emulador/Atualizar
         [HttpPut]
         [Route("Atualizar")]
         public HttpResponseMessage Atualizar([FromBody] EmuladorDTO emuladorDto)
@@ -224,7 +224,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Exclui o emulador passando o objeto no body da requisição pelo método DELETE</remarks>
         /// <param name="emuladorDto">Objeto do emulador</param>
         /// <returns></returns>
-        // DELETE api/antiguera/admin/emulador/Deletar
+        // DELETE Api/Emulador/Deletar
         [HttpDelete]
         [Route("Deletar")]
         public HttpResponseMessage Deletar([FromBody] EmuladorDTO emuladorDto)

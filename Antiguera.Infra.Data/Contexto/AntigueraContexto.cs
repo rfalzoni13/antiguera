@@ -10,7 +10,6 @@ namespace Antiguera.Infra.Data.Contexto
     public class AntigueraContexto : DbContext
     {
         #region Atributos
-        public virtual DbSet<Acesso> Acessos { get; set; }
 
         public virtual DbSet<Emulador> Emuladores { get; set; }
 
@@ -19,8 +18,6 @@ namespace Antiguera.Infra.Data.Contexto
         public virtual DbSet<Programa> Programas { get; set; }
 
         public virtual DbSet<Rom> Roms { get; set; }
-
-        public virtual DbSet<Usuario> Usuarios { get; set; }
         #endregion
 
         public AntigueraContexto()
@@ -36,13 +33,11 @@ namespace Antiguera.Infra.Data.Contexto
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
             modelBuilder.Conventions.Remove<ManyToManyCascadeDeleteConvention>();
 
-            modelBuilder.Configurations.Add(new AcessoConfiguracao());
             modelBuilder.Configurations.Add(new EmuladorConfiguracao());
             modelBuilder.Configurations.Add(new HistoricoConfiguracao());
             modelBuilder.Configurations.Add(new JogoConfiguracao());
             modelBuilder.Configurations.Add(new ProgramaConfiguracao());
             modelBuilder.Configurations.Add(new RomConfiguracao());
-            modelBuilder.Configurations.Add(new UsuarioConfiguracao());
         }
     }
 }

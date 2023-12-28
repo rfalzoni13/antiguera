@@ -1,8 +1,7 @@
-﻿using Antiguera.Administrador.Client.Interface;
-using Antiguera.Administrador.Controllers.Base;
-using Antiguera.Administrador.Helpers;
+﻿using Antiguera.Administrador.Clients.Interface;
 using Antiguera.Administrador.Models;
 using Antiguera.Administrador.Models.Tables;
+using Antiguera.Utils.Helpers;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ using System.Web.Mvc;
 namespace Antiguera.Administrador.Controllers
 {
     [Authorize]
-    public class ProgramaController : BaseController
+    public class ProgramaController : Controller
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly IProgramaClient _programaClient;
@@ -35,48 +34,18 @@ namespace Antiguera.Administrador.Controllers
         [HttpPost]
         public async Task<JsonResult> CarregarProgramas()
         {
-            var obj = new ProgramaTableModel();
+            var tabela = new ProgramaTableModel();
 
             try
             {
-                var url = UrlConfiguration.ProgramaGetAll;
-
-                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
-
-                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
-
-                var programas = await _programaClient.ListarTodos(url, token);
-
-                foreach (var programa in programas)
-                {
-                    obj.data.Add(new ProgramaListTableModel()
-                    {
-                        Id = programa.Id,
-                        Nome = programa.Nome,
-                        Created = programa.Created,
-                        Modified = programa.Modified,
-                        Novo = programa.Novo
-                    });
-                }
-
-                obj.recordsFiltered = obj.data.Count();
-                obj.recordsTotal = obj.data.Count();
-
-                return Json(obj);
+                tabela = await _programaClient.ListarTabela(UrlConfigurationHelper.ProgramaGetAll);
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
-                Response.StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError);
-                obj.error = ex.Message;
-
-                if (Debugger.IsAttached)
-                {
-                    obj.error = "Ocorreu um erro ao processar a solicitação!";
-                }
-
-                return Json(obj);
             }
+
+            return Json(tabela);
         }
 
         // POST: Programa/Cadastrar
@@ -100,13 +69,7 @@ namespace Antiguera.Administrador.Controllers
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                var url = UrlConfiguration.ProgramaCreate;
-
-                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
-
-                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
-
-                string result = await _programaClient.Inserir(url, token, model);
+                string result = await _programaClient.Inserir(UrlConfigurationHelper.ProgramaCreate, model);
 
                 return Json(new { success = true, message = result });
             }
@@ -155,13 +118,7 @@ namespace Antiguera.Administrador.Controllers
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                var url = UrlConfiguration.ProgramaEdit;
-
-                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
-
-                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
-
-                string result = await _programaClient.Atualizar(url, token, model);
+                string result = await _programaClient.Atualizar(UrlConfigurationHelper.ProgramaEdit, model);
 
                 return Json(new { success = true, message = result });
 
@@ -212,13 +169,7 @@ namespace Antiguera.Administrador.Controllers
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                var url = UrlConfiguration.ProgramaDelete;
-
-                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
-
-                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
-
-                string result = await _programaClient.Excluir(url, token, model);
+                string result = await _programaClient.Excluir(UrlConfigurationHelper.ProgramaDelete, model);
 
                 return Json(new { success = true, message = result });
             }

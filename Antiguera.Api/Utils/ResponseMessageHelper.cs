@@ -1,4 +1,5 @@
 ﻿using Antiguera.Api.Models;
+using Antiguera.Utils.Helpers;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ namespace Antiguera.Api.Utils
             StatusCodeModel status = new StatusCodeModel
             {
                 Status = HttpStatusCode.InternalServerError,
-                Message = ex.Message
+                Message = ExceptionHelper.CatchMessageFromException(ex)
             };
 
             logger.Info(action + " - Finalizado");

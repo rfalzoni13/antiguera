@@ -70,7 +70,7 @@ namespace Antiguera.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Digite seu login ou e-mail.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Digite seu e-mail.
         /// </summary>
         public static string Email {
             get {

@@ -1,13 +1,11 @@
-﻿using Antiguera.Administrador.Client.Interface;
-using Antiguera.Administrador.Controllers.Base;
-using Antiguera.Administrador.Helpers;
+﻿using Antiguera.Administrador.Clients.Interface;
 using Antiguera.Administrador.Models;
 using Antiguera.Administrador.Models.Tables;
+using Antiguera.Utils.Helpers;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -15,7 +13,7 @@ using System.Web.Mvc;
 namespace Antiguera.Administrador.Controllers
 {
     [Authorize]
-    public class AcessoController : BaseController
+    public class AcessoController : Controller
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly IAcessoClient _acessoClient;
@@ -35,48 +33,18 @@ namespace Antiguera.Administrador.Controllers
         [HttpPost]
         public async Task<JsonResult> CarregarAcessos()
         {
-            var obj = new AcessoTableModel();
+            var tabela = new AcessoTableModel();
 
             try
             {
-                var url = UrlConfiguration.AcessoGetAll;
-
-                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
-
-                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
-
-                var acessos = await _acessoClient.ListarTodos(url, token);
-
-                foreach (var acesso in acessos)
-                {
-                    obj.data.Add(new AcessoListTableModel()
-                    {
-                        Id = acesso.Id,
-                        Nome = acesso.Nome,
-                        Created = acesso.Created,
-                        Modified = acesso.Modified,
-                        Novo = acesso.Novo
-                    });
-                }
-
-                obj.recordsFiltered = obj.data.Count();
-                obj.recordsTotal = obj.data.Count();
-
-                return Json(obj);
+                tabela = await _acessoClient.ListarTabela(UrlConfigurationHelper.AcessoGetAll);
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
-                Response.StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError);
-                obj.error = ex.Message;
-                
-                if(Debugger.IsAttached)
-                {
-                    obj.error = "Ocorreu um erro ao processar a solicitação!";
-                }
-                
-                return Json(obj);
             }
+
+            return Json(tabela);
         }
 
         // POST: Acesso/Cadastrar
@@ -100,13 +68,7 @@ namespace Antiguera.Administrador.Controllers
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                var url = UrlConfiguration.AcessoCreate;
-
-                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
-
-                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
-
-                string result = await _acessoClient.Inserir(url, token, model);
+                string result = await _acessoClient.Inserir(UrlConfigurationHelper.AcessoCreate, model);
 
                 return Json(new { success = true, message = result });
             }
@@ -155,13 +117,7 @@ namespace Antiguera.Administrador.Controllers
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                var url = UrlConfiguration.AcessoEdit;
-
-                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
-
-                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
-
-                string result = await _acessoClient.Atualizar(url, token, model);
+                string result = await _acessoClient.Atualizar(UrlConfigurationHelper.AcessoEdit, model);
 
                 return Json(new { success = true, message = result });
 
@@ -212,13 +168,7 @@ namespace Antiguera.Administrador.Controllers
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                var url = UrlConfiguration.AcessoDelete;
-
-                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
-
-                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
-
-                string result = await _acessoClient.Excluir(url, token, model);
+                string result = await _acessoClient.Excluir(UrlConfigurationHelper.AcessoDelete, model);
 
                 return Json(new { success = true, message = result });
             }

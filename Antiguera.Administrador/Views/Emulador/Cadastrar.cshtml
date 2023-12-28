@@ -1,4 +1,4 @@
-﻿@model Antiguera.Administrador.ViewModels.EmuladorViewModel
+﻿@model Antiguera.Administrador.Models.EmuladorModel
 
 @{
     ViewBag.Title = "Cadastrar novo emulador";
@@ -48,18 +48,17 @@
                             <div class="input-group-addon">
                                 <i class="fa fa-calendar"></i>
                             </div>
-                            @Html.TextBoxFor(x => x.Lancamento, new { @class = "form-control pull-right" })
+                            @Html.TextBoxFor(x => x.Lancamento, new { @value = DateTime.Now.Date, @class = "form-control pull-right" })
                         </div>
                     </div>
                 </div>
                 <br />
-                <div class="row">
+                @*<div class="form-row">
                     <div class="col-md-4">
-                        @Html.LabelFor(x => x.FileEmulador)
-                        @Html.TextBoxFor(x => x.FileEmulador, new { @type = "file" })
+                        @Html.LabelFor(x => x.FilePrograma)
+                        @Html.TextBoxFor(x => x.FilePrograma, new { @type = "file" })
                     </div>
-                </div>
-                <br />
+                </div>*@
                 <div class="row">
                     <div class="col-md-5">
                         @Html.LabelFor(x => x.Descricao)

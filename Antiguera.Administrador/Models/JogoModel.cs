@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Antiguera.Utils.Helpers;
+using Newtonsoft.Json;
+using System;
+using System.Web;
 
 namespace Antiguera.Administrador.Models
 {
@@ -18,11 +21,35 @@ namespace Antiguera.Administrador.Models
 
         public string Genero { get; set; }
 
-        public string BoxArt { get; set; }
+        public string Arquivo { get; set; }
 
-        public string NomeArquivo { get; set; }
+        public string Capa { get; set; }
 
-        public string HashArquivo { get; set; }
+        public string Jogo64
+        {
+            get
+            {
+                if(ArquivoJogo != null)
+                    return FileHelper.ConvertStreamToBase64String(ArquivoJogo);
+                
+                return null;
+            }
+            set { }
+        }
+
+        public string Capa64
+        {
+            get
+            {
+                if(ArquivoCapa != null)
+                    return FileHelper.ConvertStreamToBase64String(ArquivoCapa);
+
+                return null;
+            }
+            set { }
+        }
+
+        public string Tipo { get; set; }
 
         public string Plataforma { get; set; }
 
@@ -31,5 +58,10 @@ namespace Antiguera.Administrador.Models
         public DateTime Created { get; set; }
 
         public DateTime? Modified { get; set; }
+
+        [JsonIgnore]
+        public HttpPostedFileBase ArquivoJogo { get; set; }
+        [JsonIgnore]
+        public HttpPostedFileBase ArquivoCapa { get; set; }
     }
 }

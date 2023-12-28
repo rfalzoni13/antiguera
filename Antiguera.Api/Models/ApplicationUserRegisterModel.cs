@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Antiguera.Dominio.DTO.Identity;
+using System;
+using System.Collections.Generic;
 
 namespace Antiguera.Api.Models
 {
@@ -11,9 +13,26 @@ namespace Antiguera.Api.Models
         public string Senha { get; set; }
         public string Genero { get; set; }
         public DateTime DataNascimento { get; set; }
-        public Guid IdAcesso { get; set; }
         public string PathFoto { get; set; }
         public bool AcceptTerms { get; set; }
+        public List<string> Acessos { get; set; }
+
+        public static ApplicationUserRegisterDTO ConvertToDTO(ApplicationUserRegisterModel model)
+        {
+            return new ApplicationUserRegisterDTO
+            {
+                ID = model.ID,
+                Nome = model.Nome,
+                Email = model.Email,
+                Login = model.Login,
+                PathFoto = model.PathFoto,
+                Genero = model.Genero,
+                DataNascimento = model.DataNascimento.Date,
+                Acessos = model.Acessos.ToArray(),
+                Senha = model.Senha,
+                AcceptTerms = model.AcceptTerms
+            };
+        }
     }
 
     public class AddExternalLoginBindingModel

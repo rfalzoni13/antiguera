@@ -23,11 +23,11 @@ namespace Antiguera.Infra.Data.Configuracao
 
             Property(j => j.Genero).IsRequired();
 
-            Property(j => j.BoxArt).IsOptional();
+            Property(j => j.Arquivo).IsOptional();
 
-            Property(j => j.NomeArquivo).IsOptional();
+            Property(j => j.Capa).IsOptional();
 
-            Property(j => j.HashArquivo).IsOptional();
+            Property(j => j.Tipo).IsOptional();
 
             Property(j => j.Novo).IsRequired();
 

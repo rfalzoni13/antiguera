@@ -1,4 +1,4 @@
-﻿@model Antiguera.Administrador.ViewModels.RomViewModel
+﻿@model Antiguera.Administrador.Models.RomModel
 
 @{
     ViewBag.Title = "Cadastrar nova rom";
@@ -62,12 +62,12 @@
                             <div class="input-group-addon">
                                 <i class="fa fa-calendar"></i>
                             </div>
-                            @Html.TextBoxFor(x => x.Lancamento, new { @class = "form-control pull-right" })
+                            @Html.TextBoxFor(x => x.Lancamento, new { @value = DateTime.Now.Date, @class = "form-control pull-right" })
                         </div>
                     </div>
                 </div>
                 <br />
-                <div class="row">
+                @*<div class="row">
                     <div class="col-md-4">
                         @Html.LabelFor(x => x.FileBoxArt)
                         @Html.TextBoxFor(x => x.FileBoxArt, new { @type = "file" })
@@ -76,7 +76,7 @@
                         @Html.LabelFor(x => x.FileRom)
                         @Html.TextBoxFor(x => x.FileRom, new { @type = "file" })
                     </div>
-                </div>
+                </div>*@
                 <br />
                 <div class="row">
                     <div class="col-md-5">

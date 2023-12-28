@@ -1,13 +1,11 @@
-﻿using Antiguera.Administrador.Client.Interface;
-using Antiguera.Administrador.Controllers.Base;
-using Antiguera.Administrador.Helpers;
+﻿using Antiguera.Administrador.Clients.Interface;
 using Antiguera.Administrador.Models;
 using Antiguera.Administrador.Models.Tables;
+using Antiguera.Utils.Helpers;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -15,7 +13,7 @@ using System.Web.Mvc;
 namespace Antiguera.Administrador.Controllers
 {
     [Authorize]
-    public class EmuladorController : BaseController
+    public class EmuladorController : Controller
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly IEmuladorClient _emuladorClient;
@@ -31,54 +29,29 @@ namespace Antiguera.Administrador.Controllers
             return View();
         }
 
-        //POST: Emulador/CarregarEmuladors
+        //POST: Emulador/CarregarEmuladores
         [HttpPost]
-        public async Task<JsonResult> CarregarEmuladors()
+        public async Task<JsonResult> CarregarEmuladores()
         {
-            var obj = new EmuladorTableModel();
+            var tabela = new EmuladorTableModel();
 
             try
             {
-                var url = UrlConfiguration.EmuladorGetAll;
-
-                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
-
-                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
-
-                var emuladors = await _emuladorClient.ListarTodos(url, token);
-
-                foreach (var emulador in emuladors)
-                {
-                    obj.data.Add(new EmuladorListTableModel()
-                    {
-                        Id = emulador.Id,
-                        Nome = emulador.Nome,
-                        Console = emulador.Console,
-                        Roms = emulador.Roms.Count(),
-                        Created = emulador.Created,
-                        Modified = emulador.Modified,
-                        Novo = emulador.Novo
-                    });
-                }
-
-                obj.recordsFiltered = obj.data.Count();
-                obj.recordsTotal = obj.data.Count();
-
-                return Json(obj);
+                tabela = await _emuladorClient.ListarTabela(UrlConfigurationHelper.EmuladorGetAll);
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
-                Response.StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError);
-                obj.error = ex.Message;
-
-                if (Debugger.IsAttached)
-                {
-                    obj.error = "Ocorreu um erro ao processar a solicitação!";
-                }
-
-                return Json(obj);
             }
+
+            return Json(tabela);
+        }
+
+        //GET: Emulador/Cadastrar
+        [HttpGet]
+        public ActionResult Cadastrar()
+        {
+            return View(new EmuladorModel());
         }
 
         // POST: Emulador/Cadastrar
@@ -102,13 +75,7 @@ namespace Antiguera.Administrador.Controllers
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                var url = UrlConfiguration.EmuladorCreate;
-
-                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
-
-                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
-
-                string result = await _emuladorClient.Inserir(url, token, model);
+                string result = await _emuladorClient.Inserir(UrlConfigurationHelper.EmuladorCreate, model);
 
                 return Json(new { success = true, message = result });
             }
@@ -157,13 +124,7 @@ namespace Antiguera.Administrador.Controllers
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                var url = UrlConfiguration.EmuladorEdit;
-
-                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
-
-                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
-
-                string result = await _emuladorClient.Atualizar(url, token, model);
+                string result = await _emuladorClient.Atualizar(UrlConfigurationHelper.EmuladorEdit, model);
 
                 return Json(new { success = true, message = result });
 
@@ -214,13 +175,7 @@ namespace Antiguera.Administrador.Controllers
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                var url = UrlConfiguration.EmuladorDelete;
-
-                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
-
-                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
-
-                string result = await _emuladorClient.Excluir(url, token, model);
+                string result = await _emuladorClient.Excluir(UrlConfigurationHelper.EmuladorDelete, model);
 
                 return Json(new { success = true, message = result });
             }

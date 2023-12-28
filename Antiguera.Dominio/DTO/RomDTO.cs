@@ -1,5 +1,7 @@
 ﻿using Antiguera.Dominio.DTO.Base;
+using Antiguera.Dominio.Entidades;
 using System;
+using System.Collections.Generic;
 
 namespace Antiguera.Dominio.DTO
 {
@@ -24,5 +26,43 @@ namespace Antiguera.Dominio.DTO
         public string NomeArquivo { get; set; }
 
         public string HashArquivo { get; set; }
+
+        public static RomDTO ConvertToDTO(Rom rom)
+        {
+            return new RomDTO
+            {
+                Id = rom.Id,
+                EmuladorId = rom.EmuladorId,
+                Nome = rom.Nome,
+                Lancamento = rom.Lancamento,
+                Descricao = rom.Descricao,
+                NomeArquivo = rom.NomeArquivo,
+                HashArquivo = rom.HashArquivo,
+                Genero = rom.Genero,
+                BoxArt = rom.BoxArt,
+                Created = rom.Created,
+                Modified = rom.Modified,
+                Novo = rom.Novo
+            };
+        }
+
+        public static List<RomDTO> ConvertToList(List<Rom> roms)
+        {
+            return roms.ConvertAll(rom => new RomDTO
+            {
+                Id = rom.Id,
+                EmuladorId = rom.EmuladorId,
+                Nome = rom.Nome,
+                Lancamento = rom.Lancamento,
+                Descricao = rom.Descricao,
+                NomeArquivo = rom.NomeArquivo,
+                HashArquivo = rom.HashArquivo,
+                Genero = rom.Genero,
+                BoxArt = rom.BoxArt,
+                Created = rom.Created,
+                Modified = rom.Modified,
+                Novo = rom.Novo
+            });
+        }
     }
 }

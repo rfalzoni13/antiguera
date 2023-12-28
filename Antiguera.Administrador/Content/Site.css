@@ -90,11 +90,31 @@
     display: none;
 }
 
+.skin-blue .main-header .navbar {
+    background-color: #0a07dd;
+}
+
+.skin-blue .main-header .logo {
+    background-color: #0300bd;
+}
+
+.skin-blue .main-header .logo:hover {
+    background-color: #0a0891;
+}
+
+.skin-blue .main-header .navbar .sidebar-toggle:hover {
+    background-color: #0a0891;
+}
+
+.skin-blue .main-header li.user-header {
+    background-color: #1366ff;
+}
+
+
 /*#photoBoxArt {
     width: 220px;
     height: 300px;
 }*/
-
 /* Safari */
 @-webkit-keyframes spin {
     0% {

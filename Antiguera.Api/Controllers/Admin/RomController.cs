@@ -30,7 +30,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Listagem de todas as roms</remarks>
         /// <returns></returns>
-        // GET api/antiguera/admin/rom/ListarTodos
+        // GET Api/Rom/ListarTodos
         [HttpGet]
         [Route("ListarTodos")]
         public HttpResponseMessage ListarTodos()
@@ -80,7 +80,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Retorna a rom através do Id da mesma</remarks>
         /// <param name="Id">Id da rom</param>
         /// <returns></returns>
-        // GET api/antiguera/admin/rom/ListarPorId?id={Id}
+        // GET Api/Rom/ListarPorId?id={Id}
         [HttpGet]
         [Route("ListarPorId")]
         public HttpResponseMessage ListarPorId(Guid Id)
@@ -136,7 +136,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Insere uma nova rom passando um objeto no body da requisição no método POST</remarks>
         /// <param name="romDto">Objeto da rom</param>
         /// <returns></returns>
-        // POST api/antiguera/admin/rom/Inserir
+        // POST Api/Rom/Inserir
         [HttpPost]
         [Route("Inserir")]
         public HttpResponseMessage Inserir([FromBody] RomDTO romDto)
@@ -180,7 +180,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Atualiza a rom passando o objeto no body da requisição pelo método PUT</remarks>
         /// <param name="romDto">Objeto da rom</param>
         /// <returns></returns>
-        // PUT api/antiguera/admin/rom/Atualizar
+        // PUT Api/Rom/Atualizar
         [HttpPut]
         [Route("Atualizar")]
         public HttpResponseMessage Atualizar([FromBody] RomDTO romDto)
@@ -224,7 +224,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Exclui a rom passando o objeto no body da requisição pelo método DELETE</remarks>
         /// <param name="romDto">Objeto da rom</param>
         /// <returns></returns>
-        // DELETE api/antiguera/admin/rom/Excluir
+        // DELETE Api/Rom/Excluir
         [HttpDelete]
         [Route("Excluir")]
         public HttpResponseMessage Excluir([FromBody] RomDTO romDto)

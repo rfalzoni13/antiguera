@@ -34,5 +34,7 @@ namespace Antiguera.Utils.Helpers
             return decbuff != null ? Encoding.UTF8.GetString(decbuff) : null;
         }
 
+        public static string SetDashboardName(string name)
+            => $"{name.Split(' ').FirstOrDefault()} {name.Split(' ').LastOrDefault()}";
     }
 }

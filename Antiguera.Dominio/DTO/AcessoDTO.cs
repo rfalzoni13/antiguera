@@ -1,5 +1,4 @@
 ﻿using Antiguera.Dominio.DTO.Base;
-
 namespace Antiguera.Dominio.DTO
 {
     public class AcessoDTO : BaseDTO
@@ -9,7 +8,5 @@ namespace Antiguera.Dominio.DTO
         }
 
         public string Nome { get; set; }
-
-        public string IdentityRoleId { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model Antiguera.Administrador.ViewModels.JogoViewModel
+﻿@model Antiguera.Administrador.Models.JogoModel
 
 @{
     ViewBag.Title = "Editar jogo";
@@ -56,7 +56,7 @@
 
                 @Html.HiddenFor(x => x.Id)
                 @Html.HiddenFor(x => x.Arquivo)
-                @Html.HiddenFor(x => x.BoxArt)
+                @Html.HiddenFor(x => x.Capa)
                 @Html.HiddenFor(x => x.Created)
                 <div class="row">
                     <div class="col-md-3">
@@ -93,38 +93,18 @@
                 </div>
                 <br />
                 <div class="row">
-                    @if (!string.IsNullOrEmpty(Model.BoxArt))
-                    {
-                        <div class="col-md-4">
-                            @Html.LabelFor(x => x.FileBoxArt)
-                            @Html.TextBoxFor(x => x.FileBoxArt, new { @type = "file", @style = "display:none" })
-                            <p id="textBoxArt">@(Model.BoxArt.Split('/')[4])</p>
-                            <button type="button" id="ClickBoxArt" class="btn btn-primary">Alterar</button>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="col-md-4">
-                            @Html.LabelFor(x => x.FileBoxArt)
-                            @Html.TextBoxFor(x => x.FileBoxArt, new { @type = "file" })
-                        </div>
-                    }
-                    @if (!string.IsNullOrEmpty(Model.Arquivo))
-                    {
-                        <div class="col-md-4">
-                            @Html.LabelFor(x => x.FileJogo)
-                            @Html.TextBoxFor(x => x.FileJogo, new { @type = "file", @style = "display:none" })
-                            <p id="textFile">@(Model.Arquivo.Split('/')[3])</p>
-                            <button type="button" id="ClickFile" class="btn btn-primary">Alterar</button>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="col-md-4">
-                            @Html.LabelFor(x => x.FileJogo)
-                            @Html.TextBoxFor(x => x.FileJogo, new { @type = "file" })
-                        </div>
-                    }
+                    <div class="col-md-3">
+                        <label for="btnArquivoJogo">Arquivo</label>
+                        @Html.TextBoxFor(x => x.ArquivoJogo, new { @type = "file", @style = "display:none" })
+                        <p id="textArquivo">@(Model.Arquivo?.Split('/')[4])</p>
+                        <button type="button" id="BtnArquivoJogo" class="btn btn-info">Escolher arquivo</button>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="btnArquivoCapa">Capa</label>
+                        @Html.TextBoxFor(x => x.ArquivoCapa, new { @type = "file", @style = "display:none" })
+                        <p id="textBoxArt">@(Model.Capa?.Split('/')[4])</p>
+                        <button type="button" id="BtnArquivoCapa" class="btn btn-warning">Escolher arquivo</button>
+                    </div>
                 </div>
                 @*<br />
                     <div class="row">

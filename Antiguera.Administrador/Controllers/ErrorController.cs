@@ -6,6 +6,7 @@ namespace Antiguera.Administrador.Controllers
 {
     public class ErrorController : Controller
     {
+
         // GET: Error
         public ActionResult Index()
         {

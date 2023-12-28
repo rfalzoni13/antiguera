@@ -1,6 +1,7 @@
 ﻿using Antiguera.Dominio.DTO;
 using Antiguera.Dominio.Entidades.Base;
 using System;
+using System.Collections.Generic;
 
 namespace Antiguera.Dominio.Entidades
 {
@@ -18,11 +19,11 @@ namespace Antiguera.Dominio.Entidades
 
         public string Genero { get; set; }
 
-        public string BoxArt { get; set; }
+        public string Arquivo { get; set; }
 
-        public string NomeArquivo { get; set; }
+        public string Capa { get; set; }
 
-        public string HashArquivo { get; set; }
+        public string Tipo { get; set; }
 
         public string Plataforma { get; set; }
 
@@ -34,17 +35,38 @@ namespace Antiguera.Dominio.Entidades
                 Nome = jogoDTO.Nome,
                 Lancamento = jogoDTO.Lancamento,
                 Descricao = jogoDTO.Descricao,
-                NomeArquivo = jogoDTO.NomeArquivo,
-                HashArquivo = jogoDTO.HashArquivo,
+                Arquivo = jogoDTO.Arquivo,
+                Capa = jogoDTO.Capa,
+                Tipo = jogoDTO.Tipo,
                 Genero = jogoDTO.Genero,
                 Plataforma = jogoDTO.Plataforma,
                 Publisher = jogoDTO.Publisher,
-                BoxArt = jogoDTO.BoxArt,
                 Developer = jogoDTO.Developer,
                 Created = jogoDTO.Created,
                 Modified = jogoDTO.Modified,
                 Novo = jogoDTO.Novo
             };
+        }
+
+        public static List<Jogo> ConvertToList(List<JogoDTO> jogosDTO)
+        {
+            return jogosDTO.ConvertAll(jogoDTO => new Jogo
+            {
+                Id = jogoDTO.Id,
+                Nome = jogoDTO.Nome,
+                Lancamento = jogoDTO.Lancamento,
+                Descricao = jogoDTO.Descricao,
+                Arquivo = jogoDTO.Arquivo,
+                Capa = jogoDTO.Capa,
+                Tipo = jogoDTO.Tipo,
+                Genero = jogoDTO.Genero,
+                Plataforma = jogoDTO.Plataforma,
+                Publisher = jogoDTO.Publisher,
+                Developer = jogoDTO.Developer,
+                Created = jogoDTO.Created,
+                Modified = jogoDTO.Modified,
+                Novo = jogoDTO.Novo
+            });
         }
     }
 }

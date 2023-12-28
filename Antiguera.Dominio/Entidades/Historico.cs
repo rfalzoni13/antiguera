@@ -10,7 +10,5 @@ namespace Antiguera.Dominio.Entidades
         public DateTime Data { get; set; }
 
         public string TipoHistorico { get; set; }
-
-        public virtual Usuario Usuario { get; set; }
     }
 }

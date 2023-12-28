@@ -121,7 +121,7 @@
     <value>Todos los derechos reservados</value>
   </data>
   <data name="Email" xml:space="preserve">
-    <value>Ingrese su nombre de usuario o correo electrónico</value>
+    <value>Ingrese su correo electrónico</value>
   </data>
   <data name="EsqueciMinhaSenha" xml:space="preserve">
     <value>Olvide mi contraseña</value>

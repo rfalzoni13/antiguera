@@ -6,7 +6,6 @@ using Antiguera.Infra.Data.Contexto;
 using Antiguera.Infra.Data.Repositorios;
 using Antiguera.Infra.Data.Repositorios.Base;
 using Antiguera.Servicos.Servicos;
-using Antiguera.Servicos.Servicos.Identity;
 using Antiguera.Utils.Helpers;
 using System.Data.Entity;
 using Unity;
@@ -21,13 +20,11 @@ namespace Antiguera.Infra.IoC
 
             //Repositórios
             container.RegisterType(typeof(IRepositorioBase<>), typeof(RepositorioBase<>));
-            container.RegisterType<IAcessoRepositorio, AcessoRepositorio>();
             container.RegisterType<IEmuladorRepositorio, EmuladorRepositorio>();
             container.RegisterType<IHistoricoRepositorio, HistoricoRepositorio>();
             container.RegisterType<IJogoRepositorio, JogoRepositorio>();
             container.RegisterType<IProgramaRepositorio, ProgramaRepositorio>();
             container.RegisterType<IRomRepositorio, RomRepositorio>();
-            container.RegisterType<IUsuarioRepositorio, UsuarioRepositorio>();
 
             //Serviços
             container.RegisterType(typeof(IRepositorioBase<>), typeof(RepositorioBase<>));

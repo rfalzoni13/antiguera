@@ -20,8 +20,6 @@ namespace Antiguera.Infra.Data.Configuracao
             Property(h => h.Created).IsRequired();
 
             Property(h => h.Modified).IsOptional();
-
-            HasRequired(h => h.Usuario).WithMany().HasForeignKey(h => h.UsuarioId).WillCascadeOnDelete();
         }
     }
 }

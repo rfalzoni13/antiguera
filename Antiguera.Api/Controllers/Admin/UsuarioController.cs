@@ -1,5 +1,6 @@
 ﻿using Antiguera.Api.Utils;
 using Antiguera.Dominio.DTO;
+using Antiguera.Dominio.DTO.Identity;
 using Antiguera.Dominio.Interfaces.Servicos;
 using NLog;
 using System;
@@ -15,10 +16,12 @@ namespace Antiguera.Api.Controllers.Admin
     public class UsuarioController : ApiController
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private readonly IAccountServico _accountServico;
         private readonly IUsuarioServico _usuarioServico;
 
-        public UsuarioController(IUsuarioServico usuarioServico)
+        public UsuarioController(IAccountServico accountServico, IUsuarioServico usuarioServico)
         {
+            _accountServico = accountServico;
             _usuarioServico = usuarioServico;
         }
 
@@ -30,7 +33,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Listagem de todos os usuarios</remarks>
         /// <returns></returns>
-        // GET api/antiguera/admin/usuario/ListarTodos
+        // GET Api/Usuario/ListarTodos
         [HttpGet]
         [Route("ListarTodos")]
         public HttpResponseMessage ListarTodos()
@@ -80,7 +83,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Retorna o usuário através do Id do mesmo</remarks>
         /// <param name="Id">Id do usuário</param>
         /// <returns></returns>
-        // GET api/antiguera/usuario/ListarPorId?id={Id}
+        // GET Api/Usuario/ListarPorId?id={Id}
         [HttpGet]
         [AllowAnonymous]
         [Route("ListarPorId")]
@@ -92,7 +95,7 @@ namespace Antiguera.Api.Controllers.Admin
             {
                 if (Id != null)
                 {
-                    var usuario = _usuarioServico.BuscarPorId(Id);
+                    var usuario = _usuarioServico.ListarPorId(Id);
 
                     if (usuario != null)
                     {
@@ -121,61 +124,6 @@ namespace Antiguera.Api.Controllers.Admin
                 return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
             }
 
-            catch (Exception ex)
-            {
-                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
-            }
-        }
-
-        /// <summary>
-        /// Listar usuário pelo Identity Id
-        /// </summary>
-        /// <response code="400">Bad Request</response>
-        /// <response code="401">Unauthorized</response>
-        /// <response code="404">Not Found</response>
-        /// <response code="500">Internal Server Error</response>
-        /// <remarks>Retorna o usuário através do Id do mesmo</remarks>
-        /// <param name="UserId">Id Identity do usuário</param>
-        /// <returns></returns>
-        // GET api/antiguera/usuario/ListarPorUserId?id={Id}
-        [HttpGet]
-        [Route("ListarPorUserId")]
-        public HttpResponseMessage ListarPorUserId(string UserId)
-        {
-            string action = this.ActionContext.ActionDescriptor.ActionName;
-            _logger.Info(action + " - Iniciado");
-            try
-            {
-                if (!string.IsNullOrEmpty(UserId))
-                {
-                    var usuario = _usuarioServico.ListarPorIdentityId(UserId);
-
-                    if (usuario != null)
-                    {
-                        _logger.Info(action + " - Sucesso!");
-
-                        _logger.Info(action + " - Finalizado");
-                        return Request.CreateResponse(HttpStatusCode.OK, usuario);
-                    }
-                    else
-                    {
-                        throw new HttpResponseException(HttpStatusCode.NotFound);
-                    }
-                }
-                else
-                {
-                    return ResponseMessageHelper.RetornoRequisicaoInvalida(Request, _logger, action, "Parâmetro incorreto!");
-                }
-            }
-            catch (HttpResponseException ex)
-            {
-                if (ex.Response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return ResponseMessageHelper.RetornoExceptionNaoEncontrado(ex, Request, _logger, action, "Nenhum registro encontrado!");
-                }
-
-                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
-            }
             catch (Exception ex)
             {
                 return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
@@ -190,13 +138,13 @@ namespace Antiguera.Api.Controllers.Admin
         /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Insere um novo usuário passando um objeto no body da requisição no método POST</remarks>
-        /// <param name="usuarioDto">Objeto do usuário</param>
+        /// <param name="register">Objeto de registro usuário</param>
         /// <returns></returns>
-        // POST api/antiguera/usuario/Inserir
+        // POST Api/Usuario/Inserir
         [HttpPost]
         [AllowAnonymous]
         [Route("Inserir")]
-        public HttpResponseMessage Inserir([FromBody] UsuarioDTO usuarioDto)
+        public HttpResponseMessage Inserir([FromBody] ApplicationUserRegisterDTO register)
         {
             string action = this.ActionContext.ActionDescriptor.ActionName;
             _logger.Info(action + " - Iniciado");
@@ -204,13 +152,7 @@ namespace Antiguera.Api.Controllers.Admin
             {
                 if (ModelState.IsValid)
                 {
-
-
-                    usuarioDto.Created = DateTime.Now;
-
-                    usuarioDto.Novo = true;
-
-                    _usuarioServico.Adicionar(usuarioDto);
+                    _accountServico.Adicionar(register);
 
                     _logger.Info(action + " - Sucesso!");
 
@@ -248,12 +190,12 @@ namespace Antiguera.Api.Controllers.Admin
         /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza o usuário passando o objeto no body da requisição pelo método PUT</remarks>
-        /// <param name="usuarioDto">Objeto do usuário</param>
+        /// <param name="register">Objeto de registro do usuário</param>
         /// <returns></returns>
-        // PUT api/antiguera/usuario/Atualizar
+        // PUT Api/Usuario/Atualizar
         [HttpPut]
         [Route("Atualizar")]
-        public HttpResponseMessage Atualizar([FromBody] UsuarioDTO usuarioDto)
+        public HttpResponseMessage Atualizar([FromBody] ApplicationUserRegisterDTO register)
         {
             string action = this.ActionContext.ActionDescriptor.ActionName;
             _logger.Info(action + " - Iniciado");
@@ -261,11 +203,7 @@ namespace Antiguera.Api.Controllers.Admin
             {
                 if (ModelState.IsValid)
                 {
-                    usuarioDto.Modified = DateTime.Now;
-
-                    usuarioDto.Novo = false;
-
-                    _usuarioServico.Atualizar(usuarioDto);
+                    _accountServico.Atualizar(register);
 
                     _logger.Info(action + " - Sucesso!");
 
@@ -302,12 +240,12 @@ namespace Antiguera.Api.Controllers.Admin
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Exclui o usuario passando o objeto no body da requisição pelo método DELETE</remarks>
-        /// <param name="usuarioDto">Objeto do usuario</param>
+        /// <param name="register">Objeto de registro do usuario</param>
         /// <returns></returns>
-        // DELETE api/antiguera/admin/usuario/Excluir
+        // DELETE Api/Usuario/Excluir
         [HttpDelete]
         [Route("Excluir")]
-        public HttpResponseMessage Excluir([FromBody] UsuarioDTO usuarioDto)
+        public HttpResponseMessage Excluir([FromBody] ApplicationUserRegisterDTO register)
         {
             string action = this.ActionContext.ActionDescriptor.ActionName;
             _logger.Info(action + " - Iniciado");
@@ -315,7 +253,7 @@ namespace Antiguera.Api.Controllers.Admin
             {
                 if (ModelState.IsValid)
                 {
-                    _usuarioServico.Apagar(usuarioDto);
+                    _accountServico.Apagar(register);
 
                     _logger.Info(action + " - Sucesso!");
 
@@ -345,7 +283,7 @@ namespace Antiguera.Api.Controllers.Admin
         ///// <remarks>Atualiza a senha do usuário passando o objeto no body da requisição pelo método PUT</remarks>
         ///// <param name="usuarioDto">Objeto do usuário</param>
         ///// <returns></returns>
-        // PUT api/antiguera/usuario/AtualizarSenha
+        // PUT Api/Usuario/AtualizarSenha
         //[HttpPut]
         //[Route("AtualizarSenha")]
         //public async Task<HttpResponseMessage> AtualizarSenha([FromBody]UsuarioDTO usuarioDto)

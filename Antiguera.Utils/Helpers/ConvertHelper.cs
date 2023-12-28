@@ -1,4 +1,5 @@
 ﻿using Antiguera.Dominio.Interfaces.Servicos.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -12,13 +13,13 @@ namespace Antiguera.Utils.Helpers
         {
             var dest = new TDestination();
 
-            foreach (FieldInfo srcField in typeof(TSource).GetFields())
+            foreach (PropertyInfo srcProp in typeof(TSource).GetProperties())
             {
-                foreach (FieldInfo destField in typeof(TDestination).GetFields())
+                foreach (PropertyInfo destProp in typeof(TDestination).GetProperties())
                 {
-                    if (destField.Name == srcField.Name && destField.FieldType == srcField.FieldType)
+                    if (destProp.Name == srcProp.Name && destProp.PropertyType == srcProp.PropertyType)
                     {
-                        destField.SetValue(dest, srcField.GetValue(source));
+                        destProp.SetValue(dest, srcProp.GetValue(source));
                     }
                 }
             }
@@ -30,15 +31,22 @@ namespace Antiguera.Utils.Helpers
         {
             var listDest = new List<TDestination>();
 
-            foreach (FieldInfo srcField in typeof(TSource).GetFields())
+            foreach(var source in listSource)
             {
-                foreach (FieldInfo destField in typeof(TDestination).GetFields())
+                var dest = new TDestination();
+
+                foreach (PropertyInfo srcProp in typeof(TSource).GetProperties())
                 {
-                    if (destField.Name == srcField.Name && destField.FieldType == srcField.FieldType)
+                    foreach (PropertyInfo destProp in typeof(TDestination).GetProperties())
                     {
-                        destField.SetValue(listDest, srcField.GetValue(listSource));
+                        if (destProp.Name == srcProp.Name && destProp.PropertyType == srcProp.PropertyType)
+                        {
+                            destProp.SetValue(dest, srcProp.GetValue(source));
+                        }
                     }
                 }
+
+                listDest.Add(dest);
             }
 
             return listDest;

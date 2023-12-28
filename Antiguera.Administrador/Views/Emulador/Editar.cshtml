@@ -1,4 +1,4 @@
-﻿@model Antiguera.Administrador.ViewModels.EmuladorViewModel
+﻿@model Antiguera.Administrador.Models.EmuladorModel
 
 @{
     ViewBag.Title = "Editar emulador";
@@ -74,25 +74,6 @@
                             @Html.TextBoxFor(x => x.DataLancamento, new { @class = "form-control pull-right" })
                         </div>
                     </div>
-                </div>
-                <br />
-                <div class="row">
-                    @if (!string.IsNullOrEmpty(Model.UrlArquivo))
-                    {
-                        <div class="col-md-4">
-                            @Html.LabelFor(x => x.FileEmulador)
-                            @Html.TextBoxFor(x => x.FileEmulador, new { @type = "file", @style = "display:none" })
-                            <p id="textEmulator">@(Model.UrlArquivo.Split('/')[3])</p>
-                            <button type="button" id="ClickEmulator" class="btn btn-primary">Alterar</button>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="col-md-4">
-                            @Html.LabelFor(x => x.FileEmulador)
-                            @Html.TextBoxFor(x => x.FileEmulador, new { @type = "file" })
-                        </div>
-                    }
                 </div>
                 <br />
                 <div class="row">

@@ -1,8 +1,7 @@
-﻿using Antiguera.Administrador.Client.Interface;
-using Antiguera.Administrador.Controllers.Base;
-using Antiguera.Administrador.Helpers;
+﻿using Antiguera.Administrador.Clients.Interface;
 using Antiguera.Administrador.Models;
 using Antiguera.Administrador.Models.Tables;
+using Antiguera.Utils.Helpers;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ using System.Web.Mvc;
 namespace Antiguera.Administrador.Controllers
 {
     [Authorize]
-    public class RomController : BaseController
+    public class RomController : Controller
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly IRomClient _acessoClient;
@@ -35,48 +34,20 @@ namespace Antiguera.Administrador.Controllers
         [HttpPost]
         public async Task<JsonResult> CarregarRoms()
         {
-            var obj = new RomTableModel();
+            var tabela = new RomTableModel();
 
             try
             {
-                var url = UrlConfiguration.RomGetAll;
+                tabela = await _acessoClient.ListarTabela(UrlConfigurationHelper.RomGetAll);
 
-                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
-
-                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
-
-                var acessos = await _acessoClient.ListarTodos(url, token);
-
-                foreach (var acesso in acessos)
-                {
-                    obj.data.Add(new RomListTableModel()
-                    {
-                        Id = acesso.Id,
-                        Nome = acesso.Nome,
-                        Created = acesso.Created,
-                        Modified = acesso.Modified,
-                        Novo = acesso.Novo
-                    });
-                }
-
-                obj.recordsFiltered = obj.data.Count();
-                obj.recordsTotal = obj.data.Count();
-
-                return Json(obj);
+                return Json(tabela);
             }
             catch (Exception ex)
             {
                 _logger.Fatal("Ocorreu um erro: " + ex);
-                Response.StatusCode = Convert.ToInt32(HttpStatusCode.InternalServerError);
-                obj.error = ex.Message;
-
-                if (Debugger.IsAttached)
-                {
-                    obj.error = "Ocorreu um erro ao processar a solicitação!";
-                }
-
-                return Json(obj);
             }
+
+            return Json(tabela);
         }
 
         // POST: Rom/Cadastrar
@@ -100,13 +71,7 @@ namespace Antiguera.Administrador.Controllers
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                var url = UrlConfiguration.RomCreate;
-
-                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
-
-                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
-
-                string result = await _acessoClient.Inserir(url, token, model);
+                string result = await _acessoClient.Inserir(UrlConfigurationHelper.RomCreate, model);
 
                 return Json(new { success = true, message = result });
             }
@@ -155,13 +120,7 @@ namespace Antiguera.Administrador.Controllers
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                var url = UrlConfiguration.RomEdit;
-
-                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
-
-                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
-
-                string result = await _acessoClient.Atualizar(url, token, model);
+                string result = await _acessoClient.Atualizar(UrlConfigurationHelper.RomEdit, model);
 
                 return Json(new { success = true, message = result });
 
@@ -212,13 +171,7 @@ namespace Antiguera.Administrador.Controllers
                     return Json(new { success = false, errors = errorsList });
                 }
 
-                var url = UrlConfiguration.RomDelete;
-
-                string token = Session["Token"] != null ? Session["Token"].ToString() : null;
-
-                if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
-
-                string result = await _acessoClient.Excluir(url, token, model);
+                string result = await _acessoClient.Excluir(UrlConfigurationHelper.RomDelete, model);
 
                 return Json(new { success = true, message = result });
             }

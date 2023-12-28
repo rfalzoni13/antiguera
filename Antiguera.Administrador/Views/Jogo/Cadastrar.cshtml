@@ -1,4 +1,4 @@
-﻿@model Antiguera.Administrador.ViewModels.JogoViewModel
+﻿@model Antiguera.Administrador.Models.JogoModel
 
 @{
     ViewBag.Title = "Cadastrar novo jogo";
@@ -25,66 +25,76 @@
 
     <section class="content container-fluid">
         <div class="container">
-            <div class="row">
-                <div class="col-md-3">
-                    @Html.LabelFor(x => x.Nome)
-                    @Html.TextBoxFor(x => x.Nome, new { @class = "form-control", @autofocus = "autofocus" })
-                </div>
-                <div class="col-md-3">
-                    @Html.LabelFor(x => x.Developer)
-                    @Html.TextBoxFor(x => x.Developer, new { @class = "form-control" })
-                </div>
-                <div class="col-md-3">
-                    @Html.LabelFor(x => x.Lancamento)
-                    <div class="input-group date" data-provide="datepicker">
-                        <div class="input-group-addon">
-                            <i class="fa fa-calendar"></i>
+            @using (Html.BeginForm("Cadastrar", "Jogo", FormMethod.Post, new { @class = "form-jogo", enctype = "multipart/form-data" }))
+            {
+                <div class="row">
+                    <div class="col-md-3">
+                        @Html.LabelFor(x => x.Nome)
+                        @Html.TextBoxFor(x => x.Nome, new { @class = "form-control", @autofocus = "autofocus" })
+                    </div>
+                    <div class="col-md-3">
+                        @Html.LabelFor(x => x.Developer)
+                        @Html.TextBoxFor(x => x.Developer, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-3">
+                        @Html.LabelFor(x => x.Lancamento)
+                        <div class="input-group date" data-provide="datepicker">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            @Html.TextBoxFor(x => x.Lancamento, new { @Value = DateTime.Now.Date, @class = "form-control pull-right" })
                         </div>
-                        @Html.TextBoxFor(x => x.Lancamento, new { @class = "form-control pull-right" })
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-3">
-                    @Html.LabelFor(x => x.Genero)
-                    @Html.TextBoxFor(x => x.Genero, new { @class = "form-control" })
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        @Html.LabelFor(x => x.Genero)
+                        @Html.TextBoxFor(x => x.Genero, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-3">
+                        @Html.LabelFor(x => x.Publisher)
+                        @Html.TextBoxFor(x => x.Publisher, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-3">
+                        @Html.LabelFor(x => x.Plataforma)
+                        @Html.TextBoxFor(x => x.Plataforma, new { @class = "form-control" })
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    @Html.LabelFor(x => x.Publisher)
-                    @Html.TextBoxFor(x => x.Publisher, new { @class = "form-control" })
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="btnArquivoJogo">Arquivo</label>
+                        <br />
+                        @Html.TextBoxFor(x => x.ArquivoJogo, new { @type = "file", @style = "display:none" })
+                        <button type="button" id="BtnArquivoJogo" class="btn btn-info">Escolher arquivo</button>
+                        <p id="TextArquivo">@(Model?.Arquivo?.Split('/')[4])</p>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="btnArquivoCapa">Capa</label>
+                        <br />
+                        @Html.TextBoxFor(x => x.ArquivoCapa, new { @type = "file", @style = "display:none" })
+                        <button type="button" id="BtnArquivoCapa" class="btn btn-warning">Escolher arquivo</button>
+                        <p id="TextBoxArt">@(Model?.Capa?.Split('/')[4])</p>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    @Html.LabelFor(x => x.Plataforma)
-                    @Html.TextBoxFor(x => x.Plataforma, new { @class = "form-control" })
+                <br />
+                <div class="row">
+                    <div class="col-md-5">
+                        @Html.LabelFor(x => x.Descricao)
+                        @Html.TextAreaFor(x => x.Descricao, new { @class = "form-control", @rows = "5" })
+                    </div>
                 </div>
-            </div>
-            <br />
-            <div class="row">
-                <div class="col-md-4">
-                    @Html.LabelFor(x => x.FileBoxArt)
-                    @Html.TextBoxFor(x => x.FileBoxArt, new { @type = "file", @accept = "image/*" })
+                <br />
+                <div class="row">
+                    <div class="col-md-2">
+                        <button type="submit" id="Salvar" class="btn btn-success btn-block">Cadastrar</button>
+                    </div>
+                    <div class="col-md-2">
+                        @Html.ActionLink("Voltar", "Index", null, new { @class = "btn btn-default btn-block" })
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    @Html.LabelFor(x => x.FileJogo)
-                    @Html.TextBoxFor(x => x.FileJogo, new { @type = "file", @accept = ".rar,.zip" })
-                </div>
-            </div>
-            <br />
-            <div class="row">
-                <div class="col-md-5">
-                    @Html.LabelFor(x => x.Descricao)
-                    @Html.TextAreaFor(x => x.Descricao, new { @class = "form-control", @rows = "5" })
-                </div>
-            </div>
-            <br />
-            <div class="row">
-                <div class="col-md-2">
-                    <button type="button" id="Salvar" class="btn btn-success btn-block">Cadastrar</button>
-                </div>
-                <div class="col-md-2">
-                    @Html.ActionLink("Voltar", "Index", null, new { @class = "btn btn-default btn-block" })
-                </div>
-            </div>
+            }
         </div> <!-- /container -->
     </section>
 </div>

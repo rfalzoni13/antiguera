@@ -3,16 +3,17 @@
 
 namespace Antiguera.Administrador.App_Start
 {
-    using System;
-    using System.Web;
-    using Antiguera.Administrador.Client;
-    using Antiguera.Administrador.Client.Base;
-    using Antiguera.Administrador.Client.Interface;
+    using Antiguera.Administrador.Clients;
+    using Antiguera.Administrador.Clients.Base;
+    using Antiguera.Administrador.Clients.Interface;
+    using Antiguera.Administrador.Filters;
     using Microsoft.Web.Infrastructure.DynamicModuleHelper;
-
     using Ninject;
     using Ninject.Web.Common;
     using Ninject.Web.Common.WebHost;
+    using Ninject.Web.Mvc.FilterBindingSyntax;
+    using System;
+    using System.Web;
 
     public static class NinjectWebCommon 
     {
@@ -63,7 +64,7 @@ namespace Antiguera.Administrador.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
-            kernel.Bind(typeof(IClientBase<>), typeof(ClientBase<>));
+            kernel.Bind(typeof(IClientBase<,>), typeof(ClientBase<,>));
             kernel.Bind<IAcessoClient>().To<AcessoClient>().InSingletonScope();
             kernel.Bind<IEmuladorClient>().To<EmuladorClient>().InSingletonScope();
             kernel.Bind<IJogoClient>().To<JogoClient>().InSingletonScope();
@@ -72,6 +73,8 @@ namespace Antiguera.Administrador.App_Start
             kernel.Bind<IUsuarioClient>().To<UsuarioClient>().InSingletonScope();
 
             kernel.Bind<AccountClient>().ToSelf().InSingletonScope();
+
+            kernel.BindFilter<DashBoardActionAttribute>(System.Web.Mvc.FilterScope.Global, 1).InRequestScope();
         }
     }
 }

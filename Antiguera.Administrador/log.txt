@@ -3104,3 +3104,1539 @@ A instru��o foi finalizada.
 2020-06-25 18:12:22.1392|INFO|Antiguera.Administrador.Controllers.Base.BaseController|18|Acesso atualizado com sucesso!|
 2020-06-25 18:12:22.1392|INFO|Antiguera.Administrador.Controllers.Base.BaseController|18|Finalizado|
 2020-06-25 18:12:22.1502|INFO|Antiguera.Administrador.Controllers.Base.BaseController|18|Hist�rico atualizado na data de 25/06/2020 18:12:22|
+2023-05-09 08:05:10.7221|ERROR|Antiguera.Administrador.Controllers.JogoController|18|Ocorreu um erro: System.ApplicationException: Não foram encontrados recursos HTTP que correspondam ao URI de solicitação 'https://localhost:44301/Api/Jogo/Adicionar'.
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext()|
+2023-05-09 08:24:20.0377|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.ApplicationException: Você não esta autorizado a acessar este conteúdo!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Projects\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Projects\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-05-09 08:24:49.9367|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.ApplicationException: Você não esta autorizado a acessar este conteúdo!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Projects\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Projects\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-05-09 08:31:45.8873|FATAL|Antiguera.Administrador.Controllers.JogoController|11|Ocorreu um erro: System.Net.WebException: A solicitação foi anulada: A solicitação foi cancelada.
+   em System.Net.ConnectStream.BeginRead(Byte[] buffer, Int32 offset, Int32 size, AsyncCallback callback, Object state)
+   em System.IO.Stream.<>c.<BeginEndReadAsync>b__43_0(Stream stream, ReadWriteParameters args, AsyncCallback callback, Object state)
+   em System.Threading.Tasks.TaskFactory`1.FromAsyncTrim[TInstance,TArgs](TInstance thisRef, TArgs args, Func`5 beginMethod, Func`3 endMethod)
+   em System.IO.Stream.BeginEndReadAsync(Byte[] buffer, Int32 offset, Int32 count)
+   em System.IO.Stream.ReadAsync(Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
+   em System.IO.Stream.<CopyToAsyncInternal>d__27.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpContent.<LoadIntoBufferAsyncCore>d__49.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpClient.<FinishSendAsyncBuffered>d__58.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Projects\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 75
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Projects\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-05-09 08:32:14.3960|ERROR|Antiguera.Administrador.Controllers.JogoController|15|Ocorreu um erro: System.ApplicationException: Validation failed for one or more entities. See 'EntityValidationErrors' property for more details.
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Projects\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Projects\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-05-10 19:04:38.4525|FATAL|Antiguera.Administrador.Controllers.AccountController|7|Ocorreu um erro: System.Threading.Tasks.TaskCanceledException: Uma tarefa foi cancelada.
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpClient.<FinishSendAsyncBuffered>d__58.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.AccountClient.<Login>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   em Antiguera.Administrador.Controllers.AccountController.<Login>d__4.MoveNext()|
+2023-05-10 19:06:44.0650|FATAL|Antiguera.Administrador.Controllers.AccountController|7|Ocorreu um erro: System.Threading.Tasks.TaskCanceledException: Uma tarefa foi cancelada.
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpClient.<FinishSendAsyncBuffered>d__58.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.AccountClient.<Login>d__0.MoveNext() na F:\Renato\Documents\Projects\Antiguera\Antiguera.Administrador\Clients\AccountClient.cs:linha 35
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   em Antiguera.Administrador.Controllers.AccountController.<Login>d__4.MoveNext() na F:\Renato\Documents\Projects\Antiguera\Antiguera.Administrador\Controllers\AccountController.cs:linha 50|
+2023-05-10 19:08:02.4483|FATAL|Antiguera.Administrador.Controllers.AccountController|6|Ocorreu um erro: System.Threading.Tasks.TaskCanceledException: Uma tarefa foi cancelada.
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpClient.<FinishSendAsyncBuffered>d__58.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.AccountClient.<Login>d__0.MoveNext() na F:\Renato\Documents\Projects\Antiguera\Antiguera.Administrador\Clients\AccountClient.cs:linha 35
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   em Antiguera.Administrador.Controllers.AccountController.<Login>d__4.MoveNext() na F:\Renato\Documents\Projects\Antiguera\Antiguera.Administrador\Controllers\AccountController.cs:linha 50|
+2023-05-10 19:29:06.7766|ERROR|Antiguera.Administrador.Controllers.AccountController|5|Ocorreu um erro interno do servidor: System.Threading.Tasks.TaskCanceledException: Uma tarefa foi cancelada.
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpClient.<FinishSendAsyncBuffered>d__58.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.AccountClient.<Login>d__0.MoveNext() na F:\Renato\Documents\Projects\Antiguera\Antiguera.Administrador\Clients\AccountClient.cs:linha 35
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   em Antiguera.Administrador.Controllers.AccountController.<Login>d__4.MoveNext() na F:\Renato\Documents\Projects\Antiguera\Antiguera.Administrador\Controllers\AccountController.cs:linha 50|
+2023-06-16 09:51:46.6882|ERROR|Antiguera.Administrador.Controllers.JogoController|48|Ocorreu um erro: System.ApplicationException: Rollback!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 09:52:46.8484|ERROR|Antiguera.Administrador.Controllers.JogoController|51|Ocorreu um erro: System.ApplicationException: Rollback!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 10:49:33.7654|FATAL|Antiguera.Administrador.Controllers.JogoController|8|Ocorreu um erro: System.NullReferenceException: Referência de objeto não definida para uma instância de um objeto.
+   em Antiguera.Utils.Helpers.FileHelper.ConvertPostedFileToBase64(HttpPostedFileBase file) na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Utils\Helpers\FileHelper.cs:linha 23
+   em Antiguera.Administrador.Clients.JogoClient.Inserir(String url, JogoModel obj) na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 71
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 10:51:35.2593|FATAL|Antiguera.Administrador.Controllers.JogoController|10|Ocorreu um erro: Newtonsoft.Json.JsonSerializationException: Error getting value from 'ReadTimeout' on 'System.Web.HttpInputStream'. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   em GetReadTimeout(Object )
+   em Newtonsoft.Json.Serialization.DynamicValueProvider.GetValue(Object target)
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em Newtonsoft.Json.Serialization.DynamicValueProvider.GetValue(Object target)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.CalculatePropertyValues(JsonWriter writer, Object value, JsonContainerContract contract, JsonProperty member, JsonProperty property, JsonContract& memberContract, Object& memberValue)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.Serialize(JsonWriter jsonWriter, Object value, Type objectType)
+   em Newtonsoft.Json.JsonSerializer.SerializeInternal(JsonWriter jsonWriter, Object value, Type objectType)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, Encoding effectiveEncoding)
+   em System.Net.Http.Formatting.JsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, Encoding effectiveEncoding)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, HttpContent content)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStreamAsync(Type type, Object value, Stream writeStream, HttpContent content, TransportContext transportContext, CancellationToken cancellationToken)
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpContent.<LoadIntoBufferAsyncCore>d__49.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpClient.<FinishSendAsyncBuffered>d__58.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 75
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 12:01:40.6303|FATAL|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: Newtonsoft.Json.JsonSerializationException: Error getting value from 'ReadTimeout' on 'System.Web.HttpInputStream'. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   em GetReadTimeout(Object )
+   em Newtonsoft.Json.Serialization.DynamicValueProvider.GetValue(Object target)
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em Newtonsoft.Json.Serialization.DynamicValueProvider.GetValue(Object target)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.CalculatePropertyValues(JsonWriter writer, Object value, JsonContainerContract contract, JsonProperty member, JsonProperty property, JsonContract& memberContract, Object& memberValue)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.Serialize(JsonWriter jsonWriter, Object value, Type objectType)
+   em Newtonsoft.Json.JsonSerializer.SerializeInternal(JsonWriter jsonWriter, Object value, Type objectType)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, Encoding effectiveEncoding)
+   em System.Net.Http.Formatting.JsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, Encoding effectiveEncoding)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, HttpContent content)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStreamAsync(Type type, Object value, Stream writeStream, HttpContent content, TransportContext transportContext, CancellationToken cancellationToken)
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpContent.<LoadIntoBufferAsyncCore>d__49.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpClient.<FinishSendAsyncBuffered>d__58.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 75
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 12:02:41.4901|FATAL|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: Newtonsoft.Json.JsonSerializationException: Error getting value from 'ReadTimeout' on 'System.Web.HttpInputStream'. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   em GetReadTimeout(Object )
+   em Newtonsoft.Json.Serialization.DynamicValueProvider.GetValue(Object target)
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em Newtonsoft.Json.Serialization.DynamicValueProvider.GetValue(Object target)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.CalculatePropertyValues(JsonWriter writer, Object value, JsonContainerContract contract, JsonProperty member, JsonProperty property, JsonContract& memberContract, Object& memberValue)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.Serialize(JsonWriter jsonWriter, Object value, Type objectType)
+   em Newtonsoft.Json.JsonSerializer.SerializeInternal(JsonWriter jsonWriter, Object value, Type objectType)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, Encoding effectiveEncoding)
+   em System.Net.Http.Formatting.JsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, Encoding effectiveEncoding)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, HttpContent content)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStreamAsync(Type type, Object value, Stream writeStream, HttpContent content, TransportContext transportContext, CancellationToken cancellationToken)
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpContent.<LoadIntoBufferAsyncCore>d__49.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpClient.<FinishSendAsyncBuffered>d__58.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 75
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 12:03:43.4306|FATAL|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: Newtonsoft.Json.JsonSerializationException: Error getting value from 'ReadTimeout' on 'System.Web.HttpInputStream'. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   em GetReadTimeout(Object )
+   em Newtonsoft.Json.Serialization.DynamicValueProvider.GetValue(Object target)
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em Newtonsoft.Json.Serialization.DynamicValueProvider.GetValue(Object target)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.CalculatePropertyValues(JsonWriter writer, Object value, JsonContainerContract contract, JsonProperty member, JsonProperty property, JsonContract& memberContract, Object& memberValue)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.Serialize(JsonWriter jsonWriter, Object value, Type objectType)
+   em Newtonsoft.Json.JsonSerializer.SerializeInternal(JsonWriter jsonWriter, Object value, Type objectType)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, Encoding effectiveEncoding)
+   em System.Net.Http.Formatting.JsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, Encoding effectiveEncoding)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, HttpContent content)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStreamAsync(Type type, Object value, Stream writeStream, HttpContent content, TransportContext transportContext, CancellationToken cancellationToken)
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpContent.<LoadIntoBufferAsyncCore>d__49.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpClient.<FinishSendAsyncBuffered>d__58.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 75
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 12:05:50.8372|ERROR|Antiguera.Administrador.Controllers.JogoController|19|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 12:06:26.7487|ERROR|Antiguera.Administrador.Controllers.JogoController|7|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 12:06:43.4894|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 12:09:20.5753|ERROR|Antiguera.Administrador.Controllers.JogoController|5|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 12:13:24.6326|FATAL|Antiguera.Administrador.Controllers.JogoController|7|Ocorreu um erro: Newtonsoft.Json.JsonSerializationException: Error getting value from 'ReadTimeout' on 'System.Web.HttpInputStream'. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   em GetReadTimeout(Object )
+   em Newtonsoft.Json.Serialization.DynamicValueProvider.GetValue(Object target)
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em Newtonsoft.Json.Serialization.DynamicValueProvider.GetValue(Object target)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.CalculatePropertyValues(JsonWriter writer, Object value, JsonContainerContract contract, JsonProperty member, JsonProperty property, JsonContract& memberContract, Object& memberValue)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.Serialize(JsonWriter jsonWriter, Object value, Type objectType)
+   em Newtonsoft.Json.JsonSerializer.SerializeInternal(JsonWriter jsonWriter, Object value, Type objectType)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, Encoding effectiveEncoding)
+   em System.Net.Http.Formatting.JsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, Encoding effectiveEncoding)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, HttpContent content)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStreamAsync(Type type, Object value, Stream writeStream, HttpContent content, TransportContext transportContext, CancellationToken cancellationToken)
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpContent.<LoadIntoBufferAsyncCore>d__49.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpClient.<FinishSendAsyncBuffered>d__58.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 75
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 15:17:13.3774|FATAL|Antiguera.Administrador.Controllers.JogoController|14|Ocorreu um erro: Newtonsoft.Json.JsonSerializationException: Error getting value from 'ReadTimeout' on 'System.Web.HttpInputStream'. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   em GetReadTimeout(Object )
+   em Newtonsoft.Json.Serialization.DynamicValueProvider.GetValue(Object target)
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em Newtonsoft.Json.Serialization.DynamicValueProvider.GetValue(Object target)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.CalculatePropertyValues(JsonWriter writer, Object value, JsonContainerContract contract, JsonProperty member, JsonProperty property, JsonContract& memberContract, Object& memberValue)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeObject(JsonWriter writer, Object value, JsonObjectContract contract, JsonProperty member, JsonContainerContract collectionContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.SerializeValue(JsonWriter writer, Object value, JsonContract valueContract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerProperty)
+   em Newtonsoft.Json.Serialization.JsonSerializerInternalWriter.Serialize(JsonWriter jsonWriter, Object value, Type objectType)
+   em Newtonsoft.Json.JsonSerializer.SerializeInternal(JsonWriter jsonWriter, Object value, Type objectType)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, Encoding effectiveEncoding)
+   em System.Net.Http.Formatting.JsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, Encoding effectiveEncoding)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStream(Type type, Object value, Stream writeStream, HttpContent content)
+   em System.Net.Http.Formatting.BaseJsonMediaTypeFormatter.WriteToStreamAsync(Type type, Object value, Stream writeStream, HttpContent content, TransportContext transportContext, CancellationToken cancellationToken)
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpContent.<LoadIntoBufferAsyncCore>d__49.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpClient.<FinishSendAsyncBuffered>d__58.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 75
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 17:16:34.2726|FATAL|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.InvalidOperationException: An invalid request URI was provided. The request URI must either be an absolute URI or BaseAddress must be set.
+   em System.Net.Http.HttpClient.PrepareRequestMessage(HttpRequestMessage request)
+   em System.Net.Http.HttpClient.SendAsync(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationToken cancellationToken)
+   em System.Net.Http.HttpClient.SendAsync(HttpRequestMessage request)
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 83
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 17:16:49.4592|FATAL|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.InvalidOperationException: An invalid request URI was provided. The request URI must either be an absolute URI or BaseAddress must be set.
+   em System.Net.Http.HttpClient.PrepareRequestMessage(HttpRequestMessage request)
+   em System.Net.Http.HttpClient.SendAsync(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationToken cancellationToken)
+   em System.Net.Http.HttpClient.SendAsync(HttpRequestMessage request)
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 83
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 17:18:33.5586|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.ApplicationException: Referência de objeto não definida para uma instância de um objeto.
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 93
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 17:20:04.1830|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.ApplicationException: O tipo de mídia da entidade de solicitação 'multipart/form-data' não é suportado para este recurso.
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 95
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 17:20:45.3006|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.ApplicationException: O tipo de mídia da entidade de solicitação 'multipart/form-data' não é suportado para este recurso.
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 95
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 17:24:42.1380|FATAL|Antiguera.Administrador.Controllers.JogoController|8|Ocorreu um erro: System.Net.Http.UnsupportedMediaTypeException: Nenhum MediaTypeFormatter está disponível para ler um objeto do tipo 'StatusCodeModel' do conteúdo com o tipo de mídia 'multipart/form-data'.
+   em System.Net.Http.HttpContentExtensions.ReadAsAsync[T](HttpContent content, Type type, IEnumerable`1 formatters, IFormatterLogger formatterLogger, CancellationToken cancellationToken)
+   em System.Net.Http.HttpContentExtensions.ReadAsAsync[T](HttpContent content, Type type, IEnumerable`1 formatters, IFormatterLogger formatterLogger)
+   em System.Net.Http.HttpContentExtensions.ReadAsAsync[T](HttpContent content, IEnumerable`1 formatters)
+   em System.Net.Http.HttpContentExtensions.ReadAsAsync[T](HttpContent content)
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 93
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 17:37:49.7813|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 17:38:24.5736|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 17:44:24.4910|ERROR|Antiguera.Administrador.Controllers.JogoController|22|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 17:54:20.0607|ERROR|Antiguera.Administrador.Controllers.JogoController|18|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 17:54:39.3241|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 18:00:41.6254|ERROR|Antiguera.Administrador.Controllers.JogoController|9|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 18:05:05.9195|ERROR|Antiguera.Administrador.Controllers.JogoController|5|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 18:08:01.3324|ERROR|Antiguera.Administrador.Controllers.JogoController|5|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 18:08:14.2547|ERROR|Antiguera.Administrador.Controllers.JogoController|5|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 18:12:51.2725|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 18:13:51.1596|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 18:25:59.8629|ERROR|Antiguera.Administrador.Controllers.JogoController|5|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 18:28:05.4177|ERROR|Antiguera.Administrador.Controllers.JogoController|19|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 18:29:39.6377|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 18:30:26.3527|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 18:30:49.6768|ERROR|Antiguera.Administrador.Controllers.JogoController|13|Ocorreu um erro: System.ApplicationException: Por favor, preencha os campos corretamente!
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 20:36:50.9873|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.ApplicationException: Exceção do tipo 'System.Exception' foi acionada.
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 20:40:27.0850|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.ApplicationException: O acesso ao caminho 'Attachments/Jogo/0757caa1-127f-4dec-9358-3c4069536ff4' foi negado.
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-06-16 20:43:41.1496|ERROR|Antiguera.Administrador.Controllers.JogoController|18|Ocorreu um erro: System.ApplicationException: O acesso ao caminho 'Attachments/Jogo/46320b88-4304-4516-8ab4-6e361cc19c5f' foi negado.
+   em Antiguera.Administrador.Clients.Base.ClientBase`2.<Inserir>d__4.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\Base\ClientBase.cs:linha 84
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 13:27:52.8334|FATAL|Antiguera.Administrador.Controllers.JogoController|65|Ocorreu um erro: System.NullReferenceException: Referência de objeto não definida para uma instância de um objeto.
+   em Antiguera.Administrador.Clients.JogoClient.<>c__DisplayClass1_0.<Inserir>b__0()
+   em RestSharp.RequestContent.AddFiles()
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClientExtensions.<PostAsync>d__17.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext()|
+2023-07-22 13:34:41.6603|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClientExtensions.<PostAsync>d__17.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 86
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 13:35:24.1135|FATAL|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.Net.Http.HttpRequestException: Request failed with status code InternalServerError
+   em RestSharp.ResponseThrowExtension.ThrowIfError(RestResponse response)
+   em RestSharp.RestClientExtensions.<PostAsync>d__17.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 86
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 13:35:49.1623|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClientExtensions.<PostAsync>d__17.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 86
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 13:36:14.3268|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClientExtensions.<PostAsync>d__17.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 86
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 13:36:25.3250|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClientExtensions.<PostAsync>d__17.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 86
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 13:36:39.9375|ERROR|Antiguera.Administrador.Controllers.JogoController|7|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClientExtensions.<PostAsync>d__17.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 86
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 13:38:14.9051|ERROR|Antiguera.Administrador.Controllers.JogoController|7|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClientExtensions.<PostAsync>d__17.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 86
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 13:39:20.8602|ERROR|Antiguera.Administrador.Controllers.JogoController|7|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClientExtensions.<PostAsync>d__17.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 86
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 13:41:09.4759|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClientExtensions.<PostAsync>d__17.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 86
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 13:46:25.5094|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 86
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 13:49:44.4511|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.<>c__DisplayClass1_0`1.<<RunSync>b__0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.<<Run>g__PostCallback|7_0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.Run()
+   em RestSharp.AsyncHelpers.RunSync(Func`1 task)
+   em RestSharp.AsyncHelpers.RunSync[T](Func`1 task)
+   em RestSharp.RestClientExtensions.Execute(RestClient client, RestRequest request, CancellationToken cancellationToken)
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 86
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 14:20:56.9620|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.<>c__DisplayClass1_0`1.<<RunSync>b__0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.<<Run>g__PostCallback|7_0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.Run()
+   em RestSharp.AsyncHelpers.RunSync(Func`1 task)
+   em RestSharp.AsyncHelpers.RunSync[T](Func`1 task)
+   em RestSharp.RestClientExtensions.Execute(RestClient client, RestRequest request, CancellationToken cancellationToken)
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 87
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 14:21:59.6864|ERROR|Antiguera.Administrador.Controllers.JogoController|5|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.<>c__DisplayClass1_0`1.<<RunSync>b__0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.<<Run>g__PostCallback|7_0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.Run()
+   em RestSharp.AsyncHelpers.RunSync(Func`1 task)
+   em RestSharp.AsyncHelpers.RunSync[T](Func`1 task)
+   em RestSharp.RestClientExtensions.Execute(RestClient client, RestRequest request, CancellationToken cancellationToken)
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 87
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 14:23:41.7530|ERROR|Antiguera.Administrador.Controllers.JogoController|8|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.<>c__DisplayClass1_0`1.<<RunSync>b__0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.<<Run>g__PostCallback|7_0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.Run()
+   em RestSharp.AsyncHelpers.RunSync(Func`1 task)
+   em RestSharp.AsyncHelpers.RunSync[T](Func`1 task)
+   em RestSharp.RestClientExtensions.Execute(RestClient client, RestRequest request, CancellationToken cancellationToken)
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 88
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 14:25:05.6747|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.<>c__DisplayClass1_0`1.<<RunSync>b__0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.<<Run>g__PostCallback|7_0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.Run()
+   em RestSharp.AsyncHelpers.RunSync(Func`1 task)
+   em RestSharp.AsyncHelpers.RunSync[T](Func`1 task)
+   em RestSharp.RestClientExtensions.Execute(RestClient client, RestRequest request, CancellationToken cancellationToken)
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 88
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 14:25:35.9895|ERROR|Antiguera.Administrador.Controllers.JogoController|5|Ocorreu um erro: System.ApplicationException: O tipo de mídia da entidade de solicitação 'multipart/form-data' não é suportado para este recurso.
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 97
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 14:27:37.2124|ERROR|Antiguera.Administrador.Controllers.JogoController|5|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.<>c__DisplayClass1_0`1.<<RunSync>b__0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.<<Run>g__PostCallback|7_0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.Run()
+   em RestSharp.AsyncHelpers.RunSync(Func`1 task)
+   em RestSharp.AsyncHelpers.RunSync[T](Func`1 task)
+   em RestSharp.RestClientExtensions.Execute(RestClient client, RestRequest request, CancellationToken cancellationToken)
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 88
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 14:30:17.5834|ERROR|Antiguera.Administrador.Controllers.JogoController|7|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.<>c__DisplayClass1_0`1.<<RunSync>b__0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.<<Run>g__PostCallback|7_0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.Run()
+   em RestSharp.AsyncHelpers.RunSync(Func`1 task)
+   em RestSharp.AsyncHelpers.RunSync[T](Func`1 task)
+   em RestSharp.RestClientExtensions.Execute(RestClient client, RestRequest request, CancellationToken cancellationToken)
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 88
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 14:33:33.9767|ERROR|Antiguera.Administrador.Controllers.JogoController|5|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.<>c__DisplayClass1_0`1.<<RunSync>b__0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.<<Run>g__PostCallback|7_0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.Run()
+   em RestSharp.AsyncHelpers.RunSync(Func`1 task)
+   em RestSharp.AsyncHelpers.RunSync[T](Func`1 task)
+   em RestSharp.RestClientExtensions.Execute(RestClient client, RestRequest request, CancellationToken cancellationToken)
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 88
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 14:38:47.5100|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.<>c__DisplayClass1_0`1.<<RunSync>b__0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.<<Run>g__PostCallback|7_0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.Run()
+   em RestSharp.AsyncHelpers.RunSync(Func`1 task)
+   em RestSharp.AsyncHelpers.RunSync[T](Func`1 task)
+   em RestSharp.RestClientExtensions.Execute(RestClient client, RestRequest request, CancellationToken cancellationToken)
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\JogoClient.cs:linha 91
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Renato\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2023-07-22 14:42:01.9596|ERROR|Antiguera.Administrador.Controllers.JogoController|6|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.<>c__DisplayClass1_0`1.<<RunSync>b__0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.<<Run>g__PostCallback|7_0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.Run()
+   em RestSharp.AsyncHelpers.RunSync(Func`1 task)
+   em RestSharp.AsyncHelpers.RunSync[T](Func`1 task)
+   em RestSharp.RestClientExtensions.Execute(RestClient client, RestRequest request, CancellationToken cancellationToken)
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext()|
+2023-07-22 14:42:15.4986|ERROR|Antiguera.Administrador.Controllers.JogoController|20|Ocorreu um erro: System.Reflection.TargetInvocationException: Uma exceção foi acionada pelo destino de uma chamada. ---> System.InvalidOperationException: Não há suporte para tempo limite neste fluxo.
+   em System.IO.Stream.get_ReadTimeout()
+   --- Fim do rastreamento de pilha de exceções internas ---
+   em System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+   em System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+   em System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   em System.Text.Json.Serialization.Metadata.ReflectionMemberAccessor.<>c__DisplayClass7_0`1.<CreatePropertyGetter>b__0(Object obj)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.GetMemberAndWriteJson(Object obj, WriteStack& state, Utf8JsonWriter writer)
+   em System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryWrite(Utf8JsonWriter writer, T value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.TryWrite(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCore(Utf8JsonWriter writer, T& value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.Serialization.JsonConverter`1.WriteCoreAsObject(Utf8JsonWriter writer, Object value, JsonSerializerOptions options, WriteStack& state)
+   em System.Text.Json.JsonSerializer.WriteCore[TValue](Utf8JsonWriter writer, TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em System.Text.Json.JsonSerializer.WriteString[TValue](TValue& value, JsonTypeInfo`1 jsonTypeInfo)
+   em RestSharp.Serializers.Json.SystemTextJsonSerializer.Serialize(Parameter bodyParameter)
+   em RestSharp.RequestContent.<Serialize>g__GetSerialized|11_1(<>c__DisplayClass11_0& )
+   em RestSharp.RequestContent.Serialize(BodyParameter body)
+   em RestSharp.RequestContent.AddBody(Boolean hasPostParameters)
+   em RestSharp.RequestContent.BuildContent()
+   em RestSharp.RestClient.<ExecuteRequestAsync>d__3.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.RestClient.<ExecuteAsync>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.<>c__DisplayClass1_0`1.<<RunSync>b__0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.<<Run>g__PostCallback|7_0>d.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em RestSharp.AsyncHelpers.CustomSynchronizationContext.Run()
+   em RestSharp.AsyncHelpers.RunSync(Func`1 task)
+   em RestSharp.AsyncHelpers.RunSync[T](Func`1 task)
+   em RestSharp.RestClientExtensions.Execute(RestClient client, RestRequest request, CancellationToken cancellationToken)
+   em Antiguera.Administrador.Clients.JogoClient.<Inserir>d__1.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext()|

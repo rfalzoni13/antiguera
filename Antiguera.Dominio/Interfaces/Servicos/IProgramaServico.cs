@@ -1,10 +1,15 @@
 ﻿using Antiguera.Dominio.DTO;
-using Antiguera.Dominio.Entidades;
-using Antiguera.Dominio.Interfaces.Servicos.Base;
+using System;
+using System.Collections.Generic;
 
 namespace Antiguera.Dominio.Interfaces.Servicos
 {
-    public interface IProgramaServico : IServicoBase<ProgramaDTO, Programa>
+    public interface IProgramaServico
     {
+        ICollection<ProgramaDTO> ListarTodos();
+        ProgramaDTO BuscarPorId(Guid id);
+        void Adicionar(ProgramaDTO obj);
+        void Apagar(ProgramaDTO obj);
+        void Atualizar(ProgramaDTO obj);
     }
 }

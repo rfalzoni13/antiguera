@@ -30,7 +30,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Listagem de todos os acessos</remarks>
         /// <returns></returns>
-        // GET api/antiguera/admin/acesso/ListarTodos
+        // GET Api/Acesso/ListarTodos
         [HttpGet]
         [Route("ListarTodos")]
         public HttpResponseMessage ListarTodos()
@@ -80,7 +80,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Retorna o acesso através do Id do mesmo</remarks>
         /// <param name="Id">Id do acesso</param>
         /// <returns></returns>
-        // GET api/antiguera/admin/acesso/ListarPorId?id={Id}
+        // GET Api/Acesso/ListarPorId?id={Id}
         [HttpGet]
         [Route("ListarPorId")]
         public HttpResponseMessage ListarPorId(Guid Id)
@@ -136,10 +136,10 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Insere um novo acesso passando um objeto no body da requisição no método POST</remarks>
         /// <param name="acessoDto">Objeto do acesso</param>
         /// <returns></returns>
-        // POST api/antiguera/admin/acesso/Adicionar
+        // POST Api/Acesso/Inserir
         [HttpPost]
-        [Route("Adicionar")]
-        public HttpResponseMessage Adicionar([FromBody] AcessoDTO acessoDto)
+        [Route("Inserir")]
+        public HttpResponseMessage Inserir([FromBody] AcessoDTO acessoDto)
         {
             string action = this.ActionContext.ActionDescriptor.ActionName;
             _logger.Info(action + " - Iniciado");
@@ -180,7 +180,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Atualiza o acesso passando o objeto no body da requisição pelo método PUT</remarks>
         /// <param name="acessoDto">Objeto do acesso</param>
         /// <returns></returns>
-        // PUT api/antiguera/admin/acesso/Atualizar
+        // PUT Api/Acesso/Atualizar
         [HttpPut]
         [Route("Atualizar")]
         public HttpResponseMessage Atualizar([FromBody] AcessoDTO acessoDto)
@@ -224,7 +224,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Exclui o acesso passando o objeto no body da requisição pelo método DELETE</remarks>
         /// <param name="acessoDto">Objeto do acesso</param>
         /// <returns></returns>
-        // DELETE api/antiguera/admin/acesso/Deletar
+        // DELETE Api/Acesso/Deletar
         [HttpDelete]
         [Route("Deletar")]
         public HttpResponseMessage Deletar([FromBody] AcessoDTO acessoDto)

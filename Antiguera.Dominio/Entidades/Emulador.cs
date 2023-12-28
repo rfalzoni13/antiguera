@@ -22,35 +22,68 @@ namespace Antiguera.Dominio.Entidades
 
         public virtual ICollection<Rom> Roms { get; set; }
 
-        public static Emulador ConvertToEntity(EmuladorDTO emuladorDTO)
+        public static EmuladorDTO ConvertToEntity(Emulador emulador)
         {
-            return new Emulador
+            return new EmuladorDTO
             {
-                Id = emuladorDTO.Id,
-                Nome = emuladorDTO.Nome,
-                Lancamento = emuladorDTO.Lancamento,
-                Console = emuladorDTO.Console,
-                Descricao = emuladorDTO.Descricao,
-                NomeArquivo = emuladorDTO.Nome,
-                HashArquivo = emuladorDTO.HashArquivo,
-                Created = emuladorDTO.Created,
-                Modified = emuladorDTO.Modified,
-                Novo = emuladorDTO.Novo,
-                Roms = emuladorDTO.Roms.ToList().ConvertAll(r => new Rom { 
-                    Id = r.Id,
-                    EmuladorId = r.EmuladorId,
-                    Nome = r.Nome,
-                    Descricao = r.Descricao,
-                    BoxArt = r.BoxArt,
-                    Lancamento = r.Lancamento,
-                    NomeArquivo = r.Nome,
-                    HashArquivo = r.HashArquivo,
-                    Genero = r.Genero,
-                    Novo = r.Novo,
-                    Created = r.Created,
-                    Modified = r.Modified
-                })
+                Id = emulador.Id,
+                Nome = emulador.Nome,
+                Lancamento = emulador.Lancamento,
+                Console = emulador.Console,
+                Descricao = emulador.Descricao,
+                NomeArquivo = emulador.NomeArquivo,
+                HashArquivo = emulador.HashArquivo,
+                Created = emulador.Created,
+                Modified = emulador.Modified,
+                Novo = emulador.Novo,
+                Roms = emulador.Roms != null ? emulador.Roms.ToList().ConvertAll(rom => new RomDTO
+                {
+                    Id = rom.Id,
+                    Nome = rom.Nome,
+                    BoxArt = rom.BoxArt,
+                    Descricao = rom.Descricao,
+                    EmuladorId = rom.EmuladorId,
+                    Lancamento = rom.Lancamento,
+                    HashArquivo = rom.HashArquivo,
+                    NomeArquivo = rom.NomeArquivo,
+                    Genero = rom.Genero,
+                    Created = rom.Created,
+                    Modified = rom.Modified,
+                    Novo = rom.Novo
+                }) : null
             };
+        }
+
+        public static List<EmuladorDTO> ConvertToList(List<Emulador> emuladors)
+        {
+            return emuladors.ConvertAll(emulador => new EmuladorDTO
+            {
+                Id = emulador.Id,
+                Nome = emulador.Nome,
+                Lancamento = emulador.Lancamento,
+                Console = emulador.Console,
+                Descricao = emulador.Descricao,
+                NomeArquivo = emulador.NomeArquivo,
+                HashArquivo = emulador.HashArquivo,
+                Created = emulador.Created,
+                Modified = emulador.Modified,
+                Novo = emulador.Novo,
+                Roms = emulador.Roms != null ? emulador.Roms.ToList().ConvertAll(rom => new RomDTO
+                {
+                    Id = rom.Id,
+                    Nome = rom.Nome,
+                    BoxArt = rom.BoxArt,
+                    Descricao = rom.Descricao,
+                    EmuladorId = rom.EmuladorId,
+                    Lancamento = rom.Lancamento,
+                    HashArquivo = rom.HashArquivo,
+                    NomeArquivo = rom.NomeArquivo,
+                    Genero = rom.Genero,
+                    Created = rom.Created,
+                    Modified = rom.Modified,
+                    Novo = rom.Novo
+                }) : null
+            });
         }
     }
 }

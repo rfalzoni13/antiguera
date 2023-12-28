@@ -30,7 +30,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Listagem de todos os programas</remarks>
         /// <returns></returns>
-        // GET api/antiguera/admin/programa/ListarTodos
+        // GET Api/Programa/ListarTodos
         [HttpGet]
         [Route("ListarTodos")]
         public HttpResponseMessage ListarTodos()
@@ -81,7 +81,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Retorna o programa através do Id do mesmo</remarks>
         /// <param name="Id">Id do programa</param>
         /// <returns></returns>
-        // GET api/antiguera/admin/programa/ListarPorId?id={Id}
+        // GET Api/Programa/ListarPorId?id={Id}
         [HttpGet]
         [Route("ListarPorId")]
         public HttpResponseMessage ListarPorId(Guid Id)
@@ -138,7 +138,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Insere um novo programa passando um objeto no body da requisição no método POST</remarks>
         /// <param name="programaDto">Objeto do programa</param>
         /// <returns></returns>
-        // POST api/antiguera/admin/programa/Inserir
+        // POST Api/Programa/Inserir
         [HttpPost]
         [Route("Inserir")]
         public HttpResponseMessage Inserir([FromBody] ProgramaDTO programaDto)
@@ -182,7 +182,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Atualiza o programa passando o objeto no body da requisição pelo método PUT</remarks>
         /// <param name="programaDto">Objeto do programa</param>
         /// <returns></returns>
-        // PUT api/antiguera/admin/programa/Atualizar
+        // PUT Api/Programa/Atualizar
         [HttpPut]
         [Route("Atualizar")]
         public HttpResponseMessage Atualizar([FromBody] ProgramaDTO programaDto)
@@ -226,7 +226,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Exclui o programa passando o objeto no body da requisição pelo método DELETE</remarks>
         /// <param name="programaDto">Objeto do programa</param>
         /// <returns></returns>
-        // DELETE api/antiguera/admin/programa/Excluir
+        // DELETE Api/Programa/Excluir
         [HttpDelete]
         [Route("Excluir")]
         public HttpResponseMessage Excluir([FromBody] ProgramaDTO programaDto)

@@ -1,32 +1,21 @@
 ﻿using Antiguera.Dominio.DTO;
-using Antiguera.Dominio.Entidades;
-using Antiguera.Dominio.Interfaces.Repositorio;
-using Antiguera.Dominio.Interfaces.Repositorio.Base;
 using Antiguera.Dominio.Interfaces.Servicos;
-using Antiguera.Dominio.Interfaces.Servicos.Helpers;
 using Antiguera.Infra.Data.Identity;
 using Antiguera.Servicos.Identity;
-using Antiguera.Servicos.Servicos.Base;
+using Antiguera.Utils.Helpers;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Transactions;
 using System.Web;
 
 namespace Antiguera.Servicos.Servicos
 {
-    public class AcessoServico : ServicoBase<AcessoDTO, Acesso>, IAcessoServico
+    public class AcessoServico : IAcessoServico
     {
         private ApplicationRoleManager _roleManager;
-        private readonly IAcessoRepositorio _acessoRepositorio;
-        private readonly IHistoricoRepositorio _historicoRepositorio;
-
-        public AcessoServico(IAcessoRepositorio acessoRepositorio, IHistoricoRepositorio historicoRepositorio, IUnitOfWork unitOfWork,
-            IConvertHelper<AcessoDTO, Acesso> convertToEntity, IConvertHelper<Acesso, AcessoDTO> convertToDTO)
-            :base(acessoRepositorio, unitOfWork, convertToEntity, convertToDTO)
-        {
-            _acessoRepositorio = acessoRepositorio;
-            _historicoRepositorio = historicoRepositorio;
-        }
 
         protected ApplicationRoleManager RoleManager
         {
@@ -40,13 +29,38 @@ namespace Antiguera.Servicos.Servicos
             }
         }
 
-        public override void Adicionar(AcessoDTO obj)
+        public AcessoDTO BuscarPorId(Guid id)
         {
-            if(obj == null)
+            var acesso = _roleManager.FindById(GuidHelper.GuidToString(id));
+
+            return new AcessoDTO
+            {
+                Id = GuidHelper.StringToGuid(acesso.Id),
+                Novo = acesso.New,
+                Created = acesso.Created,
+                Modified = acesso.Modified,
+            };
+        }
+
+        public ICollection<AcessoDTO> ListarTodos()
+        {
+            var acessos = _roleManager.Roles.ToList();
+
+            return acessos.ToList().ConvertAll(a => new AcessoDTO
+            {
+                Id = GuidHelper.StringToGuid(a.Id),
+                Novo = a.New,
+                Created = a.Created,
+                Modified = a.Modified,
+            });
+        }
+
+        public void Adicionar(AcessoDTO obj)
+        {
+            if (obj == null)
             {
                 throw new ArgumentNullException("Nenhum objeto encontrado!");
             }
-
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
@@ -58,27 +72,6 @@ namespace Antiguera.Servicos.Servicos
 
                     RoleManager.CreateAsync(role);
 
-                    obj.IdentityRoleId = role.Id;
-
-                    using(var transaction = _unitOfWork.BeginTransaction())
-                    {
-                        try
-                        {
-                            _acessoRepositorio.Adicionar(Acesso.ConvertToEntity(obj));
-
-                            transaction.Commit();
-                        }
-                        catch (Exception ex)
-                        {
-                            transaction.Rollback();
-                            throw ex;
-                        }
-                        finally
-                        {
-                            transaction.Dispose();
-                        }
-                    }
-
                     scope.Complete();
                 }
                 catch (Exception ex)
@@ -89,7 +82,7 @@ namespace Antiguera.Servicos.Servicos
             }
         }
 
-        public override void Apagar(AcessoDTO obj)
+        public void Apagar(AcessoDTO obj)
         {
             if (obj == null)
             {
@@ -100,29 +93,12 @@ namespace Antiguera.Servicos.Servicos
             {
                 try
                 {
-                    var role = RoleManager.FindByIdAsync(obj.IdentityRoleId).Result;
+                    var role = RoleManager.FindByIdAsync(GuidHelper.GuidToString(obj.Id)).Result;
                     if (role != null)
                     {
                         RoleManager.DeleteAsync(role);
                     }
 
-                    using (var transaction = _unitOfWork.BeginTransaction())
-                    {
-                        try
-                        {
-                            _acessoRepositorio.Apagar(Acesso.ConvertToEntity(obj));
-                        }
-                        catch (Exception ex)
-                        {
-                            transaction.Rollback();
-                            throw ex;
-                        }
-                        finally
-                        {
-                            transaction.Dispose();
-                        }
-                    }
-
                     scope.Complete();
                 }
                 catch (Exception ex)
@@ -133,7 +109,7 @@ namespace Antiguera.Servicos.Servicos
             }
         }
 
-        public override void Atualizar(AcessoDTO obj)
+        public void Atualizar(AcessoDTO obj)
         {
             if (obj == null)
             {
@@ -144,29 +120,12 @@ namespace Antiguera.Servicos.Servicos
             {
                 try
                 {
-                    var role = RoleManager.FindByIdAsync(obj.IdentityRoleId).Result;
+                    var role = RoleManager.FindByIdAsync(GuidHelper.GuidToString(obj.Id)).Result;
                     if (role != null)
                     {
                         role.Name = obj.Nome;
 
                         RoleManager.UpdateAsync(role);
-                    }
-
-                    using(var transaction = _unitOfWork.BeginTransaction())
-                    {
-                        try
-                        {
-                            _acessoRepositorio.Atualizar(Acesso.ConvertToEntity(obj));
-                        }
-                        catch (Exception ex)
-                        {
-                            transaction.Rollback();
-                            throw ex;
-                        }
-                        finally
-                        {
-                            transaction.Dispose();
-                        }
                     }
 
                     scope.Complete();

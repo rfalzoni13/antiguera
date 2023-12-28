@@ -30,7 +30,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Listagem de todos os jogos</remarks>
         /// <returns></returns>
-        // GET api/antiguera/admin/jogo/ListarTodos
+        // GET Api/Jogo/ListarTodos
         [HttpGet]
         [Route("ListarTodos")]
         public HttpResponseMessage ListarTodos()
@@ -80,7 +80,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Retorna o jogo através do Id do mesmo</remarks>
         /// <param name="Id">Id do jogo</param>
         /// <returns></returns>
-        // GET api/antiguera/admin/jogo/ListarPorId?id={Id}
+        // GET Api/Jogo/ListarPorId?id={Id}
         [HttpGet]
         [Route("ListarPorId")]
         public HttpResponseMessage ListarPorId(Guid Id)
@@ -137,7 +137,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Insere um novo jogo passando um objeto no body da requisição no método POST</remarks>
         /// <param name="jogoDto">Objeto do jogo</param>
         /// <returns></returns>
-        // POST api/antiguera/admin/jogo/Inserir
+        // POST Api/Jogo/Inserir
         [HttpPost]
         [Route("Inserir")]
         public HttpResponseMessage Inserir([FromBody] JogoDTO jogoDto)
@@ -181,7 +181,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Atualiza o jogo passando o objeto no body da requisição pelo método PUT</remarks>
         /// <param name="jogoDto">Objeto do jogo</param>
         /// <returns></returns>
-        // PUT api/antiguera/admin/jogo/Atualizar
+        // PUT Api/Jogo/Atualizar
         [HttpPut]
         [Route("Atualizar")]
         public HttpResponseMessage Atualizar([FromBody] JogoDTO jogoDto)
@@ -225,7 +225,7 @@ namespace Antiguera.Api.Controllers.Admin
         /// <remarks>Exclui o jogo passando o objeto no body da requisição pelo método DELETE</remarks>
         /// <param name="jogoDto">Objeto do jogo</param>
         /// <returns></returns>
-        // DELETE api/antiguera/admin/jogo/Excluir
+        // DELETE Api/Jogo/Excluir
         [HttpDelete]
         [Route("Excluir")]
         public HttpResponseMessage Excluir([FromBody] JogoDTO jogoDto)

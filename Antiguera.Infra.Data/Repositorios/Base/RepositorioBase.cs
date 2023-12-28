@@ -24,7 +24,6 @@ namespace Antiguera.Infra.Data.Repositorios.Base
 
         public virtual void Adicionar(T obj)
         {
-            obj.Id = Guid.NewGuid();
             Context.Set<T>().Add(obj);
             Context.SaveChanges();
         }

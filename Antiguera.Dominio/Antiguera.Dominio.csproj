@@ -43,6 +43,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -63,25 +64,20 @@
     <Compile Include="DTO\UsuarioDTO.cs" />
     <Compile Include="Entidades\Base\EntityBase.cs" />
     <Compile Include="Entidades\Emulador.cs" />
-    <Compile Include="Entidades\Acesso.cs" />
     <Compile Include="Entidades\Historico.cs" />
     <Compile Include="Entidades\Jogo.cs" />
     <Compile Include="Entidades\Programa.cs" />
     <Compile Include="Entidades\Rom.cs" />
-    <Compile Include="Entidades\Usuario.cs" />
     <Compile Include="Enum\ETipoHistorico.cs" />
     <Compile Include="Interfaces\Entity\IEntity.cs" />
     <Compile Include="Interfaces\Repositorio\Base\IUnitOfWork.cs" />
     <Compile Include="Interfaces\Repositorio\Base\IRepositorioBase.cs" />
-    <Compile Include="Interfaces\Repositorio\IAcessoRepositorio.cs" />
     <Compile Include="Interfaces\Repositorio\IEmuladorRepositorio.cs" />
     <Compile Include="Interfaces\Repositorio\IHistoricoRepositorio.cs" />
     <Compile Include="Interfaces\Repositorio\IJogoRepositorio.cs" />
     <Compile Include="Interfaces\Repositorio\IProgramaRepositorio.cs" />
     <Compile Include="Interfaces\Repositorio\IRomRepositorio.cs" />
-    <Compile Include="Interfaces\Repositorio\IUsuarioRepositorio.cs" />
     <Compile Include="Interfaces\Servicos\Helpers\IConvertHelper.cs" />
-    <Compile Include="Interfaces\Servicos\Base\IServicoBase.cs" />
     <Compile Include="Interfaces\Servicos\IAccountServico.cs" />
     <Compile Include="Interfaces\Servicos\IAcessoServico.cs" />
     <Compile Include="Interfaces\Servicos\IEmuladorServico.cs" />
@@ -94,6 +90,9 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interfaces\Servicos\Base\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -1,10 +1,15 @@
 ﻿using Antiguera.Dominio.DTO;
-using Antiguera.Dominio.Entidades;
-using Antiguera.Dominio.Interfaces.Servicos.Base;
+using System;
+using System.Collections.Generic;
 
 namespace Antiguera.Dominio.Interfaces.Servicos
 {
-    public interface IEmuladorServico : IServicoBase<EmuladorDTO, Emulador>
+    public interface IEmuladorServico
     {
+        ICollection<EmuladorDTO> ListarTodos();
+        EmuladorDTO BuscarPorId(Guid id);
+        void Adicionar(EmuladorDTO obj);
+        void Apagar(EmuladorDTO obj);
+        void Atualizar(EmuladorDTO obj);
     }
 }

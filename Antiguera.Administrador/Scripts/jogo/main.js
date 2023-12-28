@@ -15,7 +15,7 @@
                 { orderable: false, targets: [7, 8] },
             ],
             ajax: {
-                url: antiguera.core.configuracoes.rotas.jogo.carregarJogos,
+                url: "Jogo/CarregarJogos",
                 type: "POST",
                 error: function (jqXHR, textStatus, errorThrow) {
                     console.log(jqXHR);
@@ -42,7 +42,7 @@
                 {
                     "data": null, "render": function (data, type) {
                         if (type === 'display') {
-                            data = '<a href="' + antiguera.core.configuracoes.rotas.jogo.editar + '?id=' + data.Id + '" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pencil-square-o"></a>';
+                            data = '<a href="Jogo/Editar?id=' + data.Id + '" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pencil-square-o"></a>';
                         }
                         return data;
                     }

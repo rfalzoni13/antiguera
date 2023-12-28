@@ -2,7 +2,7 @@
 using Antiguera.Api.Utils;
 using Antiguera.Dominio.DTO.Identity;
 using Antiguera.Dominio.Interfaces.Servicos;
-using Antiguera.Servicos.Autorizacao;
+using Antiguera.Servicos.Identity;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
@@ -332,20 +332,10 @@ namespace Antiguera.Api.Admin.Controllers
             try
             {
                 _logger.Info(action + " - Iniciado");
-                var applicationUserRegisterDTO = new ApplicationUserRegisterDTO
-                {
-                    Nome = applicationUserRegisterModel.Nome,
-                    Email = applicationUserRegisterModel.Email,
-                    Login = applicationUserRegisterModel.Login,
-                    PathFoto = applicationUserRegisterModel.PathFoto,
-                    Genero = applicationUserRegisterModel.Genero,
-                    DataNascimento = applicationUserRegisterModel.DataNascimento.Date,
-                    IdAcesso = applicationUserRegisterModel.IdAcesso,
-                    Senha = applicationUserRegisterModel.Senha,
-                    AcceptTerms = applicationUserRegisterModel.AcceptTerms
-                };
 
-                await _accountServico.Adicionar(applicationUserRegisterDTO);
+                var userDto = ApplicationUserRegisterModel.ConvertToDTO(applicationUserRegisterModel);
+
+                await _accountServico.Adicionar(userDto);
 
                 _logger.Info(action + " - Sucesso!");
 
@@ -369,20 +359,10 @@ namespace Antiguera.Api.Admin.Controllers
             try
             {
                 _logger.Info(action + " - Iniciado");
-                var applicationUserRegisterDTO = new ApplicationUserRegisterDTO
-                {
-                    ID = applicationUserRegisterModel.ID,
-                    Nome = applicationUserRegisterModel.Nome,
-                    Email = applicationUserRegisterModel.Email,
-                    Login = applicationUserRegisterModel.Login,
-                    DataNascimento = applicationUserRegisterModel.DataNascimento.Date,
-                    PathFoto = applicationUserRegisterModel.PathFoto,
-                    IdAcesso = applicationUserRegisterModel.IdAcesso,
-                    Senha = applicationUserRegisterModel.Senha,
-                    AcceptTerms = applicationUserRegisterModel.AcceptTerms
-                };
 
-                await _accountServico.Atualizar(applicationUserRegisterDTO);
+                var userDto = ApplicationUserRegisterModel.ConvertToDTO(applicationUserRegisterModel);
+
+                await _accountServico.Atualizar(userDto);
 
                 _logger.Info(action + " - Sucesso!");
 
@@ -406,20 +386,12 @@ namespace Antiguera.Api.Admin.Controllers
             try
             {
                 _logger.Info(action + " - Iniciado");
-                var applicationUserRegisterDTO = new ApplicationUserRegisterDTO
-                {
-                    ID = applicationUserRegisterModel.ID,
-                    Nome = applicationUserRegisterModel.Nome,
-                    Email = applicationUserRegisterModel.Email,
-                    Login = applicationUserRegisterModel.Login,
-                    PathFoto = applicationUserRegisterModel.PathFoto,
-                    DataNascimento = applicationUserRegisterModel.DataNascimento.Date,
-                    IdAcesso = applicationUserRegisterModel.IdAcesso,
-                    Senha = applicationUserRegisterModel.Senha,
-                    AcceptTerms = applicationUserRegisterModel.AcceptTerms
-                };
 
-                await _accountServico.Apagar(applicationUserRegisterDTO);
+                var userDto = ApplicationUserRegisterModel.ConvertToDTO(applicationUserRegisterModel);
+
+                await _accountServico.Atualizar(userDto);
+
+                await _accountServico.Apagar(userDto);
 
                 _logger.Info(action + " - Sucesso!");
 

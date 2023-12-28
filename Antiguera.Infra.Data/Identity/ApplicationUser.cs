@@ -23,10 +23,17 @@ namespace Antiguera.Infra.Data.Identity
         public string Gender { get; set; }
 
         [Required]
+        [MaxLength(1024)]
+        public string PhotoPath { get; set; }
+
+        [Required]
         public bool Active { get; set; }
 
         [Required]
         public DateTime DateBirth { get; set; }
+
+        [Required]
+        public bool New { get; set; }
 
         [Required]
         public DateTime Created { get; set; }

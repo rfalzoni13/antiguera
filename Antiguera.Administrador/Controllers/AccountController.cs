@@ -1,7 +1,6 @@
-﻿using Antiguera.Administrador.Client;
-using Antiguera.Administrador.Controllers.Base;
-using Antiguera.Administrador.Helpers;
+﻿using Antiguera.Administrador.Clients;
 using Antiguera.Administrador.Models;
+using Antiguera.Utils.Helpers;
 using NLog;
 using System;
 using System.Linq;
@@ -11,7 +10,7 @@ using System.Web.Mvc;
 
 namespace Antiguera.Administrador.Controllers
 {
-    public class AccountController : BaseController
+    public class AccountController : Controller
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly AccountClient _accountClient;
@@ -21,7 +20,8 @@ namespace Antiguera.Administrador.Controllers
             _accountClient = accountClient;
         }
 
-        // GET: Account
+        #region Login
+        // GET: Account/Login
         [HttpGet]
         public ActionResult Login()
         {
@@ -44,17 +44,30 @@ namespace Antiguera.Administrador.Controllers
 
         // POST: Account
         [HttpPost]
-        public ActionResult Login(LoginModel model, string returnUrl)
+        public async Task<ActionResult> Login(LoginModel model, string returnUrl)
         {
             try
             {
-                _accountClient.Login(model, Request);
+                await _accountClient.Login(model, Request);
 
                 return RedirectToAction("Index", "Home");
             }
             catch(ApplicationException ex)
             {
-                ModelState.AddModelError(string.Empty, ex.Message);
+                ModelState.Clear();
+
+                ModelState.AddModelError(string.Empty, ExceptionHelper.CatchMessageFromException(ex));
+
+                return View();
+            }
+            catch(TaskCanceledException ex)
+            {
+                _logger.Error("Ocorreu um erro interno do servidor: " + ex);
+
+                ModelState.Clear();
+
+                ModelState.AddModelError(string.Empty, ExceptionHelper.CatchMessageFromException(ex));
+
                 return View();
             }
             catch(Exception ex)
@@ -63,7 +76,9 @@ namespace Antiguera.Administrador.Controllers
                 throw;
             }
         }
+        #endregion
 
+        #region Logout
         //POST: Logout
         [HttpPost]
         public async Task<ActionResult> LogOut()
@@ -80,7 +95,9 @@ namespace Antiguera.Administrador.Controllers
                 throw;
             }
         }
+        #endregion
 
+        #region LoginExterno
         //
         // POST: /Account/LoginExterno
         [HttpPost]
@@ -88,13 +105,15 @@ namespace Antiguera.Administrador.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> LoginExterno(string provider, string returnUrl)
         {
-            var url = $"{UrlConfiguration.AccountExternalLogin}?provider={provider}";
+            var url = $"{UrlConfigurationHelper.AccountExternalLogin}?provider={provider}";
 
             await _accountClient.LoginExterno(url);
 
             return RedirectToAction("Index", "Home");
         }
+        #endregion
 
+        #region EnviarCodigo
         // GET: /Account/EnviarCodigo
         [AllowAnonymous]
         public async Task<ActionResult> EnviarCodigo(string returnUrl, bool rememberMe)
@@ -132,7 +151,9 @@ namespace Antiguera.Administrador.Controllers
                 throw;
             }
         }
+        #endregion
 
+        #region VerificarCodigo
         // GET: /Account/VerificarCodigo
         [AllowAnonymous]
         public ActionResult VerificarCodigo(string provider, string returnUrl, bool rememberMe)
@@ -152,7 +173,7 @@ namespace Antiguera.Administrador.Controllers
         }
 
         //
-        // POST: /Account/VerifyCode
+        // POST: /Account/VerificarCodigo
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -162,7 +183,9 @@ namespace Antiguera.Administrador.Controllers
 
             return RedirectToLocal(result.ReturnUrl);
         }
+        #endregion
 
+        #region Registrar
         // GET: /Account/Registrar
         [HttpGet]
         public ActionResult Registrar()
@@ -192,14 +215,14 @@ namespace Antiguera.Administrador.Controllers
                 {
                     _logger.Error("Você deve aceitar os termos de uso!");
                     ModelState.AddModelError(string.Empty, "Você deve aceitar os termos de uso!");
+
+                    // Se chegamos até aqui e houver alguma falha, exiba novamente o formulário
+                    return View(model);
                 }
 
                 await _accountClient.Registrar(model);
 
                 return RedirectToAction("Account", "Login");
-
-                // Se chegamos até aqui e houver alguma falha, exiba novamente o formulário
-                return View(model);
             }
             catch (Exception ex)
             {
@@ -207,7 +230,9 @@ namespace Antiguera.Administrador.Controllers
                 throw;
             }
         }
+        #endregion
 
+        #region EsqueciMinhaSenha
         //GET: /Account/EsqueciMinhaSenha
         public ActionResult EsqueciMinhaSenha()
         {
@@ -242,15 +267,9 @@ namespace Antiguera.Administrador.Controllers
                 throw;
             }
         }
+        #endregion
 
-        //
-        // GET: /Account/ConfirmacaoRecuperacaoSenha
-        [AllowAnonymous]
-        public ActionResult ConfirmacaoRecuperacaoSenha()
-        {
-            return View();
-        }
-
+        #region RecuperarSenha
         //
         // GET: /Account/RecuperarSenha
         [AllowAnonymous]
@@ -290,7 +309,19 @@ namespace Antiguera.Administrador.Controllers
                 throw;
             }
         }
+        #endregion
 
+        #region ConfirmacaoRecuperacaoSenha
+        //
+        // GET: /Account/ConfirmacaoRecuperacaoSenha
+        [AllowAnonymous]
+        public ActionResult ConfirmacaoRecuperacaoSenha()
+        {
+            return View();
+        }
+        #endregion
+
+        #region private METHODS
         private ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
@@ -299,5 +330,6 @@ namespace Antiguera.Administrador.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
+        #endregion
     }
 }

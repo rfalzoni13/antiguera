@@ -21,10 +21,11 @@ namespace Antiguera.Dominio.DTO.Identity
         public string Login { get; set; }
         public string Senha { get; set; }
         public string Genero { get; set; }
-        public Guid IdAcesso { get; set; }
+        public string Telefone { get; set; }
         public string PathFoto { get; set; }
         public DateTime DataNascimento { get; set; }
         public bool AcceptTerms { get; set; }
+        public string[] Acessos { get; set; }
     }
 
     public class ChangePasswordBindingDTO

@@ -1,6 +1,7 @@
 ﻿using Antiguera.Dominio.DTO;
 using Antiguera.Dominio.Entidades.Base;
 using System;
+using System.Collections.Generic;
 
 namespace Antiguera.Dominio.Entidades
 {
@@ -15,7 +16,7 @@ namespace Antiguera.Dominio.Entidades
         public string Publisher { get; set; }
 
         public DateTime Lancamento { get; set; }
-        
+
         public string Tipo { get; set; }
 
         public string BoxArt { get; set; }
@@ -42,6 +43,26 @@ namespace Antiguera.Dominio.Entidades
                 Modified = programaDTO.Modified,
                 Novo = programaDTO.Novo
             };
+        }
+
+        public static List<Programa> ConvertToList(List<ProgramaDTO> programasDTO)
+        {
+            return programasDTO.ConvertAll(programaDTO => new Programa
+            {
+                Id = programaDTO.Id,
+                Nome = programaDTO.Nome,
+                Lancamento = programaDTO.Lancamento,
+                Descricao = programaDTO.Descricao,
+                NomeArquivo = programaDTO.NomeArquivo,
+                BoxArt = programaDTO.BoxArt,
+                Tipo = programaDTO.Tipo,
+                HashArquivo = programaDTO.HashArquivo,
+                Publisher = programaDTO.Publisher,
+                Developer = programaDTO.Developer,
+                Created = programaDTO.Created,
+                Modified = programaDTO.Modified,
+                Novo = programaDTO.Novo
+            });
         }
     }
 }

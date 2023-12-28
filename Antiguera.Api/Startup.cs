@@ -1,4 +1,4 @@
-﻿using Antiguera.Servicos.Autorizacao;
+﻿using Antiguera.Servicos.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
 using Owin;

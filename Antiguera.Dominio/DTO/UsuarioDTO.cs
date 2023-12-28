@@ -1,5 +1,7 @@
 ﻿using Antiguera.Dominio.DTO.Base;
+using Antiguera.Dominio.Entidades;
 using System;
+using System.Collections.Generic;
 
 namespace Antiguera.Dominio.DTO
 {
@@ -8,9 +10,6 @@ namespace Antiguera.Dominio.DTO
         public UsuarioDTO()
         {
         }
-
-        public Guid AcessoId { get; set; }
-
         public string Nome { get; set; }
 
         public string Email { get; set; }
@@ -23,14 +22,10 @@ namespace Antiguera.Dominio.DTO
 
         public string Senha { get; set; }
 
-        public string IdentityUserId { get; set; }
-
         public string PathFoto { get; set; }
 
         public string Telefone { get; set; }
 
-        public DateTime? UltimaVisita { get; set; }
-
-        public virtual AcessoDTO Acesso { get; set; }
+        public string[] Acessos { get; set; }
     }
 }
