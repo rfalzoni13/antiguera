@@ -61,7 +61,6 @@ namespace Antiguera.Administrador.Clients
 
         public async Task<UsuarioModel> ListarPorIdentityId(string userId, string token)
         {
-            string url = $"{UrlConfigurationHelper.UsuarioGetByUserId}?UserId={userId}";
 
             using (HttpClient client = new HttpClient())
             {
