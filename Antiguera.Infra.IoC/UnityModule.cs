@@ -20,19 +20,8 @@ namespace Antiguera.Infra.IoC
 
             //Repositórios
             container.RegisterType(typeof(IRepositorioBase<>), typeof(RepositorioBase<>));
-            container.RegisterType<IEmuladorRepositorio, EmuladorRepositorio>();
-            container.RegisterType<IHistoricoRepositorio, HistoricoRepositorio>();
-            container.RegisterType<IJogoRepositorio, JogoRepositorio>();
-            container.RegisterType<IProgramaRepositorio, ProgramaRepositorio>();
-            container.RegisterType<IRomRepositorio, RomRepositorio>();
 
             //Serviços
-            container.RegisterType(typeof(IRepositorioBase<>), typeof(RepositorioBase<>));
-            container.RegisterType<IAcessoServico, AcessoServico>();
-            container.RegisterType<IEmuladorServico, EmuladorServico>();
-            container.RegisterType<IJogoServico, JogoServico>();
-            container.RegisterType<IProgramaServico, ProgramaServico>();
-            container.RegisterType<IRomServico, RomServico>();
             container.RegisterType<IUsuarioServico, UsuarioServico>();
             container.RegisterType<IAccountServico, AccountServico>();
 

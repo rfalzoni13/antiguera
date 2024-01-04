@@ -91,6 +91,7 @@ namespace Antiguera.Servicos.Servicos
                         LastName = register.Nome.Split(' ').LastOrDefault(),
                         Email = register.Email,
                         PhoneNumber = register.Telefone,
+                        DateBirth = register.DataNascimento,
                         Gender = register.Genero,
                         PhotoPath = register.PathFoto,
                         UserName = register.Login,
@@ -228,6 +229,7 @@ namespace Antiguera.Servicos.Servicos
                     user.FirstName = register.Nome.Split(' ').FirstOrDefault();
                     user.LastName = register.Nome.Split(' ').LastOrDefault();
                     user.Email = register.Email;
+                    user.DateBirth = register.DataNascimento;
                     user.PhotoPath = register.PathFoto;
                     user.PhoneNumber = register.Telefone;
                     user.Modified = DateTime.Now;

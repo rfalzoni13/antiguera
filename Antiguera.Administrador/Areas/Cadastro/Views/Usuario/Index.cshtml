@@ -1,0 +1,97 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    @Styles.Render("~/bundles/datatable")
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            Módulo Usuários
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active"><i class="fa fa-shopping-bag"></i> @ViewContext.RouteData.GetRequiredString("controller")</li>
+        </ol>
+    </section><!--section -->
+    <!-- Main content -->
+    <section class="content container-fluid">
+        @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
+                        @Html.ValidationSummary(false, string.Empty)
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-md-12">
+                @Html.ActionLink("Novo usuário", "Cadastrar", "Usuario", new { Area = "Cadastro" }, new { Area = "Cadastro", @class = "btn btn-info" })
+            </div><!-- /.col-lg-6 -->
+        </div><!-- /.row -->
+        <br /><br />
+        <div class="row">
+            <div class="col-md-12 col-sm-6">
+                <div class="box box-info">
+                    <div class="box-header">
+                        <h3 class="box-title">Lista de usuários</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="table-responsive">
+                            <table id="TabelaUsuario" class="table no-margin">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            @Html.DisplayName("Nome")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Email")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Login")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Gênero")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Inserido em:")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Modificado em:")
+                                        </th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.row -->
+    </section><!--section-->
+</div><!--div-->
+
+@section modals
+{
+    @Html.Partial("_ModalSucesso")
+    @Html.Partial("_ModalError")
+}
+
+@section scripts {
+    @Scripts.Render("~/bundles/js/datatable")
+    @Scripts.Render("~/bundles/js/moment")
+    @Scripts.Render("~/bundles/js/core")
+    <script type="text/javascript" src="@Url.Content("~/Scripts/config/defaults.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/usuario/main.js")"></script>
+}

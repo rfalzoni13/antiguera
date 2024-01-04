@@ -52,38 +52,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DTO\AcessoDTO.cs" />
     <Compile Include="DTO\Base\BaseDTO.cs" />
-    <Compile Include="DTO\EmuladorDTO.cs" />
-    <Compile Include="DTO\HistoricoDTO.cs" />
     <Compile Include="DTO\Identity\ApplicationUserDTO.cs" />
     <Compile Include="DTO\Identity\SendCodeDTO.cs" />
-    <Compile Include="DTO\JogoDTO.cs" />
-    <Compile Include="DTO\ProgramaDTO.cs" />
-    <Compile Include="DTO\RomDTO.cs" />
+    <Compile Include="DTO\ProdutoDTO.cs" />
     <Compile Include="DTO\UsuarioDTO.cs" />
     <Compile Include="Entidades\Base\EntityBase.cs" />
-    <Compile Include="Entidades\Emulador.cs" />
-    <Compile Include="Entidades\Historico.cs" />
-    <Compile Include="Entidades\Jogo.cs" />
-    <Compile Include="Entidades\Programa.cs" />
-    <Compile Include="Entidades\Rom.cs" />
-    <Compile Include="Enum\ETipoHistorico.cs" />
+    <Compile Include="Entidades\Base\TipoProduto.cs" />
+    <Compile Include="Entidades\Produto.cs" />
     <Compile Include="Interfaces\Entity\IEntity.cs" />
     <Compile Include="Interfaces\Repositorio\Base\IUnitOfWork.cs" />
     <Compile Include="Interfaces\Repositorio\Base\IRepositorioBase.cs" />
-    <Compile Include="Interfaces\Repositorio\IEmuladorRepositorio.cs" />
-    <Compile Include="Interfaces\Repositorio\IHistoricoRepositorio.cs" />
-    <Compile Include="Interfaces\Repositorio\IJogoRepositorio.cs" />
-    <Compile Include="Interfaces\Repositorio\IProgramaRepositorio.cs" />
-    <Compile Include="Interfaces\Repositorio\IRomRepositorio.cs" />
     <Compile Include="Interfaces\Servicos\Helpers\IConvertHelper.cs" />
     <Compile Include="Interfaces\Servicos\IAccountServico.cs" />
-    <Compile Include="Interfaces\Servicos\IAcessoServico.cs" />
-    <Compile Include="Interfaces\Servicos\IEmuladorServico.cs" />
-    <Compile Include="Interfaces\Servicos\IJogoServico.cs" />
-    <Compile Include="Interfaces\Servicos\IProgramaServico.cs" />
-    <Compile Include="Interfaces\Servicos\IRomServico.cs" />
     <Compile Include="Interfaces\Servicos\IUsuarioServico.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

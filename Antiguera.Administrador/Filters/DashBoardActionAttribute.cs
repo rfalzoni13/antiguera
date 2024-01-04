@@ -27,10 +27,10 @@ namespace Antiguera.Administrador.Filters
 
                 if (string.IsNullOrEmpty(token)) throw new Exception("Não autorizado!");
 
-                var usuario = Task.Run(async () => await _usuarioClient.ListarPorIdentityId(userId, token)).Result;
+                var usuario = Task.Run(async () => await _usuarioClient.Listar($"{UrlConfigurationHelper.UsuarioGet}", userId)).Result;
 
                 filterContext.Controller.ViewBag.Usuario = StringHelper.SetDashboardName(usuario.Nome);
-                filterContext.Controller.ViewBag.Perfil = usuario.Acesso.Nome;
+                filterContext.Controller.ViewBag.Perfil = usuario.Acessos[0];
             }
 
             base.OnActionExecuting(filterContext);
