@@ -108,9 +108,6 @@
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp, Version=110.2.0.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
-      <HintPath>..\packages\RestSharp.110.2.0\lib\netstandard2.0\RestSharp.dll</HintPath>
-    </Reference>
     <Reference Include="ServiceStack.Text, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ServiceStack.Text.6.9.0\lib\netstandard2.0\ServiceStack.Text.dll</HintPath>
     </Reference>
@@ -447,12 +444,6 @@
     <Content Include="admin-lte\js\pages\dashboard.js" />
     <Content Include="admin-lte\js\pages\dashboard2.js" />
     <Content Include="Content\Images\Jcrop.gif" />
-    <Content Include="Content\Images\ui-icons_444444_256x240.png" />
-    <Content Include="Content\Images\ui-icons_555555_256x240.png" />
-    <Content Include="Content\Images\ui-icons_777620_256x240.png" />
-    <Content Include="Content\Images\ui-icons_777777_256x240.png" />
-    <Content Include="Content\Images\ui-icons_cc0000_256x240.png" />
-    <Content Include="Content\Images\ui-icons_ffffff_256x240.png" />
     <Content Include="Content\libraries\bootstrap-datepicker\bootstrap-datepicker.css" />
     <Content Include="Content\libraries\bootstrap-datepicker\bootstrap-datepicker.min.css" />
     <Content Include="Content\libraries\bootstrap-datepicker\bootstrap-datepicker.standalone.css" />
@@ -502,15 +493,12 @@
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Scripts\acesso\main.js" />
+    <Content Include="Scripts\core\image-utilities.js" />
     <Content Include="Scripts\core\root.js" />
     <Content Include="Scripts\core\datatable-defaults.js" />
     <Content Include="Scripts\core\masks.js" />
-    <Content Include="Scripts\emulador\cadastrar.js" />
-    <Content Include="Scripts\emulador\main.js" />
+    <Content Include="Scripts\core\rotas.js" />
     <Content Include="Scripts\home\dashboard.js" />
-    <Content Include="Scripts\jogo\cadastrar.js" />
-    <Content Include="Scripts\jogo\main.js" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
@@ -561,6 +549,11 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="Areas\Cadastro\Views\web.config" />
+    <Content Include="Areas\Cadastro\Views\Usuario\_ModalFoto.cshtml" />
+    <Content Include="Areas\Cadastro\Views\Usuario\Editar.cshtml" />
+    <Content Include="Areas\Cadastro\Views\Usuario\Index.cshtml" />
+    <Content Include="Areas\Cadastro\Views\Usuario\Novo.cshtml" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -757,15 +750,11 @@
     <Content Include="Scripts\locales\bootstrap-datepicker.zh-CN.min.js" />
     <Content Include="Scripts\locales\bootstrap-datepicker.zh-TW.min.js" />
     <Content Include="Scripts\login\login.js" />
-    <Content Include="Scripts\programa\cadastrar.js" />
-    <Content Include="Scripts\programa\main.js" />
-    <Content Include="Scripts\rom\cadastrar.js" />
-    <Content Include="Scripts\rom\main.js" />
     <Content Include="Scripts\Site.js" />
     <Content Include="Scripts\libraries\tether.js" />
     <Content Include="Scripts\libraries\tether.min.js" />
-    <Content Include="Scripts\usuario\cadastrar.js" />
-    <Content Include="Scripts\usuario\main.js" />
+    <Content Include="Scripts\cadastro\usuario\cadastrar.js" />
+    <Content Include="Scripts\cadastro\usuario\main.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -780,50 +769,23 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Areas\Cadastro\CadastroAreaRegistration.cs" />
+    <Compile Include="Areas\Cadastro\Controllers\UsuarioController.cs" />
     <Compile Include="Clients\AccountClient.cs" />
-    <Compile Include="Clients\AcessoClient.cs" />
     <Compile Include="Clients\Base\ClientBase.cs" />
     <Compile Include="Clients\Base\IClientBase.cs" />
-    <Compile Include="Clients\EmuladorClient.cs" />
-    <Compile Include="Clients\Interface\IAcessoClient.cs" />
-    <Compile Include="Clients\Interface\IEmuladorClient.cs" />
-    <Compile Include="Clients\Interface\IJogoClient.cs" />
-    <Compile Include="Clients\Interface\IProgramaClient.cs" />
-    <Compile Include="Clients\Interface\IRomClient.cs" />
     <Compile Include="Clients\Interface\IUsuarioClient.cs" />
-    <Compile Include="Clients\JogoClient.cs" />
-    <Compile Include="Clients\ProgramaClient.cs" />
-    <Compile Include="Clients\RomClient.cs" />
     <Compile Include="Clients\UsuarioClient.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Filters\CustomActionAttribute.cs" />
     <Compile Include="Filters\DashBoardActionAttribute.cs" />
-    <Compile Include="Models\AcessoModel.cs" />
-    <Compile Include="Models\ConfigModel.cs" />
-    <Compile Include="Models\DashboardModel.cs" />
-    <Compile Include="Models\EmuladorModel.cs" />
     <Compile Include="Models\Enum\ETipoHistorico.cs" />
-    <Compile Include="Models\JogoModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
-    <Compile Include="Models\ProgramaModel.cs" />
-    <Compile Include="Models\RomModel.cs" />
     <Compile Include="Models\StatusCodeModel.cs" />
-    <Compile Include="Models\Tables\AcessoTableModel.cs" />
     <Compile Include="Models\Tables\Base\TableBase.cs" />
-    <Compile Include="Models\Tables\EmuladorTableModel.cs" />
-    <Compile Include="Models\Tables\JogoTableModel.cs" />
-    <Compile Include="Models\Tables\ProgramaTableModel.cs" />
-    <Compile Include="Models\Tables\RomTableModel.cs" />
     <Compile Include="Models\Tables\UsuarioTableModel.cs" />
-    <Compile Include="Controllers\AcessoController.cs" />
-    <Compile Include="Controllers\ConfiguracaoController.cs" />
-    <Compile Include="Controllers\EmuladorController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\JogoController.cs" />
-    <Compile Include="Controllers\ProgramaController.cs" />
-    <Compile Include="Controllers\RomController.cs" />
-    <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -839,29 +801,10 @@
     <Content Include="Content\fonts\fontawesome-webfont.woff" />
     <Content Include="Content\fonts\fontawesome-webfont.ttf" />
     <Content Include="Content\fonts\fontawesome-webfont.eot" />
-    <Content Include="Views\Configuracao\Index.cshtml" />
-    <Content Include="Views\Jogo\Index.cshtml" />
-    <Content Include="Views\Jogo\Cadastrar.cshtml" />
-    <Content Include="Views\Jogo\Editar.cshtml" />
-    <Content Include="Views\Programa\Index.cshtml" />
-    <Content Include="Views\Programa\Cadastrar.cshtml" />
-    <Content Include="Views\Programa\Editar.cshtml" />
-    <Content Include="Views\Emulador\Index.cshtml" />
-    <Content Include="Views\Emulador\Cadastrar.cshtml" />
-    <Content Include="Views\Emulador\Editar.cshtml" />
-    <Content Include="Views\Rom\Cadastrar.cshtml" />
-    <Content Include="Views\Rom\Index.cshtml" />
-    <Content Include="Views\Rom\Editar.cshtml" />
-    <Content Include="Views\Usuario\Index.cshtml" />
-    <Content Include="Views\Usuario\Cadastrar.cshtml" />
-    <Content Include="Views\Usuario\Editar.cshtml" />
-    <Content Include="Views\Acesso\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\NotFound.cshtml" />
-    <Content Include="Views\Usuario\_ModalFoto.cshtml" />
     <Content Include="Views\Shared\_ModalSucesso.cshtml" />
     <Content Include="Views\Shared\_ModalError.cshtml" />
-    <Content Include="Views\Acesso\_ModalCadastro.cshtml" />
     <Content Include="Views\Shared\_ModalBoxArt.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\EsqueciMinhaSenha.cshtml" />
@@ -874,12 +817,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Content\Consoles\Emuladores\" />
-    <Folder Include="Content\Consoles\Roms\" />
-    <Folder Include="Content\Games\" />
     <Folder Include="Content\Images\BoxArt\" />
-    <Folder Include="Content\Programas\" />
-    <Folder Include="Views\Base\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Antiguera.Resources\Antiguera.Resources.csproj">

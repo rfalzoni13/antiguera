@@ -7,6 +7,5 @@ namespace Antiguera.Administrador.Clients.Interface
 {
     public interface IUsuarioClient : IClientBase<UsuarioModel, UsuarioTableModel>
     {
-        Task<UsuarioModel> ListarPorIdentityId(string userId, string token);
     }
 }

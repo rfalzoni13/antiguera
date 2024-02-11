@@ -13,6 +13,8 @@ namespace Antiguera.Administrador
         {
             //MapearRotasJavascript(routes);
 
+            AreaRegistration.RegisterAllAreas();
+
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(

@@ -81,11 +81,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuracao\EmuladorConfiguracao.cs" />
-    <Compile Include="Configuracao\HistoricoConfiguracao.cs" />
-    <Compile Include="Configuracao\JogoConfiguracao.cs" />
-    <Compile Include="Configuracao\ProgramaConfiguracao.cs" />
-    <Compile Include="Configuracao\RomConfiguracao.cs" />
     <Compile Include="Contexto\AntigueraContexto.cs" />
     <Compile Include="Contexto\ApplicationDbContext.cs" />
     <Compile Include="Identity\ApplicationRole.cs" />
@@ -97,11 +92,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Repositorios\Base\RepositorioBase.cs" />
-    <Compile Include="Repositorios\EmuladorRepositorio.cs" />
-    <Compile Include="Repositorios\HistoricoRepositorio.cs" />
-    <Compile Include="Repositorios\JogoRepositorio.cs" />
-    <Compile Include="Repositorios\ProgramaRepositorio.cs" />
-    <Compile Include="Repositorios\RomRepositorio.cs" />
     <Compile Include="Repositorios\Base\UnitOfWork.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +116,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Configuracao\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

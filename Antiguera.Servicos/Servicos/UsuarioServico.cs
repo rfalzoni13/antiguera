@@ -45,7 +45,7 @@ namespace Antiguera.Servicos.Servicos
 
         public ICollection<UsuarioDTO> ListarTodos()
         {
-            var usuarios = _userManager.Users;
+            var usuarios = UserManager.Users;
 
             return usuarios.ToList().ConvertAll(u => new UsuarioDTO
             {
@@ -60,13 +60,13 @@ namespace Antiguera.Servicos.Servicos
                 Novo = u.New,
                 Created = u.Created,
                 Modified = u.Modified,
-                Acessos = _userManager.GetRoles(u.Id).ToArray()
+                Acessos = UserManager.GetRoles(u.Id).ToArray()
             });
         }
 
         public UsuarioDTO ListarPorId(Guid id)
         {
-            var usuario = _userManager.FindById(GuidHelper.GuidToString(id));
+            var usuario = UserManager.FindById(GuidHelper.GuidToString(id));
 
             return new UsuarioDTO
             {
@@ -81,7 +81,7 @@ namespace Antiguera.Servicos.Servicos
                 Novo = usuario.New,
                 Created = usuario.Created,
                 Modified = usuario.Modified,
-                Acessos = _userManager.GetRoles(usuario.Id).ToArray()
+                Acessos = UserManager.GetRoles(usuario.Id).ToArray()
             };
         }
     }
