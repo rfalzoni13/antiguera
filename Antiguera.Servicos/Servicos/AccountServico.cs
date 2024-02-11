@@ -99,7 +99,7 @@ namespace Antiguera.Servicos.Servicos
                         Created = DateTime.Now
                     };
 
-                    var result = await UserManager.CreateAsync(user, register.Senha);
+                    var result = await UserManager.CreateAsync(user);
 
                     if (!result.Succeeded)
                     {

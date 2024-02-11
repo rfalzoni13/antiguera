@@ -15,7 +15,7 @@
                 { orderable: false, targets: [6, 7] },
             ],
             ajax: {
-                url: antiguera.core.configuracoes.rotas.usuario.carregarUsuarios,
+                url: antiguera.core.rotas.usuario.carregarTabela,
                 type: "POST",
                 error: function (jqXHR, textStatus, errorThrow) {
                     console.log(jqXHR);
@@ -41,7 +41,7 @@
                 {
                     "data": null, "render": function (data, type) {
                         if (type === 'display') {
-                            data = '<a href="' + antiguera.core.configuracoes.rotas.usuario.editar + '?id=' + data.Id + '" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pencil-square-o"></a>';
+                            data = '<a href="' + antiguera.core.rotas.usuario.editar + '?id=' + data.Id + '" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pencil-square-o"></a>';
                         }
                         return data;
                     }
@@ -59,7 +59,7 @@
     deletarUsuario: function (id) {
 
         $.ajax({
-            url: antiguera.core.configuracoes.rotas.usuario.excluir,
+            url: antiguera.core.rotas.usuario.excluir,
             data: { id: id },
             dataType: 'json',
             type: 'POST',

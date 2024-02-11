@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Web;
+using System.Web.Mvc;
 
 namespace Antiguera.Administrador.Models
 {
@@ -8,6 +12,7 @@ namespace Antiguera.Administrador.Models
 
         public string Nome { get; set; }
 
+        [DisplayName("E-mail")]
         public string Email { get; set; }
 
         public string Genero { get; set; }
@@ -15,8 +20,6 @@ namespace Antiguera.Administrador.Models
         public DateTime DataNascimento { get; set; }
 
         public string Login { get; set; }
-
-        public string Senha { get; set; }
 
         public string PathFoto { get; set; }
 
@@ -30,5 +33,29 @@ namespace Antiguera.Administrador.Models
 
         public string[] Acessos { get; set; }
 
+        public List<SelectListItem> Sexos 
+        {
+            get
+            {
+                return new List<SelectListItem>
+                (
+                    new SelectListItem[]
+                    {
+                        new SelectListItem
+                        {
+                            Text = "Masculino",
+                            Value = "Maculino"
+                        },
+                        new SelectListItem
+                        {
+                            Text = "Feminino",
+                            Value = "Feminino"
+                        }
+                    }
+                );
+            }
+        }
+
+        public HttpPostedFileBase ArquivoPerfil { get; set; }
     }
 }

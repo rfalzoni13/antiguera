@@ -5395,3 +5395,51 @@ Nome do parâmetro: obj
    em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
    em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
    em Antiguera.Administrador.Controllers.JogoController.<Cadastrar>d__6.MoveNext() na F:\Users\Renato Falzoni\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\JogoController.cs:linha 66|
+2024-01-05 20:47:28.9090|ERROR|Antiguera.Administrador.Controllers.AccountController|6|Ocorreu um erro interno do servidor: System.Threading.Tasks.TaskCanceledException: Uma tarefa foi cancelada.
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpClient.<FinishSendAsyncBuffered>d__58.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.AccountClient.<Login>d__0.MoveNext() na F:\Users\Renato Falzoni\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Clients\AccountClient.cs:linha 35
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   em Antiguera.Administrador.Controllers.AccountController.<Login>d__4.MoveNext() na F:\Users\Renato Falzoni\Documents\Pessoal\Projetos\Antiguera\Antiguera.Administrador\Controllers\AccountController.cs:linha 51|
+2024-02-10 20:19:48.4997|ERROR|Antiguera.Administrador.Controllers.AccountController|5|Ocorreu um erro interno do servidor: System.Threading.Tasks.TaskCanceledException: Uma tarefa foi cancelada.
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpClient.<FinishSendAsyncBuffered>d__58.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.AccountClient.<Login>d__0.MoveNext() na F:\Users\Renato Falzoni\Documents\Pessoal\Projetos\C# .NET\Antiguera\Antiguera.Administrador\Clients\AccountClient.cs:linha 35
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   em Antiguera.Administrador.Controllers.AccountController.<Login>d__4.MoveNext() na F:\Users\Renato Falzoni\Documents\Pessoal\Projetos\C# .NET\Antiguera\Antiguera.Administrador\Controllers\AccountController.cs:linha 51|
+2024-02-10 20:24:14.2175|ERROR|Antiguera.Administrador.Controllers.AccountController|20|Ocorreu um erro interno do servidor: System.Threading.Tasks.TaskCanceledException: Uma tarefa foi cancelada.
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Net.Http.HttpClient.<FinishSendAsyncBuffered>d__58.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   em Antiguera.Administrador.Clients.AccountClient.<Login>d__0.MoveNext() na F:\Users\Renato Falzoni\Documents\Pessoal\Projetos\C# .NET\Antiguera\Antiguera.Administrador\Clients\AccountClient.cs:linha 35
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   em Antiguera.Administrador.Controllers.AccountController.<Login>d__4.MoveNext() na F:\Users\Renato Falzoni\Documents\Pessoal\Projetos\C# .NET\Antiguera\Antiguera.Administrador\Controllers\AccountController.cs:linha 51|

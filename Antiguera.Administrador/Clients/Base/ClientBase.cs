@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Antiguera.Administrador.Clients.Base
 {
-    public abstract class ClientBase<T, TTable> : IClientBase<T, TTable> 
+    public abstract class ClientBase<T, TTable> : IClientBase<T, TTable>
         where T : class
         where TTable : class
     {
@@ -22,6 +22,7 @@ namespace Antiguera.Administrador.Clients.Base
 
         public virtual async Task<string> Atualizar(string url, T obj)
         {
+
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);

@@ -493,9 +493,11 @@
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\core\image-utilities.js" />
     <Content Include="Scripts\core\root.js" />
     <Content Include="Scripts\core\datatable-defaults.js" />
     <Content Include="Scripts\core\masks.js" />
+    <Content Include="Scripts\core\rotas.js" />
     <Content Include="Scripts\home\dashboard.js" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -551,7 +553,7 @@
     <Content Include="Areas\Cadastro\Views\Usuario\_ModalFoto.cshtml" />
     <Content Include="Areas\Cadastro\Views\Usuario\Editar.cshtml" />
     <Content Include="Areas\Cadastro\Views\Usuario\Index.cshtml" />
-    <Content Include="Areas\Cadastro\Views\Usuario\Cadastrar.cshtml" />
+    <Content Include="Areas\Cadastro\Views\Usuario\Novo.cshtml" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -751,8 +753,8 @@
     <Content Include="Scripts\Site.js" />
     <Content Include="Scripts\libraries\tether.js" />
     <Content Include="Scripts\libraries\tether.min.js" />
-    <Content Include="Scripts\usuario\cadastrar.js" />
-    <Content Include="Scripts\usuario\main.js" />
+    <Content Include="Scripts\cadastro\usuario\cadastrar.js" />
+    <Content Include="Scripts\cadastro\usuario\main.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

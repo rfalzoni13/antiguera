@@ -34,7 +34,7 @@
         }
         <div class="row">
             <div class="col-md-12">
-                @Html.ActionLink("Novo usuário", "Cadastrar", "Usuario", new { Area = "Cadastro" }, new { Area = "Cadastro", @class = "btn btn-info" })
+                @Html.ActionLink("Novo usuário", "Novo", "Usuario", new { Area = "Cadastro" }, new { @class = "btn btn-info" })
             </div><!-- /.col-lg-6 -->
         </div><!-- /.row -->
         <br /><br />
@@ -46,7 +46,7 @@
                     </div>
                     <div class="box-body">
                         <div class="table-responsive">
-                            <table id="TabelaUsuario" class="table no-margin">
+                            <table id="TabelaUsuario" class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th>
@@ -92,6 +92,5 @@
     @Scripts.Render("~/bundles/js/datatable")
     @Scripts.Render("~/bundles/js/moment")
     @Scripts.Render("~/bundles/js/core")
-    <script type="text/javascript" src="@Url.Content("~/Scripts/config/defaults.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Scripts/usuario/main.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/cadastro/usuario/main.js")"></script>
 }

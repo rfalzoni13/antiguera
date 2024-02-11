@@ -1,7 +1,7 @@
 ﻿@model Antiguera.Administrador.Models.UsuarioModel
 
 @{
-    ViewBag.Title = "Editar usuário";
+    ViewBag.Title = "Inserir novo usuário";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -14,7 +14,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            Editar Usuário
+            Novo Usuário
         </h1>
         <ol class="breadcrumb">
             <li><a href="@Url.Action("Index", "Home", new { area = string.Empty })"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -32,7 +32,6 @@
                 <div class="box-body">
                     @using (Html.BeginForm("Novo", "Usuario", new { Area = "Cadastro" }, FormMethod.Post, new { @class = "form-jogo", enctype = "multipart/form-data" }))
                     {
-                        @Html.HiddenFor(x => x.Id)
                         <div class="row">
                             <div class="col-md-2">
                                 <img class="img-responsive img-bordered user-box" id="ImgFoto" src="/Content/Images/Profile/@(!string.IsNullOrEmpty(Model.PathFoto) ? Model.PathFoto : "user.png")" />

@@ -10,7 +10,6 @@ namespace Antiguera.Api.Models
         public string Nome { get; set; }
         public string Email { get; set; }
         public string Login { get; set; }
-        public string Senha { get; set; }
         public string Genero { get; set; }
         public DateTime DataNascimento { get; set; }
         public string PathFoto { get; set; }
@@ -29,7 +28,6 @@ namespace Antiguera.Api.Models
                 Genero = model.Genero,
                 DataNascimento = model.DataNascimento.Date,
                 Acessos = model.Acessos.ToArray(),
-                Senha = model.Senha,
                 AcceptTerms = model.AcceptTerms
             };
         }

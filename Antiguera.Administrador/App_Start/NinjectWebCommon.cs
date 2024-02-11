@@ -65,9 +65,9 @@ namespace Antiguera.Administrador.App_Start
         private static void RegisterServices(IKernel kernel)
         {
             kernel.Bind(typeof(IClientBase<,>), typeof(ClientBase<,>));
-            kernel.Bind<IUsuarioClient>().To<UsuarioClient>().InSingletonScope();
+            kernel.Bind<IUsuarioClient>().To<UsuarioClient>().InRequestScope();
 
-            kernel.Bind<AccountClient>().ToSelf().InSingletonScope();
+            kernel.Bind<AccountClient>().ToSelf().InRequestScope();
 
             kernel.BindFilter<DashBoardActionAttribute>(System.Web.Mvc.FilterScope.Global, 1).InRequestScope();
         }

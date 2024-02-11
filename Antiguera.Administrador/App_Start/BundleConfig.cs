@@ -39,11 +39,14 @@ namespace Antiguera.Administrador
                       "~/Scripts/libraries/moment/moment-with-locales.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/js/core").Include(
-                      "~/Scripts/core/root.js"));
+                      "~/Scripts/core/root.js",
+                      "~/Scripts/core/image-utilities.js",
+                      "~/Scripts/core/rotas.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/js/datatable").Include(
                       "~/Scripts/libraries/datatable/datatable*",
-                      "~/Scripts/libraries/datatable.moment.datetime/datatable.moment.datetime.js"));
+                      "~/Scripts/libraries/datatable.moment.datetime/datatable.moment.datetime.js",
+                      "~/Scripts/core/datatable-defaults.js"));
 
             //Styles
             bundles.Add(new StyleBundle("~/bundles/bootstrap").Include(

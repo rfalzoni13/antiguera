@@ -13,6 +13,8 @@ namespace Antiguera.Administrador.Clients
 {
     public class UsuarioClient : ClientBase<UsuarioModel, UsuarioTableModel>, IUsuarioClient
     {
+        public UsuarioClient() :base() { }
+
         public async override Task<UsuarioTableModel> ListarTabela(string url)
         {
             var table = new UsuarioTableModel();
@@ -26,17 +28,20 @@ namespace Antiguera.Administrador.Clients
                     HttpResponseMessage response = await client.GetAsync(url);
                     if (response.IsSuccessStatusCode)
                     {
-                        var acessos = await response.Content.ReadAsAsync<ICollection<UsuarioModel>>();
+                        var usuarios = await response.Content.ReadAsAsync<ICollection<UsuarioModel>>();
 
-                        foreach (var acesso in acessos)
+                        foreach (var usuario in usuarios)
                         {
                             table.data.Add(new UsuarioListTableModel()
                             {
-                                Id = acesso.Id,
-                                Nome = acesso.Nome,
-                                Created = acesso.Created,
-                                Modified = acesso.Modified,
-                                Novo = acesso.Novo
+                                Id = usuario.Id,
+                                Nome = usuario.Nome,
+                                Email = usuario.Email,
+                                Login = usuario.Login,
+                                Sexo = usuario.Genero,
+                                Created = usuario.Created,
+                                Modified = usuario.Modified,
+                                Novo = usuario.Novo
                             });
                         }
 
