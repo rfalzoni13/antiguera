@@ -264,3 +264,4 @@ __pycache__/
 *.png
 /Antiguera.Infra.Data/Migrations
 /Antiguera.Api/log.txt
+/Antiguera.Administrador/log.txt
