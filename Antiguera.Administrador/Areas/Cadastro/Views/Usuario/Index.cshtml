@@ -15,23 +15,13 @@
             Módulo Usuários
         </h1>
         <ol class="breadcrumb">
-            <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="@Url.Action("Index", "Home", new { Area = string.Empty })"><i class="fa fa-dashboard"></i> Home</a></li>
             <li class="active"><i class="fa fa-shopping-bag"></i> @ViewContext.RouteData.GetRequiredString("controller")</li>
         </ol>
     </section><!--section -->
     <!-- Main content -->
     <section class="content container-fluid">
-        @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
-        {
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="alert alert-danger">
-                        <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
-                        @Html.ValidationSummary(false, string.Empty)
-                    </div>
-                </div>
-            </div>
-        }
+        @Html.Partial("_ReturnMessages")
         <div class="row">
             <div class="col-md-12">
                 @Html.ActionLink("Novo usuário", "Novo", "Usuario", new { Area = "Cadastro" }, new { @class = "btn btn-info" })
