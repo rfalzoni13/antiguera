@@ -9,9 +9,6 @@ namespace Antiguera.Utils.Helpers
         public static string AccountLogin;
         public static string AccountLogout;
         public static string AccountExternalLogin;
-        public static string AccountGetTwoFactorProviders;
-        public static string AccountSendTwoFactorProviderCode;
-        public static string AccountVerifyCodeTwoFactor;
         public static string AccountGetExternalLogins;
         public static string AccountAddExternalLogin;
         public static string AccountAddUserExternalLogin;
@@ -19,24 +16,34 @@ namespace Antiguera.Utils.Helpers
         public static string AccountChangePassword;
         public static string AccountForgotPassword;
         public static string AccountResetPassword;
-        public static string AccountRegister;
-        public static string AccountUpdate;
-        public static string AccountDelete;
-        public static string AccountSendEmailConfirmationCode;
-        public static string AccountSendPhoneConfirmationCode;
-        public static string AccountVerifyEmailConfirmationCode;
-        public static string AccountVerifyPhoneConfirmationCode;
+        #endregion
+
+        #region IdentityUtility
+        public static string IdentityUtilityGetTwoFactorProviders;
+        public static string IdentityUtilitySendTwoFactorProviderCode;
+        public static string IdentityUtilityVerifyCodeTwoFactor;
+        public static string IdentityUtilitySendEmailConfirmationCode;
+        public static string IdentityUtilitySendPhoneConfirmationCode;
+        public static string IdentityUtilityVerifyEmailConfirmationCode;
+        public static string IdentityUtilityVerifyPhoneConfirmationCode;
+        #endregion
+
+        #region Acesso
+        public static string AcessoGetAllNames;
+        public static string AcessoGetAll;
+        public static string AcessoGet;
+        public static string AcessoCreate;
+        public static string AcessoEdit;
+        public static string AcessoDelete;
         #endregion
 
         #region Usuario
         public static string UsuarioGetAll;
         public static string UsuarioGet;
-        public static string UsuarioGetByUserId;
         public static string UsuarioCreate;
         public static string UsuarioEdit;
         public static string UsuarioDelete;
         #endregion
-
 
         public static void SetUrlList()
         {
@@ -50,25 +57,33 @@ namespace Antiguera.Utils.Helpers
             AccountAddExternalLogin = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/AdicionarLoginExterno";
             AccountAddUserExternalLogin = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/AdicionarUsuarioLoginExterno";
             AccountRemoveExternalLogin = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/RemoverLoginExterno";
-            AccountGetTwoFactorProviders = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/ObterAutenticacaoDoisFatores";
-            AccountSendTwoFactorProviderCode = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/EnviarCodigoDoisFatores";
-            AccountVerifyCodeTwoFactor = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/VerificarCodigoDoisFatores";
-            AccountRegister = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/Cadastrar";
-            AccountUpdate = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/Atualizar";
-            AccountDelete = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/Apagar";
-            AccountSendEmailConfirmationCode = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/EnviarCodigoConfirmacaoEmail";
-            AccountSendPhoneConfirmationCode = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/EnviarCodigoConfirmacaoTelefone";
-            AccountVerifyEmailConfirmationCode = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/VerificarCodigoConfirmacaoEmail";
-            AccountVerifyPhoneConfirmationCode = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/VerificarCodigoConfirmacaoTelefone";
             AccountChangePassword = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/AlterarSenha";
             AccountForgotPassword = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/EsqueciMinhaSenha";
             AccountResetPassword = $"{urlApi}/{ConfigurationManager.AppSettings["AccountUrl"]}/RecuperarSenha";
             #endregion
 
+            #region IdentityUtility
+            IdentityUtilityGetTwoFactorProviders = $"{urlApi}/{ConfigurationManager.AppSettings["IdentityUtilityUrl"]}/ObterAutenticacaoDoisFatores";
+            IdentityUtilitySendTwoFactorProviderCode = $"{urlApi}/{ConfigurationManager.AppSettings["IdentityUtilityUrl"]}/EnviarCodigoDoisFatores";
+            IdentityUtilityVerifyCodeTwoFactor = $"{urlApi}/{ConfigurationManager.AppSettings["IdentityUtilityUrl"]}/VerificarCodigoDoisFatores";
+            IdentityUtilitySendEmailConfirmationCode = $"{urlApi}/{ConfigurationManager.AppSettings["IdentityUtilityUrl"]}/EnviarCodigoConfirmacaoEmail";
+            IdentityUtilitySendPhoneConfirmationCode = $"{urlApi}/{ConfigurationManager.AppSettings["IdentityUtilityUrl"]}/EnviarCodigoConfirmacaoTelefone";
+            IdentityUtilityVerifyEmailConfirmationCode = $"{urlApi}/{ConfigurationManager.AppSettings["IdentityUtilityUrl"]}/VerificarCodigoConfirmacaoEmail";
+            IdentityUtilityVerifyPhoneConfirmationCode = $"{urlApi}/{ConfigurationManager.AppSettings["IdentityUtilityUrl"]}/VerificarCodigoConfirmacaoTelefone";
+            #endregion
+
+            #region Acesso
+            AcessoGetAllNames = $"{urlApi}/{ConfigurationManager.AppSettings["AcessoUrl"]}/ListarTodosNomes";
+            AcessoGetAll = $"{urlApi}/{ConfigurationManager.AppSettings["AcessoUrl"]}/ListarTodos";
+            AcessoGet = $"{urlApi}/{ConfigurationManager.AppSettings["AcessoUrl"]}/ListarPorId";
+            AcessoCreate = $"{urlApi}/{ConfigurationManager.AppSettings["AcessoUrl"]}/Inserir";
+            AcessoEdit = $"{urlApi}/{ConfigurationManager.AppSettings["AcessoUrl"]}/Atualizar";
+            AcessoDelete = $"{urlApi}/{ConfigurationManager.AppSettings["AcessoUrl"]}/Deletar";
+            #endregion
+
             #region Usuario
             UsuarioGetAll = $"{urlApi}/{ConfigurationManager.AppSettings["UsuarioUrl"]}/ListarTodos";
             UsuarioGet = $"{urlApi}/{ConfigurationManager.AppSettings["UsuarioUrl"]}/ListarPorId";
-            UsuarioGetByUserId = $"{urlApi}/{ConfigurationManager.AppSettings["UsuarioUrl"]}/ListarPorUserId";
             UsuarioCreate = $"{urlApi}/{ConfigurationManager.AppSettings["UsuarioUrl"]}/Inserir";
             UsuarioEdit = $"{urlApi}/{ConfigurationManager.AppSettings["UsuarioUrl"]}/Atualizar";
             UsuarioDelete = $"{urlApi}/{ConfigurationManager.AppSettings["UsuarioUrl"]}/Deletar";

@@ -23,6 +23,14 @@ namespace Antiguera.Utils.Helpers
             }
         }
 
+        public static void DeleteFile(string path)
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+
         public static MemoryStream ConvertArrayBytesToStream(byte[] bytes)
         {
             string base64String = Convert.ToBase64String(bytes);
