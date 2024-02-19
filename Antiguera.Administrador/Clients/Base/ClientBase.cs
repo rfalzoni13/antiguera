@@ -1,4 +1,4 @@
-﻿using Antiguera.Administrador.Models;
+﻿using Antiguera.Administrador.Models.Common;
 using Antiguera.Utils.Helpers;
 using Newtonsoft.Json;
 using System;

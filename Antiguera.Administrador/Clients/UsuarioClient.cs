@@ -1,6 +1,8 @@
 ﻿using Antiguera.Administrador.Clients.Base;
 using Antiguera.Administrador.Clients.Interface;
 using Antiguera.Administrador.Models;
+using Antiguera.Administrador.Models.Common;
+using Antiguera.Administrador.Models.Identity;
 using Antiguera.Administrador.Models.Tables;
 using Antiguera.Utils.Helpers;
 using System;
@@ -62,6 +64,39 @@ namespace Antiguera.Administrador.Clients
             }
 
             return await Task.FromResult(table);
+        }
+
+        public override async Task<string> Inserir(string url, UsuarioModel obj)
+        {
+            var model = new ApplicationUserModel
+            {
+                Nome = obj.Nome,
+                Email = obj.Email,
+                Login = obj.Login,
+                Genero = obj.Genero,
+                DataNascimento = obj.DataNascimento.Date,
+                AcceptTerms = false
+                //Acessos = obj.Acessos.ToArray(),
+            };
+
+            model.PathFoto = FileHelper.ConvertStreamToBase64String(obj.ArquivoPerfil);
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                HttpResponseMessage response = await client.PostAsJsonAsync(url, model);
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    StatusCodeModel statusCode = response.Content.ReadAsAsync<StatusCodeModel>().Result;
+
+                    throw new ApplicationException(statusCode.Message);
+                }
+            }
         }
     }
 }
