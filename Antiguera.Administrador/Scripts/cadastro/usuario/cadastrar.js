@@ -1,6 +1,4 @@
-﻿var formData = new FormData();
-
-antiguera.usuario.cadastrar = antiguera.usuario.cadastrar || {
+﻿antiguera.usuario.cadastrar = antiguera.usuario.cadastrar || {
     registrarComponentes: function () {
         $("#BtnFoto").click(antiguera.usuario.cadastrar.clicarBotaoFoto);
         $("#ArquivoPerfil").change(antiguera.usuario.cadastrar.mudarFoto);
@@ -19,26 +17,33 @@ antiguera.usuario.cadastrar = antiguera.usuario.cadastrar || {
         $(".modal-danger").on("hidden.bs.modal", function () {
             $(this).find("ul").empty();
         });
+
+        $(".alert-close").click(antiguera.core.configuracoes.modais.fecharModal);
+
+        $("#Acessos").select2();
+
+        antiguera.core.datepicker.registrarConfiguracoes();
     },
 
     clicarBotaoFoto: function () {
-        antiguera.core.configuracoes.imageUtility.clicarBotaoFoto($("#ArquivoPerfil"), $("#ImgFoto"), 'usuario');
+        antiguera.core.imageUtility.clicarBotaoFoto($("#ArquivoPerfil"), $("#ImgFoto"), 'usuario');
     },
 
     cancelarCorte: function () {
-        antiguera.core.configuracoes.imageUtility.cancelarCorte($("#ArquivoPerfil"), $("#ImgFoto"), 'usuario');
+        antiguera.core.imageUtility.cancelarCorte($("#ArquivoPerfil"), $("#ImgFoto"), 'usuario');
     },
 
     mudarFoto: function (e) {
-        antiguera.core.configuracoes.imageUtility.mudarFoto(e, this, $("#ImagePreview"), $(".modal-foto"));
+        antiguera.core.imageUtility.mudarFoto(e, this, $("#ImagePreview"), $(".modal-foto"));
     },
 
     ajustarImagem: function () {
-        antiguera.core.configuracoes.imageUtility.ajustarImagem($("#ImagePreview"));
+        antiguera.core.imageUtility.ajustarImagem($("#ImagePreview"));
     },
 
     cortarImagem: function () {
-        antiguera.core.configuracoes.imageUtility.cortarImagem($("#ImagePreview"), $("#ImgFoto"), formData, 'ArquivoPerfil');
+        let formData = new FormData();
+        antiguera.core.imageUtility.cortarImagem($("#ImagePreview"), $("#ImgFoto"), formData, 'ArquivoPerfil');
     },
 
     //enviarFormulario: function () {

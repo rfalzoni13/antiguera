@@ -1,4 +1,4 @@
-﻿antiguera.core.configuracoes.imageUtility = antiguera.core.configuracoes.imageUtility || {
+﻿antiguera.core.imageUtility = antiguera.core.imageUtility || {
     clicarBotaoFoto: function (element, photoElement, type) {
         if (element.val().length > 0) {
             cancelarCorte(element, photoElement, type);
@@ -23,7 +23,7 @@
             backdrop: 'static',
             keyboard: false
         });
-        antiguera.core.configuracoes.imageUtility.carregarFoto(input, element);
+        antiguera.core.imageUtility.carregarFoto(input, element);
     },
 
     carregarFoto: function (input, output) {
@@ -63,7 +63,7 @@
                     || width > maxCroppedWidth
                     || height > maxCroppedHeight
                 ) {
-                    antiguera.core.configuracoes.imageUtility.definirImagemCrop(Math.max(minCroppedWidth, Math.min(maxCroppedWidth, width)), Math.max(minCroppedHeight, Math.min(maxCroppedHeight, height)), element);
+                    antiguera.core.imageUtility.definirImagemCrop(Math.max(minCroppedWidth, Math.min(maxCroppedWidth, width)), Math.max(minCroppedHeight, Math.min(maxCroppedHeight, height)), element);
                 }
 
                 //console.log("Posição X é: " + event.detail.x);
@@ -89,7 +89,7 @@
         var cropper = element.data('cropper');
         var canvas = cropper.getCroppedCanvas();
         photoElement.attr("src", canvas.toDataURL());
-        antiguera.core.configuracoes.imageUtility.prepararImagem(cropper, formData, name);
+        antiguera.core.imageUtility.prepararImagem(cropper, formData, name);
         $(".modal").modal("hide");
     },
 
