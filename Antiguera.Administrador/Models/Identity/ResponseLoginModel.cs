@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace Antiguera.Administrador.Models
+namespace Antiguera.Administrador.Models.Identity
 {
     public class ResponseLoginModel
     {

@@ -1,12 +1,12 @@
-﻿using Antiguera.Api.Utils;
-using Antiguera.Dominio.DTO;
-using Antiguera.Dominio.DTO.Identity;
-using Antiguera.Dominio.Interfaces.Servicos;
+﻿using Antiguera.Api.Models;
+using Antiguera.Api.Utils;
+using Antiguera.Servicos.Servicos.Identity;
 using NLog;
 using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace Antiguera.Api.Controllers.Admin
@@ -16,15 +16,14 @@ namespace Antiguera.Api.Controllers.Admin
     public class UsuarioController : ApiController
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
-        private readonly IAccountServico _accountServico;
-        private readonly IUsuarioServico _usuarioServico;
+        private readonly UsuarioServico _usuarioServico;
 
-        public UsuarioController(IAccountServico accountServico, IUsuarioServico usuarioServico)
+        public UsuarioController(UsuarioServico usuarioServico)
         {
-            _accountServico = accountServico;
             _usuarioServico = usuarioServico;
         }
 
+        #region Pesquisas
         /// <summary>
         /// Listar todos os usuarios
         /// </summary>
@@ -42,7 +41,7 @@ namespace Antiguera.Api.Controllers.Admin
             _logger.Info(action + " - Iniciado");
             try
             {
-                var retorno = _usuarioServico.ListarTodos();
+                var retorno = _usuarioServico.ListarTodosUsuarios();
 
                 if (retorno != null && retorno.Count() > 0)
                 {
@@ -95,7 +94,7 @@ namespace Antiguera.Api.Controllers.Admin
             {
                 if (Id != null)
                 {
-                    var usuario = _usuarioServico.ListarPorId(Id);
+                    var usuario = _usuarioServico.ListarUsuarioPorId(Id);
 
                     if (usuario != null)
                     {
@@ -129,7 +128,9 @@ namespace Antiguera.Api.Controllers.Admin
                 return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
             }
         }
+        #endregion
 
+        #region Inserir Usuário
         /// <summary>
         /// Inserir usuário
         /// </summary>
@@ -138,13 +139,13 @@ namespace Antiguera.Api.Controllers.Admin
         /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Insere um novo usuário passando um objeto no body da requisição no método POST</remarks>
-        /// <param name="register">Objeto de registro usuário</param>
+        /// <param name="applicationUserRegisterModel">Objeto de registro usuário</param>
         /// <returns></returns>
         // POST Api/Usuario/Inserir
         [HttpPost]
         [AllowAnonymous]
         [Route("Inserir")]
-        public HttpResponseMessage Inserir([FromBody] ApplicationUserRegisterDTO register)
+        public HttpResponseMessage Inserir([FromBody] ApplicationUserRegisterModel applicationUserRegisterModel)
         {
             string action = this.ActionContext.ActionDescriptor.ActionName;
             _logger.Info(action + " - Iniciado");
@@ -152,7 +153,9 @@ namespace Antiguera.Api.Controllers.Admin
             {
                 if (ModelState.IsValid)
                 {
-                    _accountServico.Adicionar(register);
+                    var userDto = ApplicationUserRegisterModel.ConvertToDTO(applicationUserRegisterModel);
+
+                    _usuarioServico.Adicionar(userDto);
 
                     _logger.Info(action + " - Sucesso!");
 
@@ -183,6 +186,45 @@ namespace Antiguera.Api.Controllers.Admin
         }
 
         /// <summary>
+        /// Inserir usuário modo assíncrono
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>Insere um novo usuário passando um objeto no body da requisição no método POST de forma assíncrona</remarks>
+        /// <param name="applicationUserRegisterModel">Objeto de registro usuário</param>
+        /// <returns></returns>
+
+        // POST: /Usuario/InserirAsync
+        [HttpPost]
+        [Route("InserirAsync")]
+        public async Task<HttpResponseMessage> InserirAsync(ApplicationUserRegisterModel applicationUserRegisterModel)
+        {
+            string action = this.ActionContext.ActionDescriptor.ActionName;
+            try
+            {
+                _logger.Info(action + " - Iniciado");
+
+                var userDto = ApplicationUserRegisterModel.ConvertToDTO(applicationUserRegisterModel);
+
+                await _usuarioServico.AdicionarAsnyc(userDto);
+
+                _logger.Info(action + " - Sucesso!");
+
+                _logger.Info(action + " - Finalizado");
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, "Usuário adicionado com sucesso!");
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal(ex, "Erro fatal!");
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
+            }
+        }
+        #endregion
+
+        #region Atualizar Usuário
+        /// <summary>
         /// Atualizar usuário
         /// </summary>
         /// <response code="400">Bad Request</response>
@@ -190,12 +232,12 @@ namespace Antiguera.Api.Controllers.Admin
         /// <response code="404">Not Found</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Atualiza o usuário passando o objeto no body da requisição pelo método PUT</remarks>
-        /// <param name="register">Objeto de registro do usuário</param>
+        /// <param name="applicationUserRegisterModel">Objeto de registro do usuário</param>
         /// <returns></returns>
         // PUT Api/Usuario/Atualizar
         [HttpPut]
         [Route("Atualizar")]
-        public HttpResponseMessage Atualizar([FromBody] ApplicationUserRegisterDTO register)
+        public HttpResponseMessage Atualizar([FromBody] ApplicationUserRegisterModel applicationUserRegisterModel)
         {
             string action = this.ActionContext.ActionDescriptor.ActionName;
             _logger.Info(action + " - Iniciado");
@@ -203,7 +245,9 @@ namespace Antiguera.Api.Controllers.Admin
             {
                 if (ModelState.IsValid)
                 {
-                    _accountServico.Atualizar(register);
+                    var userDto = ApplicationUserRegisterModel.ConvertToDTO(applicationUserRegisterModel);
+
+                    _usuarioServico.Atualizar(userDto);
 
                     _logger.Info(action + " - Sucesso!");
 
@@ -234,18 +278,56 @@ namespace Antiguera.Api.Controllers.Admin
         }
 
         /// <summary>
+        /// Atualizar usuário modo assíncrono
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>Atualiza o usuário passando o objeto no body da requisição pelo método PUT de forma assíncrona</remarks>
+        /// <param name="applicationUserRegisterModel">Objeto de registro do usuário</param>
+        // PUT: /Usuario/AtualizarAsync
+        [HttpPut]
+        [Authorize]
+        [Route("AtualizarAsync")]
+        public async Task<HttpResponseMessage> AtualizarAsync(ApplicationUserRegisterModel applicationUserRegisterModel)
+        {
+            string action = this.ActionContext.ActionDescriptor.ActionName;
+            try
+            {
+                _logger.Info(action + " - Iniciado");
+
+                var userDto = ApplicationUserRegisterModel.ConvertToDTO(applicationUserRegisterModel);
+
+                await _usuarioServico.AtualizarAsync(userDto);
+
+                _logger.Info(action + " - Sucesso!");
+
+                _logger.Info(action + " - Finalizado");
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, "Usuário atualizado com sucesso!");
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal(ex, "Erro fatal!");
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
+            }
+        }
+        #endregion
+
+        #region Excluir Usuário
+        /// <summary>
         /// Excluir usuario
         /// </summary>
         /// <response code="400">Bad Request</response>
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
         /// <remarks>Exclui o usuario passando o objeto no body da requisição pelo método DELETE</remarks>
-        /// <param name="register">Objeto de registro do usuario</param>
+        /// <param name="applicationUserRegisterModel">Objeto de registro do usuario</param>
         /// <returns></returns>
         // DELETE Api/Usuario/Excluir
         [HttpDelete]
         [Route("Excluir")]
-        public HttpResponseMessage Excluir([FromBody] ApplicationUserRegisterDTO register)
+        public HttpResponseMessage Excluir([FromBody] ApplicationUserRegisterModel applicationUserRegisterModel)
         {
             string action = this.ActionContext.ActionDescriptor.ActionName;
             _logger.Info(action + " - Iniciado");
@@ -253,7 +335,9 @@ namespace Antiguera.Api.Controllers.Admin
             {
                 if (ModelState.IsValid)
                 {
-                    _accountServico.Apagar(register);
+                    var userDto = ApplicationUserRegisterModel.ConvertToDTO(applicationUserRegisterModel);
+
+                    _usuarioServico.Apagar(userDto);
 
                     _logger.Info(action + " - Sucesso!");
 
@@ -273,55 +357,41 @@ namespace Antiguera.Api.Controllers.Admin
             }
         }
 
-        ///// <summary>
-        ///// Atualizar senha do usuário
-        ///// </summary>
-        ///// <response code="400">Bad Request</response>
-        ///// <response code="401">Unauthorized</response>
-        ///// <response code="404">Not Found</response>
-        ///// <response code="500">Internal Server Error</response>
-        ///// <remarks>Atualiza a senha do usuário passando o objeto no body da requisição pelo método PUT</remarks>
-        ///// <param name="usuarioDto">Objeto do usuário</param>
-        ///// <returns></returns>
-        // PUT Api/Usuario/AtualizarSenha
-        //[HttpPut]
-        //[Route("AtualizarSenha")]
-        //public async Task<HttpResponseMessage> AtualizarSenha([FromBody]UsuarioDTO usuarioDto)
-        //{
-        //    string action = this.ActionContext.ActionDescriptor.ActionName;;
-        //    _logger.Info(action + " - Iniciado");
-        //    try
-        //    {
-        //        if (ModelState.IsValid)
-        //        {
-        //                await UserManager.RemovePasswordAsync(user.Id);
+        /// <summary>
+        /// Excluir usuario
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>Exclui o usuario passando o objeto no body da requisição pelo método DELETE</remarks>
+        /// <param name="applicationUserRegisterModel">Objeto de registro do usuario</param>
+        /// <returns></returns>
+        //DELETE: /Usuario/ExcluirAsync
+        [HttpDelete]
+        [CustomAuthorize]
+        [Route("ExcluirAsync")]
+        public async Task<HttpResponseMessage> ExcluirAsync(ApplicationUserRegisterModel applicationUserRegisterModel)
+        {
+            string action = this.ActionContext.ActionDescriptor.ActionName;
+            try
+            {
+                _logger.Info(action + " - Iniciado");
 
-        //                await UserManager.AddPasswordAsync(user.Id, usuarioDto.Senha);
+                var userDto = ApplicationUserRegisterModel.ConvertToDTO(applicationUserRegisterModel);
 
-        //                _logger.Info(action + " - Sucesso!");
+                await _usuarioServico.ApagarAsync(userDto);
 
-        //                _logger.Info(action + " - Finalizado");
+                _logger.Info(action + " - Sucesso!");
 
-        //                GravarHistorico(usuarioDto.Id, ETipoHistorico.AtualizarSenha);
-
-        //                return Request.CreateResponse(HttpStatusCode.OK, "Senha alterada com sucesso!");
-
-
-        //        else
-        //        {
-        //            return RetornoRequisicaoInvalida(action, "Por favor, preencha os campos corretamente!");
-        //        }
-        //    }
-
-        //    catch (HttpResponseException ex)
-        //    {
-        //        return RetornoExceptionNaoEncontrado(ex, action, "Nenhum registro encontrado!");
-        //    }
-
-        //    catch (Exception ex)
-        //    {
-        //        return RetornoExceptionErroInterno(ex, action);
-        //    }
-        //}
+                _logger.Info(action + " - Finalizado");
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK, "Usuário deletado com sucesso!");
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal(ex, "Erro fatal!");
+                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
+            }
+        }
+        #endregion
     }
 }

@@ -170,6 +170,8 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\Admin\AccountController.cs" />
+    <Compile Include="Controllers\Admin\AcessoController.cs" />
+    <Compile Include="Controllers\Admin\IdentiyUtilityController.cs" />
     <Compile Include="Controllers\Admin\UsuarioController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

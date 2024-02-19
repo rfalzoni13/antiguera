@@ -1,0 +1,47 @@
+﻿@if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+{
+    <div class="col-md-12">
+        <div class="alert alert-danger">
+            <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
+            @Html.ValidationSummary(false, string.Empty)
+        </div>
+    </div>
+}
+
+@if (TempData["Return"] != null)
+{
+    <div class="row">
+        <div class="col-md-12">
+            @switch ((TempData["Return"] as Antiguera.Administrador.Models.Common.ReturnModel).Tipo)
+            {
+                case "Error":
+                    <div class="alert alert-danger">
+                        <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
+                        @((TempData["Return"] as Antiguera.Administrador.Models.Common.ReturnModel).Mensagem)
+                    </div>
+                    break;
+
+                case "Warning":
+                    <div class="alert alert-warning">
+                        <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
+                        @((TempData["Return"] as Antiguera.Administrador.Models.Common.ReturnModel).Mensagem)
+                    </div>
+                    break;
+
+                case "Success":
+                    <div class="alert alert-success">
+                        <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
+                        @((TempData["Return"] as Antiguera.Administrador.Models.Common.ReturnModel).Mensagem)
+                    </div>
+                    break;
+
+                default:
+                    <div class="alert alert-info">
+                        <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
+                        @((TempData["Return"] as Antiguera.Administrador.Models.Common.ReturnModel).Mensagem)
+                    </div>
+                    break;
+            }
+        </div>
+    </div>
+}

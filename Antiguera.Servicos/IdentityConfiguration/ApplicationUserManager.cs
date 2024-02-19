@@ -7,7 +7,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.DataProtection;
 
-namespace Antiguera.Servicos.Identity
+namespace Antiguera.Servicos.IdentityConfiguration
 {
     public class ApplicationUserManager : UserManager<ApplicationUser>
     {

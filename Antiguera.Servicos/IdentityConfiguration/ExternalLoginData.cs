@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Web;
 
-namespace Antiguera.Servicos.Identity
+namespace Antiguera.Servicos.IdentityConfiguration
 {
     public class ExternalLoginData
     {

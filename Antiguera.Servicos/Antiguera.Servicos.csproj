@@ -139,20 +139,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Identity\ApplicationOAuthProvider.cs" />
-    <Compile Include="Identity\AccessRefreshTokenProvider.cs" />
-    <Compile Include="Identity\ExternalLoginData.cs" />
-    <Compile Include="Identity\ApplicationRoleManager.cs" />
-    <Compile Include="Identity\ApplicationSignInManager.cs" />
-    <Compile Include="Identity\ApplicationUserManager.cs" />
+    <Compile Include="IdentityConfiguration\ApplicationOAuthProvider.cs" />
+    <Compile Include="IdentityConfiguration\AccessRefreshTokenProvider.cs" />
+    <Compile Include="IdentityConfiguration\ExternalLoginData.cs" />
+    <Compile Include="IdentityConfiguration\ApplicationRoleManager.cs" />
+    <Compile Include="IdentityConfiguration\ApplicationSignInManager.cs" />
+    <Compile Include="IdentityConfiguration\ApplicationUserManager.cs" />
     <Compile Include="Senders\Email\EmailIdentityMessageService.cs" />
     <Compile Include="Senders\Keys\EmailKeys.cs" />
     <Compile Include="Senders\Keys\TwilioKeys.cs" />
     <Compile Include="Senders\Sms\SmsIdentityMessageService.cs" />
-    <Compile Include="Servicos\AccountServico.cs" />
-    <Compile Include="Identity\AppBuilderConfiguration.cs" />
+    <Compile Include="Servicos\Identity\AccountServico.cs" />
+    <Compile Include="IdentityConfiguration\AppBuilderConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Servicos\UsuarioServico.cs" />
+    <Compile Include="Servicos\Identity\AcessoServico.cs" />
+    <Compile Include="Servicos\Identity\IdentityUtilityServico.cs" />
+    <Compile Include="Servicos\Identity\UsuarioServico.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Antiguera.Dominio\Antiguera.Dominio.csproj">
@@ -172,9 +174,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Servicos\Base\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

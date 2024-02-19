@@ -1,5 +1,4 @@
 ﻿using Antiguera.Infra.Data.Identity;
-using Antiguera.Servicos.Identity;
 using Antiguera.Utils.Helpers;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -16,7 +15,7 @@ using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace Antiguera.Servicos.Identity
+namespace Antiguera.Servicos.IdentityConfiguration
 {
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {

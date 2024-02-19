@@ -1,4 +1,4 @@
-﻿@model Antiguera.Administrador.Models.ForgotPasswordModel
+﻿@model Antiguera.Administrador.Models.Identity.ForgotPasswordModel
 
 @{
     ViewBag.Title = "Recuperar Senha";
@@ -31,7 +31,7 @@
         </div>
         <!-- /.login-logo -->
         <div class="login-box-body">
-            @Html.ValidationSummary()
+            @Html.Partial("_ReturnMessages")
             <h4 class="login-box-msg">@Dominio.SenhaRecuperacao</h4>
             @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "form-signin" }))
             {

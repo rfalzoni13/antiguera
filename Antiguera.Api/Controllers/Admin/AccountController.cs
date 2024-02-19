@@ -1,8 +1,8 @@
 ﻿using Antiguera.Api.Models;
 using Antiguera.Api.Utils;
 using Antiguera.Dominio.DTO.Identity;
-using Antiguera.Dominio.Interfaces.Servicos;
-using Antiguera.Servicos.Identity;
+using Antiguera.Servicos.IdentityConfiguration;
+using Antiguera.Servicos.Servicos.Identity;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
@@ -20,14 +20,20 @@ namespace Antiguera.Api.Admin.Controllers
     public class AccountController : ApiController
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
-        private readonly IAccountServico _accountServico;
+        private readonly AccountServico _accountServico;
 
-        public AccountController(IAccountServico accountServico)
+        public AccountController(AccountServico accountServico)
         {
             _accountServico = accountServico;
         }
 
         #region LOGIN
+        /// <summary>
+        /// Logout
+        /// </summary>
+        /// <response code="500">Internal Server Error</response>
+        /// <remarks>Deslogar do Sistema</remarks>
+        /// <returns></returns>
         // POST: /Account/Logout
         [Route("Logout")]
         public HttpResponseMessage Logout()
@@ -55,6 +61,16 @@ namespace Antiguera.Api.Admin.Controllers
         #endregion
 
         #region LOGINS EXTERNOS
+        /// <summary>
+        /// Login Externo
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <param name="provider"></param>
+        /// <param name="error"></param>
+        /// <remarks>Efetuar login com provedores externos</remarks>
+        /// <returns></returns>
         // GET: /Account/LoginExterno
         [OverrideAuthentication]
         [HostAuthentication(DefaultAuthenticationTypes.ExternalCookie)]
@@ -99,6 +115,14 @@ namespace Antiguera.Api.Admin.Controllers
             }
         }
 
+        /// <summary>
+        /// Obter Logins Externos
+        /// </summary>
+        /// <response code="500">Internal Server Error</response>
+        /// <param name="returnUrl"></param>
+        /// <param name="generateState"></param>
+        /// <remarks>Obtém todos logins externos vinculados</remarks>
+        /// <returns></returns>
         // GET: /Account/ObterLoginsExternos
         [HttpGet]
         [Route("ObterLoginsExternos")]
@@ -153,6 +177,14 @@ namespace Antiguera.Api.Admin.Controllers
             }
         }
 
+        /// <summary>
+        /// Adicionar Login Externo
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <param name="model"></param>
+        /// <remarks>Adiciona login externo</remarks>
+        /// <returns></returns>
         // POST: /Account/AdicionarLoginExterno
         [HttpPost]
         [Route("AdicionarLoginExterno")]
@@ -166,7 +198,7 @@ namespace Antiguera.Api.Admin.Controllers
 
                 ApplicationOAuthProvider.Logout(Request.GetOwinContext(), DefaultAuthenticationTypes.ExternalCookie);
 
-                var result = await _accountServico.AdicionarLoginExterno(User.Identity.GetUserId(), model.ExternalAccessToken);
+                var result = await _accountServico.AdicionarLoginExternoAsync(User.Identity.GetUserId(), model.ExternalAccessToken);
                 if (!result.Succeeded)
                 {
                     return ResponseMessageHelper.RetornoErrorResult(Request, _logger, action, result.Errors);
@@ -181,6 +213,14 @@ namespace Antiguera.Api.Admin.Controllers
             }
         }
 
+        /// <summary>
+        /// Adicionar Usuário ao Login Externo
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <param name="model"></param>
+        /// <remarks>Adiciona usuário ao provedor de login externo</remarks>
+        /// <returns></returns>
         // POST: /Account/AdicionarUsuarioLoginExterno
         [HttpPost]
         [Route("AdicionarUsuarioLoginExterno")]
@@ -207,6 +247,14 @@ namespace Antiguera.Api.Admin.Controllers
             }
         }
 
+        /// <summary>
+        /// Remover Login Externo
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <param name="model"></param>
+        /// <remarks>Remove provedor de login externo</remarks>
+        /// <returns></returns>
         // POST: /Account/RemoverLoginExterno
         [HttpPost]
         [Route("RemoverLoginExterno")]
@@ -218,7 +266,7 @@ namespace Antiguera.Api.Admin.Controllers
             {
                 _logger.Info(action + " - Iniciado");
 
-                var result = await _accountServico.RemoverLoginExterno(User.Identity.GetUserId(), model.LoginProvider, model.ProviderKey);
+                var result = await _accountServico.RemoverLoginExternoAsync(User.Identity.GetUserId(), model.LoginProvider, model.ProviderKey);
                 if (!result.Succeeded)
                 {
                     return ResponseMessageHelper.RetornoErrorResult(Request, _logger, action, result.Errors);
@@ -234,306 +282,15 @@ namespace Antiguera.Api.Admin.Controllers
         }
         #endregion
 
-        #region DOIS FATORES
-        // GET: /Account/ObterAutenticacaoDoisFatores
-        [HttpGet]
-        [Route("ObterAutenticacaoDoisFatores")]
-        public async Task<HttpResponseMessage> ObterAutenticacaoDoisFatores(string email, string returnUrl = null)
-        {
-            string action = this.ActionContext.ActionDescriptor.ActionName;
-
-            try
-            {
-                var userFactors = await _accountServico.ObterAutenticacaoDoisFatores(email);
-
-                return Request.CreateResponse(HttpStatusCode.OK, userFactors);
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal(ex, "Erro fatal!");
-                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
-            }
-        }
-
-        // POST: /Account/EnviarCodigoDoisFatores
-        [CustomAuthorize]
-        [HttpPost]
-        [Route("EnviarCodigoDoisFatores")]
-        public async Task<HttpResponseMessage> EnviarCodigoDoisFatores(SendCodeModel sendCodeModel)
-        {
-            string action = this.ActionContext.ActionDescriptor.ActionName;
-            try
-            {
-                _logger.Info(action + " - Iniciado");
-                var sendCodeDTO = new SendCodeDTO
-                {
-                    UserId = sendCodeModel.UserId,
-                    SelectedProvider = sendCodeModel.SelectedProvider
-                };
-
-                await _accountServico.EnviarCodigo(sendCodeDTO);
-
-                _logger.Info(action + " - Sucesso!");
-
-                _logger.Info(action + " - Finalizado");
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK, "Código enviado com sucesso!");
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal(ex, "Erro fatal!");
-                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
-            }
-        }
-
-        // POST: /Account/VerificarCodigoDoisFatores
-        [CustomAuthorize]
-        [HttpPost]
-        [Route("VerificarCodigoDoisFatores")]
-        public async Task<HttpResponseMessage> VerificarCodigoDoisFatores(VerifyCodeModel verifiyCodeModel)
-        {
-            string action = this.ActionContext.ActionDescriptor.ActionName;
-            try
-            {
-                if (!User.Identity.IsAuthenticated)
-                {
-                    throw new Exception("Usuário não autenticado!");
-                }
-                _logger.Info(action + " - Iniciado");
-                var verifiyCodeDTO = new VerifyCodeDTO
-                {
-                    UserId = verifiyCodeModel.UserId,
-                    Code = verifiyCodeModel.Code,
-                    Provider = verifiyCodeModel.Provider,
-                    ReturnUrl = verifiyCodeModel.ReturnUrl
-                };
-
-                var retornoCodigo = await _accountServico.VerificarCodigo(verifiyCodeDTO);
-
-                _logger.Info(action + " - Sucesso!");
-
-                _logger.Info(action + " - Finalizado");
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK, retornoCodigo);
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal(ex, "Erro fatal!");
-                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
-            }
-        }
-        #endregion
-
-        #region CADASTRO
-        // POST: /Account/Cadastrar
-        [HttpPost]
-        [Route("Cadastrar")]
-        public async Task<HttpResponseMessage> Cadastrar(ApplicationUserRegisterModel applicationUserRegisterModel)
-        {
-            string action = this.ActionContext.ActionDescriptor.ActionName;
-            try
-            {
-                _logger.Info(action + " - Iniciado");
-
-                var userDto = ApplicationUserRegisterModel.ConvertToDTO(applicationUserRegisterModel);
-
-                await _accountServico.Adicionar(userDto);
-
-                _logger.Info(action + " - Sucesso!");
-
-                _logger.Info(action + " - Finalizado");
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK, "Usuário adicionado com sucesso!");
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal(ex, "Erro fatal!");
-                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
-            }
-        }
-
-        // PUT: /Account/Atualizar
-        [HttpPut]
-        [Authorize]
-        [Route("Atualizar")]
-        public async Task<HttpResponseMessage> Atualizar(ApplicationUserRegisterModel applicationUserRegisterModel)
-        {
-            string action = this.ActionContext.ActionDescriptor.ActionName;
-            try
-            {
-                _logger.Info(action + " - Iniciado");
-
-                var userDto = ApplicationUserRegisterModel.ConvertToDTO(applicationUserRegisterModel);
-
-                await _accountServico.Atualizar(userDto);
-
-                _logger.Info(action + " - Sucesso!");
-
-                _logger.Info(action + " - Finalizado");
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK, "Usuário atualizado com sucesso!");
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal(ex, "Erro fatal!");
-                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
-            }
-        }
-
-        //DELETE: /Account/Apagar
-        [HttpDelete]
-        [CustomAuthorize]
-        [Route("Apagar")]
-        public async Task<HttpResponseMessage> Apagar(ApplicationUserRegisterModel applicationUserRegisterModel)
-        {
-            string action = this.ActionContext.ActionDescriptor.ActionName;
-            try
-            {
-                _logger.Info(action + " - Iniciado");
-
-                var userDto = ApplicationUserRegisterModel.ConvertToDTO(applicationUserRegisterModel);
-
-                await _accountServico.Atualizar(userDto);
-
-                await _accountServico.Apagar(userDto);
-
-                _logger.Info(action + " - Sucesso!");
-
-                _logger.Info(action + " - Finalizado");
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK, "Usuário deletado com sucesso!");
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal(ex, "Erro fatal!");
-                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
-            }
-        }
-        #endregion
-
-        #region CONFIRMAÇÃO DE EMAIL E TELEFONE
-        // POST: /Account/EnviarCodigoConfirmacaoEmail
-        [HttpPost]
-        [Route("EnviarCodigoConfirmacaoEmail")]
-        public async Task<HttpResponseMessage> EnviarCodigoConfirmacaoEmail(GenerateTokenEmailModel generateTokenEmailModel)
-        {
-            string action = this.ActionContext.ActionDescriptor.ActionName;
-            try
-            {
-                _logger.Info(action + " - Iniciado");
-                var generateTokenEmailDTO = new GenerateTokenEmailDTO
-                {
-                    UserId = generateTokenEmailModel.UserId,
-                    Url = generateTokenEmailModel.Url
-                };
-
-                await _accountServico.EnviarCodigoConfirmacaoEmail(generateTokenEmailDTO);
-
-                _logger.Info(action + " - Sucesso!");
-
-                _logger.Info(action + " - Finalizado");
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK, "Código enviado com sucesso!");
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal(ex, "Erro fatal!");
-                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
-            }
-        }
-
-        // POST: /Account/EnviarCodigoConfirmacaoTelefone
-        [HttpPost]
-        [Route("EnviarCodigoConfirmacaoTelefone")]
-        public async Task<HttpResponseMessage> EnviarCodigoConfirmacaoTelefone(GenerateTokenPhoneModel generateTokenPhoneModel)
-        {
-            string action = this.ActionContext.ActionDescriptor.ActionName;
-            try
-            {
-                _logger.Info(action + " - Iniciado");
-                var generateTokenPhoneDTO = new GenerateTokenPhoneDTO
-                {
-                    UserId = generateTokenPhoneModel.UserId,
-                    Phone = generateTokenPhoneModel.Phone
-                };
-
-                await _accountServico.EnviarCodigoConfirmacaoTelefone(generateTokenPhoneDTO);
-
-                _logger.Info(action + " - Sucesso!");
-
-                _logger.Info(action + " - Finalizado");
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK, "Código enviado com sucesso!");
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal(ex, "Erro fatal!");
-                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
-            }
-        }
-
-        // POST: /Account/VerificarCodigoConfirmacaoEmail
-        [HttpPost]
-        [Route("VerificarCodigoConfirmacaoEmail")]
-        public async Task<HttpResponseMessage> VerificarCodigoConfirmacaoEmail(ConfirmEmailCodeModel confirmEmailCodeModel)
-        {
-            string action = this.ActionContext.ActionDescriptor.ActionName;
-            try
-            {
-                _logger.Info(action + " - Iniciado");
-                var confirmEmailCodeDTO = new ConfirmEmailCodeDTO
-                {
-                    UserId = confirmEmailCodeModel.UserId,
-                    Code = confirmEmailCodeModel.Code
-                };
-
-                var result = await _accountServico.VerificarCodigoConfirmacaoEmail(confirmEmailCodeDTO);
-                if (!result.Succeeded)
-                {
-                    return ResponseMessageHelper.RetornoErrorResult(Request, _logger, action, result.Errors);
-                }
-
-                _logger.Info(action + " - Sucesso!");
-
-                _logger.Info(action + " - Finalizado");
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK, "Email confirmado com sucesso!");
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal(ex, "Erro fatal!");
-                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
-            }
-        }
-
-        // POST: /Account/VerificarCodigoConfirmacaoTelefone
-        [HttpPost]
-        [Route("VerificarCodigoConfirmacaoTelefone")]
-        public async Task<HttpResponseMessage> VerificarCodigoConfirmacaoTelefone(ConfirmPhoneCodeModel confirmPhoneCodeModel)
-        {
-            string action = this.ActionContext.ActionDescriptor.ActionName;
-            try
-            {
-                _logger.Info(action + " - Iniciado");
-                var confirmPhoneCodeDTO = new ConfirmPhoneCodeDTO
-                {
-                    UserId = confirmPhoneCodeModel.UserId,
-                    Phone = confirmPhoneCodeModel.Phone,
-                    Code = confirmPhoneCodeModel.Code
-                };
-
-                var result = await _accountServico.VerificarCodigoConfirmacaoTelefone(confirmPhoneCodeDTO);
-                if (!result.Succeeded)
-                {
-                    return ResponseMessageHelper.RetornoErrorResult(Request, _logger, action, result.Errors);
-                }
-
-                _logger.Info(action + " - Sucesso!");
-
-                _logger.Info(action + " - Finalizado");
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK, "Telefone confirmado com sucesso!");
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal(ex, "Erro fatal!");
-                return ResponseMessageHelper.RetornoExceptionErroInterno(ex, Request, _logger, action);
-            }
-        }
-        #endregion
-
         #region SENHA
+        /// <summary>
+        /// Alterar Senha
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <param name="changePasswordBinding"></param>
+        /// <remarks>Alterar senha do usuário</remarks>
+        /// <returns></returns>
         // POST /Account/AlterarSenha
         [Route("AlterarSenha")]
         public async Task<HttpResponseMessage> AlterarSenha(ChangePasswordBindingDTO changePasswordBinding)
@@ -542,7 +299,7 @@ namespace Antiguera.Api.Admin.Controllers
             try
             {
                 _logger.Info(action + " - Iniciado");
-                var result = await _accountServico.AlterarSenha(changePasswordBinding);
+                var result = await _accountServico.AlterarSenhaAsync(changePasswordBinding);
                 if (!result.Succeeded)
                 {
                     return ResponseMessageHelper.RetornoErrorResult(Request, _logger, action, result.Errors);
@@ -560,6 +317,14 @@ namespace Antiguera.Api.Admin.Controllers
             }
         }
 
+        /// <summary>
+        /// Esqueci Minha Senha
+        /// </summary>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <param name="model"></param>
+        /// <remarks>Enviar pedido de esquecimento de senha</remarks>
+        /// <returns></returns>
         // POST: /Account/EsqueciMinhaSenha
         [HttpPost]
         [AllowAnonymous]
@@ -571,12 +336,12 @@ namespace Antiguera.Api.Admin.Controllers
             try
             {
                 // Exija que o usuário efetue login via nome de usuário/senha ou login externo
-                var dto = await _accountServico.GerarTokenRecuperacaoSenha(model.Email);
+                var dto = await _accountServico.GerarTokenRecuperacaoSenhaAsync(model.Email);
                 if (dto != null)
                 {
                     dto.CallBackUrl = string.Format(model.CallBackUrl, dto.UserId, dto.Code);
 
-                    await _accountServico.EnviarEmailRecuperacaoSenha(dto);
+                    await _accountServico.EnviarEmailRecuperacaoSenhaAsync(dto);
 
                     _logger.Info(action + " - Sucesso!");
 
@@ -606,6 +371,14 @@ namespace Antiguera.Api.Admin.Controllers
             }
         }
 
+        /// <summary>
+        /// Recuperar Senha
+        /// </summary>
+        /// <response code="400">Bad Request</response>
+        /// <response code="500">Internal Server Error</response>
+        /// <param name="model"></param>
+        /// <remarks>Recuperação de senha do usuário</remarks>
+        /// <returns></returns>
         // POST: /Account/RecuperarSenha
         [HttpPost]
         [Route("RecuperarSenha")]
@@ -615,7 +388,7 @@ namespace Antiguera.Api.Admin.Controllers
 
             try
             {
-                var result = await _accountServico.RecuperarSenha(model);
+                var result = await _accountServico.RecuperarSenhaAsync(model);
                 if (!result.Succeeded)
                 {
                     return ResponseMessageHelper.RetornoErrorResult(Request, _logger, action, result.Errors);

@@ -1,4 +1,4 @@
-﻿@model Antiguera.Administrador.Models.LoginModel
+﻿@model Antiguera.Administrador.Models.Identity.LoginModel
 
 @{
     Layout = null;
@@ -25,15 +25,7 @@
         </div>
         <!-- /.login-logo -->
         <div class="login-box-body">
-            @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
-            {
-                <div class="col-md-12">
-                    <div class="alert alert-danger">
-                        <button type="button" class="close alert-close"><span aria-hidden="true">&times;</span></button>
-                        @Html.ValidationSummary(false, string.Empty)
-                    </div>
-                </div>
-            }
+            @Html.Partial("_ReturnMessages")
 
             <h4 class="login-box-msg">@Dominio.PainelAdministracao</h4>
             @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "form-signin" }))

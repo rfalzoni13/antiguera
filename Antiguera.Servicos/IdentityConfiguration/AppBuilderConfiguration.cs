@@ -6,7 +6,7 @@ using Microsoft.Owin.Security.OAuth;
 using Owin;
 using System;
 
-namespace Antiguera.Servicos.Identity
+namespace Antiguera.Servicos.IdentityConfiguration
 {
     public static class AppBuilderConfiguration
     {

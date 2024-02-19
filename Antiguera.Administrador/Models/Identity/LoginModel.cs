@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Web.Mvc;
 
-namespace Antiguera.Administrador.Models
+namespace Antiguera.Administrador.Models.Identity
 {
     public class LoginModel
     {

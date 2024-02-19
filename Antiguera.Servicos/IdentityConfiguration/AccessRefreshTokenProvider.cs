@@ -4,7 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
-namespace Antiguera.Servicos.Identity
+namespace Antiguera.Servicos.IdentityConfiguration
 {
     public class AccessRefreshTokenProvider : IAuthenticationTokenProvider
     {

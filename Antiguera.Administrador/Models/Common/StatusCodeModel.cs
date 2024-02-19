@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace Antiguera.Administrador.Models
+namespace Antiguera.Administrador.Models.Common
 {
     public class StatusCodeModel
     {

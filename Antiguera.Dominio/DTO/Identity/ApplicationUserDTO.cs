@@ -8,6 +8,7 @@ namespace Antiguera.Dominio.DTO.Identity
         public string LastName { get; set; }
         public string Gender { get; set; }
         public bool Active { get; set; }
+        public string PhotoPath { get; set; }
         public DateTime? DateBirth { get; set; }
         public DateTime Created { get; set; }
         public DateTime Modified { get; set; }

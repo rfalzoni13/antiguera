@@ -1,5 +1,5 @@
 ﻿using Antiguera.Administrador.Clients;
-using Antiguera.Administrador.Models;
+using Antiguera.Administrador.Models.Identity;
 using Antiguera.Utils.Helpers;
 using NLog;
 using System;
@@ -14,10 +14,14 @@ namespace Antiguera.Administrador.Controllers
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly AccountClient _accountClient;
+        private readonly IdentityUtilityClient _identityUtilityClient;
+        private readonly UsuarioClient _usuarioClient;
 
-        public AccountController(AccountClient accountClient)
+        public AccountController(AccountClient accountClient, IdentityUtilityClient identityUtilityClient, UsuarioClient usuarioClient)
         {
             _accountClient = accountClient;
+            _identityUtilityClient = identityUtilityClient;
+            _usuarioClient = usuarioClient;
         }
 
         #region Login
@@ -120,7 +124,7 @@ namespace Antiguera.Administrador.Controllers
         {
             try
             {
-                var userFactors = await _accountClient.ObterAutenticacaoDoisFatores();
+                var userFactors = await _identityUtilityClient.ObterAutenticacaoDoisFatores();
 
                 var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
 
@@ -141,7 +145,7 @@ namespace Antiguera.Administrador.Controllers
         {
             try
             {
-                await _accountClient.EnviarCodigoDoisFatores(model);
+                await _identityUtilityClient.EnviarCodigoDoisFatores(model);
 
                 return RedirectToAction("VerificarCodigo", new { Provider = model.SelectedProvider, model.ReturnUrl, model.RememberMe });
             }
@@ -179,56 +183,9 @@ namespace Antiguera.Administrador.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> VerificarCodigo(VerifyCodeModel model)
         {
-            var result = await _accountClient.VerificarCodigoDoisFatores(model);
+            var result = await _identityUtilityClient.VerificarCodigoDoisFatores(model);
 
             return RedirectToLocal(result.ReturnUrl);
-        }
-        #endregion
-
-        #region Registrar
-        // GET: /Account/Registrar
-        [HttpGet]
-        public ActionResult Registrar()
-        {
-            try
-            {
-                var model = new RegistrarModel();
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal("Ocorreu um erro: " + ex);
-                throw;
-            }
-        }
-
-        // POST: /Account/Registrar
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Registrar(RegistrarModel model)
-        {
-            _logger.Debug("Iniciando");
-            try
-            {
-                if (!model.AcceptTerms)
-                {
-                    _logger.Error("Você deve aceitar os termos de uso!");
-                    ModelState.AddModelError(string.Empty, "Você deve aceitar os termos de uso!");
-
-                    // Se chegamos até aqui e houver alguma falha, exiba novamente o formulário
-                    return View(model);
-                }
-
-                await _accountClient.Registrar(model);
-
-                return RedirectToAction("Account", "Login");
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal(ex, "Erro fatal!");
-                throw;
-            }
         }
         #endregion
 
