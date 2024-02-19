@@ -30,8 +30,8 @@ namespace Antiguera.Administrador
 
             bundles.Add(new ScriptBundle("~/bundles/js/bootstrap-datepicker").Include(
                       "~/Scripts/libraries/bootstrap-datepicker/bootstrap-datepicker.js",
-                      "~/Scripts/libraries/locales/bootstrap-datepicker.pt-BR.js",
-                      "~/Scripts/libraries/locales/bootstrap-datepicker.es.js"
+                      "~/Scripts/libraries/bootstrap-datepicker/locales/bootstrap-datepicker.pt-BR.min.js",
+                      "~/Scripts/libraries/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js"
                       ));
 
             bundles.Add(new ScriptBundle("~/bundles/js/moment").Include(
@@ -40,13 +40,12 @@ namespace Antiguera.Administrador
 
             bundles.Add(new ScriptBundle("~/bundles/js/core").Include(
                       "~/Scripts/core/root.js",
-                      "~/Scripts/core/image-utilities.js",
                       "~/Scripts/core/rotas.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/js/datatable").Include(
                       "~/Scripts/libraries/datatable/datatable*",
                       "~/Scripts/libraries/datatable.moment.datetime/datatable.moment.datetime.js",
-                      "~/Scripts/core/datatable-defaults.js"));
+                      "~/Scripts/core/datatable-utils.js"));
 
             //Styles
             bundles.Add(new StyleBundle("~/bundles/bootstrap").Include(
@@ -59,6 +58,10 @@ namespace Antiguera.Administrador
 
             bundles.Add(new StyleBundle("~/bundles/datatable").Include(
                       "~/Content/libraries/datatable/datatable*"));
+
+            bundles.Add(new StyleBundle("~/bundles/select2").Include(
+                      "~/Content/libraries/select2/select2.*",
+                      "~/admin-lte/css/alt/AdminLTE-select2.*"));
 
             bundles.Add(new StyleBundle("~/bundles/bootstrap-datepicker").Include(
                       "~/Content/libraries/bootstrap-datepicker/bootstrap-datepicker.css"));

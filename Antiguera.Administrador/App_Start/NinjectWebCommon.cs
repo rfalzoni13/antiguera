@@ -65,6 +65,7 @@ namespace Antiguera.Administrador.App_Start
         private static void RegisterServices(IKernel kernel)
         {
             kernel.Bind(typeof(IClientBase<,>), typeof(ClientBase<,>));
+            kernel.Bind<IAcessoClient>().To<AcessoClient>().InRequestScope();
             kernel.Bind<IUsuarioClient>().To<UsuarioClient>().InRequestScope();
 
             kernel.Bind<AccountClient>().ToSelf().InRequestScope();
